@@ -8,6 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.app.kowalski.project.dto.ProjectDTO;
+
 @Entity
 @Table(name = "project")
 public class Project {
@@ -26,7 +28,13 @@ public class Project {
 
 	public Project() {}
 
-	public Project(ProjectDTO projectDTO) {
+	/**
+	 * Read all parameters from DTO and save them into project instance
+	 *
+	 * @param projectDTO information used to create or edit a project
+	 * @return project instance
+	 */
+	public Project convertToProject(ProjectDTO projectDTO) {
 		this.name = projectDTO.getName();
 		this.code = projectDTO.getCode();
 		this.description = projectDTO.getDescription();
@@ -34,6 +42,8 @@ public class Project {
 		this.motivation = projectDTO.getMotivation();
 		this.startDate = projectDTO.getStartDate();
 		this.endDate = projectDTO.getEndDate();
+
+		return this;
 	}
 
 	/**

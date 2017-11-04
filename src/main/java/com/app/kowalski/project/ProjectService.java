@@ -2,6 +2,10 @@ package com.app.kowalski.project;
 
 import java.util.List;
 
+import com.app.kowalski.project.dto.ProjectDTO;
+import com.app.kowalski.project.dto.ProjectSummaryDTO;
+import com.app.kowalski.project.exception.ProjectNotFoundException;
+
 /**
  * Interface to expose allowed methods related to projects.
  *
@@ -24,7 +28,7 @@ public interface ProjectService {
 	 * @param id Project's id
 	 * @return Selected project
 	 */
-	public ProjectDTO getProjectById(int id);
+	public ProjectDTO getProjectById(int id) throws ProjectNotFoundException;
 
 	/**
 	 * Includes a new project in the system.
@@ -38,13 +42,13 @@ public interface ProjectService {
 	 * @param projectDTO ProjectDTO instance with new values to save
 	 * @return ProjectDTO instance with parameters already saved
 	 */
-	public ProjectDTO editProject(ProjectDTO projectDTO);
+	public ProjectDTO editProject(ProjectDTO projectDTO) throws ProjectNotFoundException;
 
 	/**
 	 * Removes a project from the system
 	 * @param id Project id
 	 * @return true if the project was removed successfully, false otherwise
 	 */
-	public boolean deleteProject(int id);
+	public boolean deleteProject(int id) throws ProjectNotFoundException;
 
 }

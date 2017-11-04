@@ -1,9 +1,11 @@
 /**
  *
  */
-package com.app.kowalski.project;
+package com.app.kowalski.project.dto;
 
 import java.util.Date;
+
+import com.app.kowalski.project.Project;
 
 /**
  *

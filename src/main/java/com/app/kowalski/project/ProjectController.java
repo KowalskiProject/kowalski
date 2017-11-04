@@ -5,11 +5,17 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.app.kowalski.project.dto.ProjectDTO;
+import com.app.kowalski.project.dto.ProjectSummaryDTO;
+import com.app.kowalski.project.exception.ProjectNotFoundException;
 
 @RestController
 @RequestMapping("/projects")
@@ -25,30 +31,45 @@ public class ProjectController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	List<ProjectSummaryDTO> getProjects() {
-		return this.projectService.getProjects();
+	public ResponseEntity<List<ProjectSummaryDTO>> getProjects() {
+		return new ResponseEntity<List<ProjectSummaryDTO>>(this.projectService.getProjects(), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	ProjectDTO getProjectById(@PathVariable int id) {
-		return this.projectService.getProjectById(id);
+	public ResponseEntity<ProjectDTO> getProjectById(@PathVariable int id) {
+		try {
+			ProjectDTO projectDTO = this.projectService.getProjectById(id);
+			return new ResponseEntity<ProjectDTO>(projectDTO, HttpStatus.OK);
+		} catch (ProjectNotFoundException e) {
+			return new ResponseEntity<ProjectDTO>(HttpStatus.NOT_FOUND);
+		}
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	ProjectDTO addProject(@RequestBody ProjectDTO projectDTO) {
-		return this.projectService.addProject(projectDTO);
+	public ResponseEntity<ProjectDTO> addProject(@RequestBody ProjectDTO projectDTO) {
+		projectDTO = this.projectService.addProject(projectDTO);
+		return new ResponseEntity<ProjectDTO>(projectDTO, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	ProjectDTO editProject(@PathVariable("id") int id, @RequestBody ProjectDTO projectDTO) {
+	public ResponseEntity<ProjectDTO> editProject(@PathVariable("id") int id, @RequestBody ProjectDTO projectDTO) {
 		projectDTO.setProjectId(id);
-		return this.projectService.editProject(projectDTO);
+		try {
+			projectDTO = this.projectService.editProject(projectDTO);
+			return new ResponseEntity<ProjectDTO>(projectDTO, HttpStatus.OK);
+		} catch (ProjectNotFoundException e) {
+			return new ResponseEntity<ProjectDTO>(HttpStatus.NOT_FOUND);
+		}
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	boolean deleteProject(@PathVariable("id") int id) {
-		return this.projectService.deleteProject(id);
+	public ResponseEntity<String> deleteProject(@PathVariable("id") int id) {
+		try {
+			boolean ret = this.projectService.deleteProject(id);
+			return new ResponseEntity<String>(HttpStatus.OK);
+		} catch (ProjectNotFoundException e) {
+			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+		}
 	}
-
 
 }
