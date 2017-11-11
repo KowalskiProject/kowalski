@@ -18,9 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.kowalski.activity.ActivityController;
-import com.app.kowalski.activity.dto.ActivityDTO;
-import com.app.kowalski.project.dto.ProjectDTO;
-import com.app.kowalski.project.dto.ProjectSummaryDTO;
+import com.app.kowalski.activity.ActivityDTO;
 import com.app.kowalski.project.exception.ProjectNotFoundException;
 
 @RestController
@@ -37,10 +35,10 @@ public class ProjectController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<List<ProjectSummaryDTO>> getProjects() {
-		List<ProjectSummaryDTO> projectsDTO = this.projectService.getProjects();
+	public ResponseEntity<List<ProjectDTO>> getProjects() {
+		List<ProjectDTO> projectsDTO = this.projectService.getProjects();
 
-		for (ProjectSummaryDTO projectDTO : projectsDTO) {
+		for (ProjectDTO projectDTO : projectsDTO) {
 			Link selfLink = linkTo(ProjectController.class).slash(projectDTO.getProjectId()).withSelfRel();
 			projectDTO.add(selfLink);
 
@@ -50,7 +48,7 @@ public class ProjectController {
 			Link ordersLink = linkTo(methodLinkBuilder).withRel("activities");
 			projectDTO.add(ordersLink);
 		}
-		return new ResponseEntity<List<ProjectSummaryDTO>>(projectsDTO, HttpStatus.OK);
+		return new ResponseEntity<List<ProjectDTO>>(projectsDTO, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{projectId}", method = RequestMethod.GET)
@@ -108,10 +106,11 @@ public class ProjectController {
 			activitiesDTO = projectService.getAllActivitiesForProject(projectId);
 
 			for (ActivityDTO activityDTO : activitiesDTO) {
-				Link selfLink = linkTo(ActivityController.class).slash(activityDTO.getActivityId()).withSelfRel();
+				Integer activityDTOId = activityDTO.getActivityId();
+				Link selfLink = linkTo(ActivityController.class).slash(activityDTOId).withSelfRel();
 				activityDTO.add(selfLink);
 
-				Link projectLink = linkTo(ProjectController.class).slash(projectId).withRel("project");
+				Link projectLink = linkTo(ActivityController.class).slash(activityDTOId).slash("project").withRel("project");
 				activityDTO.add(projectLink);
 			}
 		} catch (ProjectNotFoundException e) {
@@ -125,10 +124,11 @@ public class ProjectController {
 		try {
 			activityDTO = this.projectService.addActivityForProject(projectId, activityDTO);
 
-			Link selfLink = linkTo(ActivityController.class).slash(activityDTO.getActivityId()).withSelfRel();
+			Integer activityDTOId = activityDTO.getActivityId();
+			Link selfLink = linkTo(ActivityController.class).slash(activityDTOId).withSelfRel();
 			activityDTO.add(selfLink);
 
-			Link projectLink = linkTo(ProjectController.class).slash(projectId).withRel("project");
+			Link projectLink = linkTo(ActivityController.class).slash(activityDTOId).slash("project").withRel("project");
 			activityDTO.add(projectLink);
 		} catch (ProjectNotFoundException e) {
 			return new ResponseEntity<ActivityDTO>(HttpStatus.NOT_FOUND);
@@ -147,4 +147,5 @@ public class ProjectController {
 
 		return new ResponseEntity<ActivityDTO>(HttpStatus.OK);
 	}
+
 }

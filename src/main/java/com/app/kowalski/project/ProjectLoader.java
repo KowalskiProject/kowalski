@@ -27,8 +27,6 @@ public class ProjectLoader implements ApplicationListener<ContextRefreshedEvent>
 		p1.setName("Projeto 1");
 		p1.setCode("ABC1");
 		p1.setDescription("Pequena descrição do projeto");
-		p1.setTarget("Objetivo do projeto");
-		p1.setMotivation("Motivação do projeto");
 		p1.setStartDate(new Date());
 		p1.setEndDate(new Date());
 		projectRepository.save(p1);

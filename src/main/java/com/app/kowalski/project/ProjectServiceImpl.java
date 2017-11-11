@@ -9,9 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.app.kowalski.activity.Activity;
-import com.app.kowalski.activity.dto.ActivityDTO;
-import com.app.kowalski.project.dto.ProjectDTO;
-import com.app.kowalski.project.dto.ProjectSummaryDTO;
+import com.app.kowalski.activity.ActivityDTO;
 import com.app.kowalski.project.exception.ProjectNotFoundException;
 
 @Service
@@ -25,10 +23,10 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public List<ProjectSummaryDTO> getProjects() {
+	public List<ProjectDTO> getProjects() {
 		List<Project> projects = this.repository.findAll();
 		return projects.stream()
-				.map(project -> new ProjectSummaryDTO(project))
+				.map(project -> new ProjectDTO(project))
 				.collect(Collectors.toList());
 	}
 

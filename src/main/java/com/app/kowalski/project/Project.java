@@ -1,5 +1,7 @@
 package com.app.kowalski.project;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,7 +15,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.app.kowalski.activity.Activity;
-import com.app.kowalski.project.dto.ProjectDTO;
 
 @Entity
 @Table(name = "project")
@@ -26,13 +27,13 @@ public class Project {
 	private String name;
 	private String code;
 	private String description;
-	private String target;
-	private String motivation;
 	private Date startDate;
 	private Date endDate;
 
 	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
     private List<Activity> activities = new ArrayList<Activity>();
+
+	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
 	public Project() {}
 
@@ -46,10 +47,10 @@ public class Project {
 		this.name = projectDTO.getName();
 		this.code = projectDTO.getCode();
 		this.description = projectDTO.getDescription();
-		this.target = projectDTO.getTarget();
-		this.motivation = projectDTO.getMotivation();
-		this.startDate = projectDTO.getStartDate();
-		this.endDate = projectDTO.getEndDate();
+		try {
+			this.startDate = sdf.parse(projectDTO.getStartDate());
+			this.endDate = sdf.parse(projectDTO.getEndDate());
+		} catch (ParseException e) {}
 
 		return this;
 	}
@@ -124,34 +125,6 @@ public class Project {
 	 */
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	/**
-	 * @return the target
-	 */
-	public String getTarget() {
-		return target;
-	}
-
-	/**
-	 * @param target the target to set
-	 */
-	public void setTarget(String target) {
-		this.target = target;
-	}
-
-	/**
-	 * @return the motivation
-	 */
-	public String getMotivation() {
-		return motivation;
-	}
-
-	/**
-	 * @param motivation the motivation to set
-	 */
-	public void setMotivation(String motivation) {
-		this.motivation = motivation;
 	}
 
 	/**

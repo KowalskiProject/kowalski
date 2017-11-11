@@ -1,9 +1,7 @@
 package com.app.kowalski.activity;
 
-import java.util.List;
-
-import com.app.kowalski.activity.dto.ActivityDTO;
 import com.app.kowalski.activity.exception.ActivityNotFoundException;
+import com.app.kowalski.project.ProjectDTO;
 
 /**
  * Interface to expose allowed methods related to activities.
@@ -17,37 +15,29 @@ import com.app.kowalski.activity.exception.ActivityNotFoundException;
 public interface ActivityService {
 
 	/**
-	 * Get all activities available in the system.
-	 * @return List of activities
-	 */
-	public List<ActivityDTO> getActivities();
-
-	/**
 	 * Get a single activity instance through given id.
-	 * @param id Activity's id
+	 * @param activityId Activity's id
 	 * @return Selected activity
+	 *
+	 * @throws ActivityNotFoundException No activity instance was found in the system
 	 */
-	public ActivityDTO getActivityById(int id) throws ActivityNotFoundException;
-
-	/**
-	 * Includes a new activity in the system.
-	 * @param activityDTO Activity to be included into system.
-	 * @return Included activity
-	 */
-	public ActivityDTO addActivity(ActivityDTO activityDTO);
+	public ActivityDTO getActivityById(int activityId) throws ActivityNotFoundException;
 
 	/**
 	 * Edits a activity through given id
 	 * @param activityDTO activityDTO instance with new values to save
 	 * @return activityDTO instance with parameters already saved
+	 *
+	 * @throws ActivityNotFoundException No activity instance was found in the system
 	 */
 	public ActivityDTO editActivity(ActivityDTO activityDTO) throws ActivityNotFoundException;
 
 	/**
-	 * Removes a activity from the system
-	 * @param id activity id
-	 * @return true if the activity was removed successfully, false otherwise
+	 * Returns the project associated to the given activity
+	 * @param activityId activity reference
+	 * @return
+	 *
+	 * @throws ActivityNotFoundException No activity instance was found in the system
 	 */
-	public boolean deleteActivity(int id) throws ActivityNotFoundException;
-
+	public ProjectDTO getProjectForActivity(int activityId) throws ActivityNotFoundException;
 }

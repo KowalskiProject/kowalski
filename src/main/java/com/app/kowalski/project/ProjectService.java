@@ -2,9 +2,7 @@ package com.app.kowalski.project;
 
 import java.util.List;
 
-import com.app.kowalski.activity.dto.ActivityDTO;
-import com.app.kowalski.project.dto.ProjectDTO;
-import com.app.kowalski.project.dto.ProjectSummaryDTO;
+import com.app.kowalski.activity.ActivityDTO;
 import com.app.kowalski.project.exception.ProjectNotFoundException;
 
 /**
@@ -22,7 +20,7 @@ public interface ProjectService {
 	 * Get all projects available in the system.
 	 * @return List of projects
 	 */
-	public List<ProjectSummaryDTO> getProjects();
+	public List<ProjectDTO> getProjects();
 
 	/**
 	 * Get a single project instance through given id.
