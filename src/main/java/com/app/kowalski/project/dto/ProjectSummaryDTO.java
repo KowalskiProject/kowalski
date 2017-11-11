@@ -1,14 +1,10 @@
 package com.app.kowalski.project.dto;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-
 import java.io.Serializable;
 
-import org.springframework.hateoas.Link;
 import org.springframework.hateoas.ResourceSupport;
 
 import com.app.kowalski.project.Project;
-import com.app.kowalski.project.ProjectController;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -31,8 +27,6 @@ public class ProjectSummaryDTO extends ResourceSupport implements Serializable {
 		this.projectId = project.getProjectId();
 		this.name = project.getName();
 		this.description = project.getDescription();
-		Link selfLink = linkTo(ProjectController.class).slash(this.getProjectId()).withSelfRel();
-		this.add(selfLink);
 	}
 
 	/**

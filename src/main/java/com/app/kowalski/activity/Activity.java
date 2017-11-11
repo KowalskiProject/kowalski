@@ -6,9 +6,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.app.kowalski.activity.dto.ActivityDTO;
+import com.app.kowalski.project.Project;
 
 @Entity
 @Table(name = "activity")
@@ -24,6 +27,10 @@ public class Activity {
 	private String status;
 	private Date startDate;
 	private Date endDate;
+
+	@ManyToOne
+    @JoinColumn(name="project_projectId")
+    private Project project;
 
 	public Activity() {}
 
@@ -50,6 +57,20 @@ public class Activity {
 	 */
 	public void setActivityId(Integer activityId) {
 		this.activityId = activityId;
+	}
+
+	/**
+	 * @return the project
+	 */
+	public Project getProject() {
+		return project;
+	}
+
+	/**
+	 * @param project the project to set
+	 */
+	public void setProject(Project project) {
+		this.project = project;
 	}
 
 	/**

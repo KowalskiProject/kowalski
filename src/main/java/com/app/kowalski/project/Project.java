@@ -1,13 +1,18 @@
 package com.app.kowalski.project;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.app.kowalski.activity.Activity;
 import com.app.kowalski.project.dto.ProjectDTO;
 
 @Entity
@@ -25,6 +30,9 @@ public class Project {
 	private String motivation;
 	private Date startDate;
 	private Date endDate;
+
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
+    private List<Activity> activities = new ArrayList<Activity>();
 
 	public Project() {}
 
@@ -44,6 +52,22 @@ public class Project {
 		this.endDate = projectDTO.getEndDate();
 
 		return this;
+	}
+
+	/**
+	 *
+	 * @param activity
+	 */
+	public void addActivity(Activity activity) {
+		activities.add(activity);
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public List<Activity> getActivities() {
+		return this.activities;
 	}
 
 	/**

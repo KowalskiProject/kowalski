@@ -8,6 +8,8 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.app.kowalski.activity.Activity;
+import com.app.kowalski.activity.dto.ActivityDTO;
 import com.app.kowalski.project.dto.ProjectDTO;
 import com.app.kowalski.project.dto.ProjectSummaryDTO;
 import com.app.kowalski.project.exception.ProjectNotFoundException;
@@ -18,8 +20,8 @@ public class ProjectServiceImpl implements ProjectService {
 	private final ProjectRepository repository;
 
 	@Autowired
-	public ProjectServiceImpl(ProjectRepository repository) {
-		this.repository = repository;
+	public ProjectServiceImpl(ProjectRepository projectRepository) {
+		this.repository = projectRepository;
 	}
 
 	@Override
@@ -70,4 +72,62 @@ public class ProjectServiceImpl implements ProjectService {
 		return true;
 	}
 
+	@Override
+	public List<ActivityDTO> getAllActivitiesForProject(int id) throws ProjectNotFoundException {
+		Project project = null;
+		try {
+			project = this.repository.getOne(id);
+		} catch (EntityNotFoundException e) {
+			throw new ProjectNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		List<Activity> activities = project.getActivities();
+		return activities.stream()
+				.map(activity -> new ActivityDTO(activity))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public ActivityDTO addActivityForProject(int projectId, ActivityDTO activityDTO) throws ProjectNotFoundException {
+		Project project = null;
+		Activity activity = null;
+
+		try {
+			project = this.repository.getOne(projectId);
+			activity = new Activity().convertToActivity(activityDTO);
+			activity.setProject(project);
+			project.addActivity(activity);
+
+			project = this.repository.saveAndFlush(project);
+
+			// update activity id
+			activity = project.getActivities().get(project.getActivities().size() - 1);
+		} catch (EntityNotFoundException e) {
+			throw new ProjectNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		return new ActivityDTO(activity);
+	}
+
+	@Override
+	public boolean deleteActivityFromProject(int projectId, int activityId) throws ProjectNotFoundException {
+		Project project = null;
+		try {
+			project = this.repository.getOne(projectId);
+		} catch (EntityNotFoundException e) {
+			throw new ProjectNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		List<Activity> activities = project.getActivities();
+		for (Activity activity : activities) {
+			if (activity.getActivityId() == activityId) {
+				activities.remove(activity);
+				break;
+			}
+		}
+
+		this.repository.save(project);
+
+		return true;
+	}
 }

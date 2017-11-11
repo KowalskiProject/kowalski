@@ -1,10 +1,14 @@
 package com.app.kowalski.project;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.kowalski.activity.ActivityController;
+import com.app.kowalski.activity.dto.ActivityDTO;
 import com.app.kowalski.project.dto.ProjectDTO;
 import com.app.kowalski.project.dto.ProjectSummaryDTO;
 import com.app.kowalski.project.exception.ProjectNotFoundException;
@@ -32,44 +38,113 @@ public class ProjectController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<List<ProjectSummaryDTO>> getProjects() {
-		return new ResponseEntity<List<ProjectSummaryDTO>>(this.projectService.getProjects(), HttpStatus.OK);
+		List<ProjectSummaryDTO> projectsDTO = this.projectService.getProjects();
+
+		for (ProjectSummaryDTO projectDTO : projectsDTO) {
+			Link selfLink = linkTo(ProjectController.class).slash(projectDTO.getProjectId()).withSelfRel();
+			projectDTO.add(selfLink);
+
+			ResponseEntity<List<ActivityDTO>> methodLinkBuilder = methodOn(ProjectController.class)
+					.getActivitiesForProject(projectDTO.getProjectId());
+
+			Link ordersLink = linkTo(methodLinkBuilder).withRel("activities");
+			projectDTO.add(ordersLink);
+		}
+		return new ResponseEntity<List<ProjectSummaryDTO>>(projectsDTO, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public ResponseEntity<ProjectDTO> getProjectById(@PathVariable int id) {
+	@RequestMapping(value = "/{projectId}", method = RequestMethod.GET)
+	public ResponseEntity<ProjectDTO> getProjectById(@PathVariable int projectId) {
+		ProjectDTO projectDTO = new ProjectDTO();
 		try {
-			ProjectDTO projectDTO = this.projectService.getProjectById(id);
-			return new ResponseEntity<ProjectDTO>(projectDTO, HttpStatus.OK);
+			projectDTO = this.projectService.getProjectById(projectId);
+			Link selfLink = linkTo(ProjectController.class).slash(projectDTO.getProjectId()).withSelfRel();
+			projectDTO.add(selfLink);
 		} catch (ProjectNotFoundException e) {
 			return new ResponseEntity<ProjectDTO>(HttpStatus.NOT_FOUND);
 		}
+
+		return new ResponseEntity<ProjectDTO>(projectDTO, HttpStatus.OK);
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<ProjectDTO> addProject(@RequestBody ProjectDTO projectDTO) {
 		projectDTO = this.projectService.addProject(projectDTO);
+		Link selfLink = linkTo(ProjectController.class).slash(projectDTO.getProjectId()).withSelfRel();
+		projectDTO.add(selfLink);
+
 		return new ResponseEntity<ProjectDTO>(projectDTO, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/{projectId}", method = RequestMethod.PUT)
 	public ResponseEntity<ProjectDTO> editProject(@PathVariable("id") int id, @RequestBody ProjectDTO projectDTO) {
 		projectDTO.setProjectId(id);
 		try {
 			projectDTO = this.projectService.editProject(projectDTO);
-			return new ResponseEntity<ProjectDTO>(projectDTO, HttpStatus.OK);
+			Link selfLink = linkTo(ProjectController.class).slash(projectDTO.getProjectId()).withSelfRel();
+			projectDTO.add(selfLink);
 		} catch (ProjectNotFoundException e) {
 			return new ResponseEntity<ProjectDTO>(HttpStatus.NOT_FOUND);
 		}
+
+		return new ResponseEntity<ProjectDTO>(projectDTO, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<String> deleteProject(@PathVariable("id") int id) {
+	@RequestMapping(value = "/{projectId}", method = RequestMethod.DELETE)
+	public ResponseEntity<String> deleteProject(@PathVariable("id") int projectId) {
 		try {
-			boolean ret = this.projectService.deleteProject(id);
-			return new ResponseEntity<String>(HttpStatus.OK);
+			boolean ret = this.projectService.deleteProject(projectId);
 		} catch (ProjectNotFoundException e) {
 			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
 		}
+
+		return new ResponseEntity<String>(HttpStatus.OK);
 	}
 
+	@RequestMapping(value = "/{projectId}/activities", method = RequestMethod.GET)
+	public ResponseEntity<List<ActivityDTO>> getActivitiesForProject(@PathVariable int projectId) {
+		List<ActivityDTO> activitiesDTO = null;
+		try {
+			activitiesDTO = projectService.getAllActivitiesForProject(projectId);
+
+			for (ActivityDTO activityDTO : activitiesDTO) {
+				Link selfLink = linkTo(ActivityController.class).slash(activityDTO.getActivityId()).withSelfRel();
+				activityDTO.add(selfLink);
+
+				Link projectLink = linkTo(ProjectController.class).slash(projectId).withRel("project");
+				activityDTO.add(projectLink);
+			}
+		} catch (ProjectNotFoundException e) {
+			return new ResponseEntity<List<ActivityDTO>>(HttpStatus.NOT_FOUND);
+		}
+	    return new ResponseEntity<List<ActivityDTO>>(activitiesDTO, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/{projectId}/activities", method = RequestMethod.POST)
+	public ResponseEntity<ActivityDTO> addActivityForProject(@PathVariable int projectId, @RequestBody ActivityDTO activityDTO) {
+		try {
+			activityDTO = this.projectService.addActivityForProject(projectId, activityDTO);
+
+			Link selfLink = linkTo(ActivityController.class).slash(activityDTO.getActivityId()).withSelfRel();
+			activityDTO.add(selfLink);
+
+			Link projectLink = linkTo(ProjectController.class).slash(projectId).withRel("project");
+			activityDTO.add(projectLink);
+		} catch (ProjectNotFoundException e) {
+			return new ResponseEntity<ActivityDTO>(HttpStatus.NOT_FOUND);
+		}
+
+		return new ResponseEntity<ActivityDTO>(activityDTO, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/{projectId}/activities/{activityId}", method = RequestMethod.DELETE)
+	public ResponseEntity<ActivityDTO> deleteActivityForProject(@PathVariable int projectId, @PathVariable int activityId) {
+		try {
+			boolean ret = this.projectService.deleteActivityFromProject(projectId, activityId);
+		} catch (ProjectNotFoundException e) {
+			return new ResponseEntity<ActivityDTO>(HttpStatus.NOT_FOUND);
+		}
+
+		return new ResponseEntity<ActivityDTO>(HttpStatus.OK);
+	}
 }

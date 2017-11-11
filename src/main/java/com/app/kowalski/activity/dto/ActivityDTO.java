@@ -1,15 +1,11 @@
 package com.app.kowalski.activity.dto;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-
 import java.io.Serializable;
 import java.util.Date;
 
-import org.springframework.hateoas.Link;
 import org.springframework.hateoas.ResourceSupport;
 
 import com.app.kowalski.activity.Activity;
-import com.app.kowalski.activity.ActivityController;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -28,6 +24,7 @@ public class ActivityDTO extends ResourceSupport implements Serializable {
 	private String status;
 	private Date startDate;
 	private Date endDate;
+	private Integer projectId;
 
 	public ActivityDTO() {}
 
@@ -39,8 +36,7 @@ public class ActivityDTO extends ResourceSupport implements Serializable {
 		this.status = activity.getStatus();
 		this.startDate = activity.getStartDate();
 		this.endDate = activity.getEndDate();
-		Link selfLink = linkTo(ActivityController.class).slash(this.getActivityId()).withSelfRel();
-		this.add(selfLink);
+		this.projectId = activity.getProject().getProjectId();
 	}
 
 	/**
@@ -139,5 +135,19 @@ public class ActivityDTO extends ResourceSupport implements Serializable {
 	 */
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+	}
+
+	/**
+	 * @return the projectId
+	 */
+	public Integer getProjectId() {
+		return projectId;
+	}
+
+	/**
+	 * @param projectId the projectId to set
+	 */
+	public void setProjectId(Integer projectId) {
+		this.projectId = projectId;
 	}
 }
