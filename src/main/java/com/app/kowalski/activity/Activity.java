@@ -1,5 +1,7 @@
 package com.app.kowalski.activity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -22,7 +24,6 @@ public class Activity {
 
 	private String name;
 	private String description;
-	private String justification;
 	private String status;
 	private Date startDate;
 	private Date endDate;
@@ -31,15 +32,19 @@ public class Activity {
     @JoinColumn(name="project_projectId")
     private Project project;
 
+	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
 	public Activity() {}
 
 	public Activity convertToActivity(ActivityDTO activityDTO) {
 		this.name = activityDTO.getName();
 		this.description = activityDTO.getDescription();
-		this.justification = activityDTO.getJustification();
 		this.status = activityDTO.getStatus();
-		this.startDate = activityDTO.getStartDate();
-		this.endDate = activityDTO.getEndDate();
+		try {
+			this.startDate = sdf.parse(activityDTO.getStartDate());
+			this.endDate = sdf.parse(activityDTO.getEndDate());
+		} catch (ParseException e) {}
+
 
 		return this;
 	}
@@ -98,20 +103,6 @@ public class Activity {
 	 */
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	/**
-	 * @return the justification
-	 */
-	public String getJustification() {
-		return justification;
-	}
-
-	/**
-	 * @param justification the justification to set
-	 */
-	public void setJustification(String justification) {
-		this.justification = justification;
 	}
 
 	/**
