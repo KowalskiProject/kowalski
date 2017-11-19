@@ -1,5 +1,7 @@
 package com.app.kowalski.activity;
 
+import java.util.List;
+
 import com.app.kowalski.activity.exception.ActivityNotFoundException;
 import com.app.kowalski.project.ProjectDTO;
 
@@ -13,6 +15,9 @@ import com.app.kowalski.project.ProjectDTO;
  * handle the information.
  */
 public interface ActivityService {
+
+
+	public List<ActivityDTO> getActivitiesForProject(int projectId);
 
 	/**
 	 * Get a single activity instance through given id.

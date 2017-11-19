@@ -25,6 +25,7 @@ public class ActivityDTO extends ResourceSupport implements Serializable {
 	private String status;
 	private String startDate;
 	private String endDate;
+	private Integer projectId;
 
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -37,6 +38,7 @@ public class ActivityDTO extends ResourceSupport implements Serializable {
 		this.status = activity.getStatus();
 		this.startDate = sdf.format(activity.getStartDate());
 		this.endDate = sdf.format(activity.getEndDate());
+		this.setProjectId(activity.getProject().getProjectId());
 	}
 
 	/**
@@ -121,6 +123,20 @@ public class ActivityDTO extends ResourceSupport implements Serializable {
 	 */
 	public void setEndDate(String endDate) {
 		this.endDate = endDate;
+	}
+
+	/**
+	 * @return the projectId
+	 */
+	public Integer getProjectId() {
+		return projectId;
+	}
+
+	/**
+	 * @param projectId the projectId to set
+	 */
+	public void setProjectId(Integer projectId) {
+		this.projectId = projectId;
 	}
 
 }

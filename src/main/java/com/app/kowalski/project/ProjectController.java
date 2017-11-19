@@ -1,14 +1,10 @@
 package com.app.kowalski.project;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.app.kowalski.activity.ActivityController;
 import com.app.kowalski.activity.ActivityDTO;
 import com.app.kowalski.project.exception.ProjectNotFoundException;
+import com.app.kowalski.util.HateoasLinksBuilder;
 
 @RestController
 @RequestMapping("/projects")
@@ -39,28 +35,22 @@ public class ProjectController {
 		List<ProjectDTO> projectsDTO = this.projectService.getProjects();
 
 		for (ProjectDTO projectDTO : projectsDTO) {
-			Link selfLink = linkTo(ProjectController.class).slash(projectDTO.getProjectId()).withSelfRel();
-			projectDTO.add(selfLink);
-
-			ResponseEntity<List<ActivityDTO>> methodLinkBuilder = methodOn(ProjectController.class)
-					.getActivitiesForProject(projectDTO.getProjectId());
-
-			Link ordersLink = linkTo(methodLinkBuilder).withRel("activities");
-			projectDTO.add(ordersLink);
+			HateoasLinksBuilder.createHateoasForProject(projectDTO);
 		}
 		return new ResponseEntity<List<ProjectDTO>>(projectsDTO, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{projectId}", method = RequestMethod.GET)
 	public ResponseEntity<ProjectDTO> getProjectById(@PathVariable int projectId) {
-		ProjectDTO projectDTO = new ProjectDTO();
+		ProjectDTO projectDTO = null;
+
 		try {
 			projectDTO = this.projectService.getProjectById(projectId);
-			Link selfLink = linkTo(ProjectController.class).slash(projectDTO.getProjectId()).withSelfRel();
-			projectDTO.add(selfLink);
 		} catch (ProjectNotFoundException e) {
 			return new ResponseEntity<ProjectDTO>(HttpStatus.NOT_FOUND);
 		}
+
+		HateoasLinksBuilder.createHateoasForProject(projectDTO);
 
 		return new ResponseEntity<ProjectDTO>(projectDTO, HttpStatus.OK);
 	}
@@ -68,8 +58,7 @@ public class ProjectController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<ProjectDTO> addProject(@RequestBody ProjectDTO projectDTO) {
 		projectDTO = this.projectService.addProject(projectDTO);
-		Link selfLink = linkTo(ProjectController.class).slash(projectDTO.getProjectId()).withSelfRel();
-		projectDTO.add(selfLink);
+		HateoasLinksBuilder.createHateoasForProject(projectDTO);
 
 		return new ResponseEntity<ProjectDTO>(projectDTO, HttpStatus.OK);
 	}
@@ -77,13 +66,14 @@ public class ProjectController {
 	@RequestMapping(value = "/{projectId}", method = RequestMethod.PUT)
 	public ResponseEntity<ProjectDTO> editProject(@PathVariable("id") int id, @RequestBody ProjectDTO projectDTO) {
 		projectDTO.setProjectId(id);
+
 		try {
 			projectDTO = this.projectService.editProject(projectDTO);
-			Link selfLink = linkTo(ProjectController.class).slash(projectDTO.getProjectId()).withSelfRel();
-			projectDTO.add(selfLink);
 		} catch (ProjectNotFoundException e) {
 			return new ResponseEntity<ProjectDTO>(HttpStatus.NOT_FOUND);
 		}
+
+		HateoasLinksBuilder.createHateoasForProject(projectDTO);
 
 		return new ResponseEntity<ProjectDTO>(projectDTO, HttpStatus.OK);
 	}
@@ -102,37 +92,28 @@ public class ProjectController {
 	@RequestMapping(value = "/{projectId}/activities", method = RequestMethod.GET)
 	public ResponseEntity<List<ActivityDTO>> getActivitiesForProject(@PathVariable int projectId) {
 		List<ActivityDTO> activitiesDTO = null;
+
 		try {
 			activitiesDTO = projectService.getAllActivitiesForProject(projectId);
-
-			for (ActivityDTO activityDTO : activitiesDTO) {
-				Integer activityDTOId = activityDTO.getActivityId();
-				Link selfLink = linkTo(ActivityController.class).slash(activityDTOId).withSelfRel();
-				activityDTO.add(selfLink);
-
-				Link projectLink = linkTo(ActivityController.class).slash(activityDTOId).slash("project").withRel("project");
-				activityDTO.add(projectLink);
-			}
 		} catch (ProjectNotFoundException e) {
 			return new ResponseEntity<List<ActivityDTO>>(HttpStatus.NOT_FOUND);
 		}
-	    return new ResponseEntity<List<ActivityDTO>>(activitiesDTO, HttpStatus.OK);
+
+		for (ActivityDTO activityDTO : activitiesDTO)
+			HateoasLinksBuilder.createHateoasForActivity(activityDTO);
+
+		return new ResponseEntity<List<ActivityDTO>>(activitiesDTO, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{projectId}/activities", method = RequestMethod.POST)
 	public ResponseEntity<ActivityDTO> addActivityForProject(@PathVariable int projectId, @RequestBody ActivityDTO activityDTO) {
 		try {
 			activityDTO = this.projectService.addActivityForProject(projectId, activityDTO);
-
-			Integer activityDTOId = activityDTO.getActivityId();
-			Link selfLink = linkTo(ActivityController.class).slash(activityDTOId).withSelfRel();
-			activityDTO.add(selfLink);
-
-			Link projectLink = linkTo(ActivityController.class).slash(activityDTOId).slash("project").withRel("project");
-			activityDTO.add(projectLink);
 		} catch (ProjectNotFoundException e) {
 			return new ResponseEntity<ActivityDTO>(HttpStatus.NOT_FOUND);
 		}
+
+		HateoasLinksBuilder.createHateoasForActivity(activityDTO);
 
 		return new ResponseEntity<ActivityDTO>(activityDTO, HttpStatus.OK);
 	}
@@ -147,5 +128,4 @@ public class ProjectController {
 
 		return new ResponseEntity<ActivityDTO>(HttpStatus.OK);
 	}
-
 }

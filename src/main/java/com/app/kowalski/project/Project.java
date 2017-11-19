@@ -61,6 +61,16 @@ public class Project {
 	 */
 	public void addActivity(Activity activity) {
 		activities.add(activity);
+		activity.setProject(this);
+	}
+
+	/**
+	 *
+	 * @param activity
+	 */
+	public void removeActivity(Activity activity) {
+		activities.remove(activity);
+		activity.setProject(null);
 	}
 
 	/**

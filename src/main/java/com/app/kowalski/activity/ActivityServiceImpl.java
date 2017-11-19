@@ -1,5 +1,8 @@
 package com.app.kowalski.activity;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +18,17 @@ public class ActivityServiceImpl implements ActivityService {
 	private final ActivityRepository activityRepository;
 
 	@Autowired
-	public ActivityServiceImpl(ActivityRepository repository) {
-		this.activityRepository = repository;
+	public ActivityServiceImpl(ActivityRepository activityRepository) {
+		this.activityRepository = activityRepository;
+	}
+
+	@Override
+	public List<ActivityDTO> getActivitiesForProject(int projectId) {
+		List<Activity> activities = activityRepository.findAll();
+
+		return activities.stream()
+				.map(activity -> new ActivityDTO(activity))
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -53,4 +65,5 @@ public class ActivityServiceImpl implements ActivityService {
 
 		return new ProjectDTO(project);
 	}
+
 }
