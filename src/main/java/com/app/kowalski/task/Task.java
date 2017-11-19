@@ -1,31 +1,26 @@
-package com.app.kowalski.activity;
+package com.app.kowalski.task;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.app.kowalski.project.Project;
-import com.app.kowalski.task.Task;
+import com.app.kowalski.activity.Activity;
 
 @Entity
-@Table(name = "activity")
-public class Activity {
+@Table(name = "task")
+public class Task {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer activityId;
+	private Integer taskId;
 
 	private String name;
 	private String description;
@@ -34,81 +29,37 @@ public class Activity {
 	private Date endDate;
 
 	@ManyToOne
-    @JoinColumn(name="project_projectId")
-    private Project project;
-
-	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
-    private List<Task> tasks = new ArrayList<Task>();
+    @JoinColumn(name="activity_activityId")
+    private Activity activity;
 
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-	public Activity() {}
+	public Task() {}
 
-	public Activity convertToActivity(ActivityDTO activityDTO) {
-		this.name = activityDTO.getName();
-		this.description = activityDTO.getDescription();
-		this.status = activityDTO.getStatus();
+	public Task convertToTask(TaskDTO taskDTO) {
+		this.name = taskDTO.getName();
+		this.description = taskDTO.getDescription();
+		this.status = taskDTO.getStatus();
 		try {
-			this.startDate = sdf.parse(activityDTO.getStartDate());
-			this.endDate = sdf.parse(activityDTO.getEndDate());
+			this.startDate = sdf.parse(taskDTO.getStartDate());
+			this.endDate = sdf.parse(taskDTO.getEndDate());
 		} catch (ParseException e) {}
-
 
 		return this;
 	}
 
 	/**
-	 * @return the id
+	 * @return the taskId
 	 */
-	public Integer getActivityId() {
-		return activityId;
+	public Integer getTaskId() {
+		return taskId;
 	}
 
 	/**
-	 * @param id the id to set
+	 * @param taskId the taskId to set
 	 */
-	public void setActivityId(Integer activityId) {
-		this.activityId = activityId;
-	}
-
-	/**
-	 * @return the project
-	 */
-	public Project getProject() {
-		return project;
-	}
-
-	/**
-	 * @param project the project to set
-	 */
-	public void setProject(Project project) {
-		this.project = project;
-	}
-
-	/**
-	 *
-	 * @param task
-	 */
-	public void addTask(Task task) {
-		this.tasks.add(task);
-		task.setActivity(this);
-	}
-
-	/**
-	 *
-	 * @param task
-	 */
-	public void removeTask(Task task) {
-		this.tasks.remove(task);
-		task.setActivity(null);
-	}
-
-	/**
-	 *
-	 * @return
-	 */
-	public List<Task> getTasks() {
-		return this.tasks;
+	public void setTaskId(Integer taskId) {
+		this.taskId = taskId;
 	}
 
 	/**
@@ -179,6 +130,20 @@ public class Activity {
 	 */
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+	}
+
+	/**
+	 * @return the activity
+	 */
+	public Activity getActivity() {
+		return activity;
+	}
+
+	/**
+	 * @param activity the activity to set
+	 */
+	public void setActivity(Activity activity) {
+		this.activity = activity;
 	}
 
 }
