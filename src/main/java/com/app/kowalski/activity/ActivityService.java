@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.app.kowalski.activity.exception.ActivityNotFoundException;
 import com.app.kowalski.project.ProjectDTO;
+import com.app.kowalski.task.TaskDTO;
+import com.app.kowalski.task.exception.TaskNotFoundException;
 
 /**
  * Interface to expose allowed methods related to activities.
@@ -15,9 +17,6 @@ import com.app.kowalski.project.ProjectDTO;
  * handle the information.
  */
 public interface ActivityService {
-
-
-	public List<ActivityDTO> getActivitiesForProject(int projectId);
 
 	/**
 	 * Get a single activity instance through given id.
@@ -45,4 +44,35 @@ public interface ActivityService {
 	 * @throws ActivityNotFoundException No activity instance was found in the system
 	 */
 	public ProjectDTO getProjectForActivity(int activityId) throws ActivityNotFoundException;
+
+	/**
+	 * Returns the list of tasks associated to the given activity
+	 * @param activityId activity reference
+	 * @return List of tasks associated to the given activity
+	 *
+	 * @throws ActivityNotFoundException No activity instance was found in the system
+	 */
+	public List<TaskDTO> getTasksForActivity(int activityId) throws ActivityNotFoundException;
+
+	/**
+	 * Creates a new task and associates it to the given activity
+	 * @param activityId activity reference
+	 * @param taskDTO task to be created
+	 * @return created task
+	 *
+	 * @throws ActivityNotFoundException No activity instance was found in the system
+	 */
+	public TaskDTO addTaskForActivity(int activityId, TaskDTO taskDTO) throws ActivityNotFoundException;
+
+	/**
+	 * Deletes a task
+	 * @param activityId activity reference
+	 * @param taskId task reference
+	 * @return true if task was deleted successfully, false otherwise
+	 *
+	 * @throws ActivityNotFoundException No activity instance was found in the system
+	 * @throws TaskNotFoundException No task instance was found in the system
+	 */
+	public boolean deleteTaskFromActivity(int activityId, int taskId) throws ActivityNotFoundException, TaskNotFoundException;
+
 }
