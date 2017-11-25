@@ -25,9 +25,13 @@ public class HateoasLinksBuilder {
 
 		ResponseEntity<List<ActivityDTO>> methodLinkBuilder = methodOn(ProjectController.class)
 				.getActivitiesForProject(projectDTO.getProjectId());
-
 		Link activitiesLink = linkTo(methodLinkBuilder).withRel("activities");
 		projectDTO.add(activitiesLink);
+
+		ResponseEntity<KowalskiUserDTO> accountableLinkBuilder = methodOn(ProjectController.class)
+				.getAccountableForProject(projectDTO.getProjectId());
+		Link accountableLink = linkTo(accountableLinkBuilder).withRel("accountable");
+		projectDTO.add(accountableLink);
 	}
 
 	public static void createHateoasForActivity(ActivityDTO activityDTO) {

@@ -11,10 +11,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.app.kowalski.activity.Activity;
+import com.app.kowalski.user.KowalskiUser;
 
 @Entity
 @Table(name = "project")
@@ -32,6 +35,10 @@ public class Project {
 
 	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
     private List<Activity> activities = new ArrayList<Activity>();
+
+	@ManyToOne
+    @JoinColumn(name="kowalskiuser_kUserId")
+	private KowalskiUser accountable;
 
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -53,6 +60,20 @@ public class Project {
 		} catch (ParseException e) {}
 
 		return this;
+	}
+
+	/**
+	 * @return the accountable
+	 */
+	public KowalskiUser getAccountable() {
+		return accountable;
+	}
+
+	/**
+	 * @param accountable the accountable to set
+	 */
+	public void setAccountable(KowalskiUser accountable) {
+		this.accountable = accountable;
 	}
 
 	/**

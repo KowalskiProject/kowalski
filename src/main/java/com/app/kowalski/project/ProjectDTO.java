@@ -25,6 +25,7 @@ public class ProjectDTO extends ResourceSupport implements Serializable {
 	private String description;
 	private String startDate;
 	private String endDate;
+	private Integer accountableId;
 
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -36,6 +37,10 @@ public class ProjectDTO extends ResourceSupport implements Serializable {
 		this.description = project.getDescription();
 		this.startDate = sdf.format(project.getStartDate());
 		this.endDate = sdf.format(project.getEndDate());
+		if (project.getAccountable() != null)
+			this.setAccountableId(project.getAccountable().getkUserId());
+		else
+			this.setAccountableId(null);
 	}
 
 	/**
@@ -120,6 +125,20 @@ public class ProjectDTO extends ResourceSupport implements Serializable {
 	 */
 	public void setEndDate(String endDate) {
 		this.endDate = endDate;
+	}
+
+	/**
+	 * @return the accountableId
+	 */
+	public Integer getAccountableId() {
+		return accountableId;
+	}
+
+	/**
+	 * @param accountableId the accountableId to set
+	 */
+	public void setAccountableId(Integer accountableId) {
+		this.accountableId = accountableId;
 	}
 
 }

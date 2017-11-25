@@ -11,20 +11,26 @@ import org.springframework.stereotype.Service;
 import com.app.kowalski.activity.Activity;
 import com.app.kowalski.activity.ActivityDTO;
 import com.app.kowalski.project.exception.ProjectNotFoundException;
+import com.app.kowalski.user.KowalskiUser;
+import com.app.kowalski.user.KowalskiUserDTO;
+import com.app.kowalski.user.KowalskiUserRepository;
+import com.app.kowalski.user.exception.KowalskiUserNotFoundException;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
 
-	private final ProjectRepository repository;
+	private final ProjectRepository projectRepository;
+	private final KowalskiUserRepository userRepository;
 
 	@Autowired
-	public ProjectServiceImpl(ProjectRepository projectRepository) {
-		this.repository = projectRepository;
+	public ProjectServiceImpl(ProjectRepository projectRepository, KowalskiUserRepository userRepository) {
+		this.projectRepository = projectRepository;
+		this.userRepository = userRepository;
 	}
 
 	@Override
 	public List<ProjectDTO> getProjects() {
-		List<Project> projects = this.repository.findAll();
+		List<Project> projects = this.projectRepository.findAll();
 		return projects.stream()
 				.map(project -> new ProjectDTO(project))
 				.collect(Collectors.toList());
@@ -33,7 +39,7 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public ProjectDTO getProjectById(int id) throws ProjectNotFoundException {
 		try {
-			return new ProjectDTO(this.repository.getOne(id));
+			return new ProjectDTO(this.projectRepository.getOne(id));
 		} catch (EntityNotFoundException e) {
 			throw new ProjectNotFoundException(e.getMessage(), e.getCause());
 		}
@@ -43,7 +49,7 @@ public class ProjectServiceImpl implements ProjectService {
 	public ProjectDTO addProject(ProjectDTO projectDTO) {
 		// check business rules here
 		Project project = new Project().convertToProject(projectDTO);
-		project = this.repository.save(project);
+		project = this.projectRepository.save(project);
 		return new ProjectDTO(project);
 	}
 
@@ -51,9 +57,9 @@ public class ProjectServiceImpl implements ProjectService {
 	public ProjectDTO editProject(ProjectDTO projectDTO) throws ProjectNotFoundException {
 		// check business rules here
 		try {
-			Project project = this.repository.getOne(projectDTO.getProjectId());
+			Project project = this.projectRepository.getOne(projectDTO.getProjectId());
 			project = project.convertToProject(projectDTO);
-			project = this.repository.save(project);
+			project = this.projectRepository.save(project);
 			return new ProjectDTO(project);
 		} catch (EntityNotFoundException e) {
 			throw new ProjectNotFoundException(e.getMessage(), e.getCause());
@@ -63,7 +69,7 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public boolean deleteProject(int id) throws ProjectNotFoundException {
 		try {
-			this.repository.delete(id);
+			this.projectRepository.delete(id);
 		} catch (Exception e) {
 			throw new ProjectNotFoundException(e.getMessage(), e.getCause());
 		}
@@ -74,7 +80,7 @@ public class ProjectServiceImpl implements ProjectService {
 	public List<ActivityDTO> getAllActivitiesForProject(int id) throws ProjectNotFoundException {
 		Project project = null;
 		try {
-			project = this.repository.getOne(id);
+			project = this.projectRepository.getOne(id);
 		} catch (EntityNotFoundException e) {
 			throw new ProjectNotFoundException(e.getMessage(), e.getCause());
 		}
@@ -91,12 +97,12 @@ public class ProjectServiceImpl implements ProjectService {
 		Activity activity = null;
 
 		try {
-			project = this.repository.getOne(projectId);
+			project = this.projectRepository.getOne(projectId);
 			activity = new Activity().convertToActivity(activityDTO);
 			activity.setProject(project);
 			project.addActivity(activity);
 
-			project = this.repository.saveAndFlush(project);
+			project = this.projectRepository.saveAndFlush(project);
 
 			// update activity id
 			activity = project.getActivities().get(project.getActivities().size() - 1);
@@ -111,7 +117,7 @@ public class ProjectServiceImpl implements ProjectService {
 	public boolean deleteActivityFromProject(int projectId, int activityId) throws ProjectNotFoundException {
 		Project project = null;
 		try {
-			project = this.repository.getOne(projectId);
+			project = this.projectRepository.getOne(projectId);
 		} catch (EntityNotFoundException e) {
 			throw new ProjectNotFoundException(e.getMessage(), e.getCause());
 		}
@@ -124,8 +130,71 @@ public class ProjectServiceImpl implements ProjectService {
 			}
 		}
 
-		this.repository.save(project);
+		this.projectRepository.save(project);
 
 		return true;
+	}
+
+	@Override
+	public KowalskiUserDTO getAccountableForProject(int projectId) throws ProjectNotFoundException {
+		Project project = null;
+
+		try {
+			project = this.projectRepository.getOne(projectId);
+		} catch (EntityNotFoundException e) {
+			throw new ProjectNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		if (project.getAccountable() != null)
+			return new KowalskiUserDTO(project.getAccountable());
+		else
+			return null;
+	}
+
+	@Override
+	public ProjectDTO setAccountableForProject(Integer projectId, Integer kUserId)
+			throws ProjectNotFoundException, KowalskiUserNotFoundException {
+		Project project = null;
+		KowalskiUser kowalskiUser = null;
+
+		try {
+			project = this.projectRepository.getOne(projectId);
+		} catch (EntityNotFoundException e) {
+			throw new ProjectNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		try {
+			kowalskiUser = this.userRepository.getOne(kUserId);
+		} catch (EntityNotFoundException e) {
+			throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		project.setAccountable(kowalskiUser);
+		kowalskiUser.addAccountableProject(project);
+
+		project = this.projectRepository.save(project);
+		kowalskiUser = this.userRepository.save(kowalskiUser);
+
+		return new ProjectDTO(project);
+	}
+
+	@Override
+	public ProjectDTO removeAccountableForProject(Integer projectId) throws ProjectNotFoundException {
+		Project project = null;
+
+		try {
+			project = this.projectRepository.getOne(projectId);
+		} catch (EntityNotFoundException e) {
+			throw new ProjectNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		KowalskiUser accountable = project.getAccountable();
+		project.setAccountable(null);
+		accountable.removeAccountableProject(project);
+
+		project = this.projectRepository.save(project);
+		accountable = this.userRepository.save(accountable);
+
+		return new ProjectDTO(project);
 	}
 }

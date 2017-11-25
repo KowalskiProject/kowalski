@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.app.kowalski.activity.ActivityDTO;
 import com.app.kowalski.project.exception.ProjectNotFoundException;
+import com.app.kowalski.user.KowalskiUserDTO;
+import com.app.kowalski.user.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.util.HateoasLinksBuilder;
 
 @RestController
@@ -127,5 +129,51 @@ public class ProjectController {
 		}
 
 		return new ResponseEntity<ActivityDTO>(HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/{projectId}/accountable", method = RequestMethod.GET)
+	public ResponseEntity<KowalskiUserDTO> getAccountableForProject(@PathVariable int projectId) {
+		KowalskiUserDTO kowalskiUserDTO = null;
+
+		try {
+			kowalskiUserDTO = this.projectService.getAccountableForProject(projectId);
+		} catch (ProjectNotFoundException e) {
+			return new ResponseEntity<KowalskiUserDTO>(HttpStatus.NOT_FOUND);
+		}
+
+		if (kowalskiUserDTO == null) {
+			return new ResponseEntity<KowalskiUserDTO>(HttpStatus.NOT_FOUND);
+		}
+
+		HateoasLinksBuilder.createHateoasForKowalskiUser(kowalskiUserDTO);
+		return new ResponseEntity<KowalskiUserDTO>(kowalskiUserDTO, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/{projectId}/accountable", method = RequestMethod.POST)
+	public ResponseEntity<ProjectDTO> setAccountableForProject(@PathVariable Integer projectId, @RequestBody Integer kUserId) {
+		ProjectDTO projectDTO = null;
+
+		try {
+			projectDTO = this.projectService.setAccountableForProject(projectId, kUserId);
+		} catch (ProjectNotFoundException | KowalskiUserNotFoundException e) {
+			return new ResponseEntity<ProjectDTO>(HttpStatus.NOT_FOUND);
+		}
+
+		HateoasLinksBuilder.createHateoasForProject(projectDTO);
+		return new ResponseEntity<ProjectDTO>(projectDTO, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/{projectId}/accountable", method = RequestMethod.DELETE)
+	public ResponseEntity<ProjectDTO> removeAccountableForProject(@PathVariable Integer projectId) {
+		ProjectDTO projectDTO = null;
+
+		try {
+			projectDTO = this.projectService.removeAccountableForProject(projectId);
+		} catch (ProjectNotFoundException e) {
+			return new ResponseEntity<ProjectDTO>(HttpStatus.NOT_FOUND);
+		}
+
+		HateoasLinksBuilder.createHateoasForProject(projectDTO);
+		return new ResponseEntity<ProjectDTO>(projectDTO, HttpStatus.OK);
 	}
 }

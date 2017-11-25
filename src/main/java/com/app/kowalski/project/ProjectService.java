@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.app.kowalski.activity.ActivityDTO;
 import com.app.kowalski.project.exception.ProjectNotFoundException;
+import com.app.kowalski.user.KowalskiUserDTO;
+import com.app.kowalski.user.exception.KowalskiUserNotFoundException;
 
 /**
  * Interface to expose allowed methods related to projects.
@@ -84,4 +86,33 @@ public interface ProjectService {
 	 * @throws ProjectNotFoundException No project instance was found in the system
 	 */
 	public boolean deleteActivityFromProject(int projectId, int activityId) throws ProjectNotFoundException;
+
+	/**
+	 * Returns the accountable user for given project
+	 * @param projectId project reference
+	 * @return user data
+	 *
+	 * @throws ProjectNotFoundException No project instance was found in the system
+	 */
+	public KowalskiUserDTO getAccountableForProject(int projectId) throws ProjectNotFoundException;
+
+	/**
+	 * Associates given user as accountable for given project
+	 * @param projectId project reference
+	 * @param kUserId kowalski reference
+	 * @return project data after association
+	 *
+	 * @throws ProjectNotFoundException No project instance was found in the system
+	 * @throws KowalskiUserNotFoundException No kowalski user was found in the system
+	 */
+	public ProjectDTO setAccountableForProject(Integer projectId, Integer kUserId)
+			throws ProjectNotFoundException, KowalskiUserNotFoundException;
+
+	/**
+	 * Removes the association of the project and the accountable user.
+	 * @param projectId project reference
+	 * @return
+	 * @throws ProjectNotFoundException
+	 */
+	public ProjectDTO removeAccountableForProject(Integer projectId) throws ProjectNotFoundException;
 }

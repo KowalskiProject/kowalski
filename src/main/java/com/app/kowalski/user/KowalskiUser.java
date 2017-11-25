@@ -1,12 +1,17 @@
 package com.app.kowalski.user;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.app.kowalski.project.Project;
 
 @Entity
 @Table(name = "kowalskiuser")
@@ -21,6 +26,9 @@ public class KowalskiUser {
 	private String email;
 	private String password;
 	private Date creationDate;
+
+	@OneToMany
+    private List<Project> accountableProjects = new ArrayList<Project>();
 
 	public KowalskiUser() {}
 
@@ -118,5 +126,19 @@ public class KowalskiUser {
 		this.creationDate = creationDate;
 	}
 
+	/**
+	 *
+	 * @param project
+	 */
+	public void addAccountableProject(Project project) {
+		this.accountableProjects.add(project);
+	}
 
+	/**
+	 *
+	 * @param project
+	 */
+	public void removeAccountableProject(Project project) {
+		this.accountableProjects.remove(project);
+	}
 }
