@@ -14,6 +14,8 @@ import com.app.kowalski.project.ProjectController;
 import com.app.kowalski.project.ProjectDTO;
 import com.app.kowalski.task.TaskController;
 import com.app.kowalski.task.TaskDTO;
+import com.app.kowalski.user.KowalskiUserController;
+import com.app.kowalski.user.KowalskiUserDTO;
 
 public class HateoasLinksBuilder {
 
@@ -46,5 +48,12 @@ public class HateoasLinksBuilder {
 
 		Link activityLink = linkTo(ActivityController.class).slash(taskDTO.getActivityId()).withRel("activity");
 		taskDTO.add(activityLink);
+	}
+
+	public static void createHateoasForKowalskiUser(KowalskiUserDTO kowalskiUserDTO) {
+		Integer kUserId = kowalskiUserDTO.getkUserId();
+
+		Link selfLink = linkTo(KowalskiUserController.class).slash(kUserId).withSelfRel();
+		kowalskiUserDTO.add(selfLink);
 	}
 }

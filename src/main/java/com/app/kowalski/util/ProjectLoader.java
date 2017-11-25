@@ -13,19 +13,24 @@ import com.app.kowalski.activity.ActivityRepository;
 import com.app.kowalski.project.Project;
 import com.app.kowalski.project.ProjectRepository;
 import com.app.kowalski.task.Task;
+import com.app.kowalski.user.KowalskiUser;
+import com.app.kowalski.user.KowalskiUserRepository;
 
 @Component
 public class ProjectLoader implements ApplicationListener<ContextRefreshedEvent> {
 
 	private ProjectRepository projectRepository;
 	private ActivityRepository activityRepository;
+	private KowalskiUserRepository kowalskiUserRepository;
 
 	private Logger log = Logger.getLogger(ProjectLoader.class);
 
 	@Autowired
-	public void setProjectRepository(ProjectRepository projectRepository, ActivityRepository activityRepository) {
+	public void setProjectRepository(ProjectRepository projectRepository,
+			ActivityRepository activityRepository, KowalskiUserRepository kowalskiUserRepository) {
 		this.projectRepository = projectRepository;
 		this.activityRepository = activityRepository;
+		this.kowalskiUserRepository = kowalskiUserRepository;
 	}
 
 	@Override
@@ -100,6 +105,37 @@ public class ProjectLoader implements ApplicationListener<ContextRefreshedEvent>
 		projectRepository.save(p1);
 
 		log.info("Projeto " + p1.getName() + " added successfully");
+
+		KowalskiUser k1 = new KowalskiUser();
+		k1.setName("Cartman");
+		k1.setUsername("cartman");
+		k1.setEmail("cartman@kowalski.com");
+		k1.setPassword("cartman");
+
+		KowalskiUser k2 = new KowalskiUser();
+		k2.setName("Stan");
+		k2.setUsername("stan");
+		k2.setEmail("stan@kowalski.com");
+		k2.setPassword("stan");
+
+		KowalskiUser k3 = new KowalskiUser();
+		k3.setName("Kyle");
+		k3.setUsername("kyle");
+		k3.setEmail("kyle@kowalski.com");
+		k3.setPassword("kyle");
+
+		KowalskiUser k4 = new KowalskiUser();
+		k4.setName("Kenny");
+		k4.setUsername("kenny");
+		k4.setEmail("kenny@kowalski.com");
+		k4.setPassword("kenny");
+
+		kowalskiUserRepository.save(k1);
+		kowalskiUserRepository.save(k2);
+		kowalskiUserRepository.save(k3);
+		kowalskiUserRepository.save(k4);
+
+		log.info("Users added successfully");
 	}
 
 }
