@@ -1,6 +1,7 @@
 package com.app.kowalski.project;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
@@ -194,6 +195,69 @@ public class ProjectServiceImpl implements ProjectService {
 
 		project = this.projectRepository.save(project);
 		accountable = this.userRepository.save(accountable);
+
+		return new ProjectDTO(project);
+	}
+
+	@Override
+	public Set<KowalskiUserDTO> getProjectMembers(Integer projectId) throws ProjectNotFoundException {
+		Project project = null;
+
+		try {
+			project = this.projectRepository.getOne(projectId);
+		} catch (EntityNotFoundException e) {
+			throw new ProjectNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		return project.getMembers().stream()
+				.map(user -> new KowalskiUserDTO(user))
+				.collect(Collectors.toSet());
+	}
+
+	@Override
+	public ProjectDTO addMemberToProject(Integer projectId, Integer kUserId)
+			throws ProjectNotFoundException, KowalskiUserNotFoundException {
+		Project project = null;
+		KowalskiUser kowalskiUser = null;
+
+		try {
+			project = this.projectRepository.getOne(projectId);
+		} catch (EntityNotFoundException e) {
+			throw new ProjectNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		try {
+			kowalskiUser = this.userRepository.getOne(kUserId);
+		} catch (EntityNotFoundException e) {
+			throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		project.addMember(kowalskiUser);
+		project = this.projectRepository.save(project);
+
+		return new ProjectDTO(project);
+	}
+
+	@Override
+	public ProjectDTO removeMemberFromProject(Integer projectId, Integer kUserId)
+			throws ProjectNotFoundException, KowalskiUserNotFoundException {
+		Project project = null;
+		KowalskiUser kowalskiUser = null;
+
+		try {
+			project = this.projectRepository.getOne(projectId);
+		} catch (EntityNotFoundException e) {
+			throw new ProjectNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		try {
+			kowalskiUser = this.userRepository.getOne(kUserId);
+		} catch (EntityNotFoundException e) {
+			throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		project.removeMember(kowalskiUser);
+		project = this.projectRepository.save(project);
 
 		return new ProjectDTO(project);
 	}

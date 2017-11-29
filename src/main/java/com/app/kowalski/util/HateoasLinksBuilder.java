@@ -4,6 +4,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,11 @@ public class HateoasLinksBuilder {
 				.getAccountableForProject(projectDTO.getProjectId());
 		Link accountableLink = linkTo(accountableLinkBuilder).withRel("accountable");
 		projectDTO.add(accountableLink);
+
+		ResponseEntity<Set<KowalskiUserDTO>> membersLinkBuilder = methodOn(ProjectController.class)
+				.getProjectMembers(projectDTO.getProjectId());
+		Link membersLink = linkTo(membersLinkBuilder).withRel("members");
+		projectDTO.add(membersLink);
 	}
 
 	public static void createHateoasForActivity(ActivityDTO activityDTO) {

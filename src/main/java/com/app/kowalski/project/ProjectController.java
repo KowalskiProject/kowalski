@@ -1,6 +1,7 @@
 package com.app.kowalski.project;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -176,4 +177,49 @@ public class ProjectController {
 		HateoasLinksBuilder.createHateoasForProject(projectDTO);
 		return new ResponseEntity<ProjectDTO>(projectDTO, HttpStatus.OK);
 	}
+
+	@RequestMapping(value = "/{projectId}/members", method = RequestMethod.GET)
+	public ResponseEntity<Set<KowalskiUserDTO>> getProjectMembers(@PathVariable int projectId) {
+		Set<KowalskiUserDTO> projectUsersDTO = null;
+
+		try {
+			projectUsersDTO = this.projectService.getProjectMembers(projectId);
+		} catch (ProjectNotFoundException e) {
+			return new ResponseEntity<Set<KowalskiUserDTO>>(HttpStatus.NOT_FOUND);
+		}
+
+		for (KowalskiUserDTO kowalskiUserDTO : projectUsersDTO)
+			HateoasLinksBuilder.createHateoasForKowalskiUser(kowalskiUserDTO);
+
+		return new ResponseEntity<Set<KowalskiUserDTO>>(projectUsersDTO, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/{projectId}/members", method = RequestMethod.POST)
+	public ResponseEntity<ProjectDTO> addMemberToProject(@PathVariable Integer projectId, @RequestBody Integer kUserId) {
+		ProjectDTO projectDTO = null;
+
+		try {
+			projectDTO = this.projectService.addMemberToProject(projectId, kUserId);
+		} catch (ProjectNotFoundException | KowalskiUserNotFoundException e) {
+			return new ResponseEntity<ProjectDTO>(HttpStatus.NOT_FOUND);
+		}
+
+		HateoasLinksBuilder.createHateoasForProject(projectDTO);
+		return new ResponseEntity<ProjectDTO>(projectDTO, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/{projectId}/members/{userId}", method = RequestMethod.DELETE)
+	public ResponseEntity<ProjectDTO> removeMemberFromProject(@PathVariable Integer projectId, @PathVariable Integer userId) {
+		ProjectDTO projectDTO = null;
+
+		try {
+			projectDTO = this.projectService.removeMemberFromProject(projectId, userId);
+		} catch (ProjectNotFoundException | KowalskiUserNotFoundException e) {
+			return new ResponseEntity<ProjectDTO>(HttpStatus.NOT_FOUND);
+		}
+
+		HateoasLinksBuilder.createHateoasForProject(projectDTO);
+		return new ResponseEntity<ProjectDTO>(projectDTO, HttpStatus.OK);
+	}
+
 }

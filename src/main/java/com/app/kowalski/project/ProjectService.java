@@ -1,6 +1,7 @@
 package com.app.kowalski.project;
 
 import java.util.List;
+import java.util.Set;
 
 import com.app.kowalski.activity.ActivityDTO;
 import com.app.kowalski.project.exception.ProjectNotFoundException;
@@ -115,4 +116,37 @@ public interface ProjectService {
 	 * @throws ProjectNotFoundException
 	 */
 	public ProjectDTO removeAccountableForProject(Integer projectId) throws ProjectNotFoundException;
+
+	/**
+	 * Returns all users that belong to the given project
+	 * @param projectId Project reference
+	 * @return List of users associated to the project
+	 *
+	 * @throws ProjectNotFoundException No project instance was found in the system
+	 */
+	public Set<KowalskiUserDTO> getProjectMembers(Integer projectId) throws ProjectNotFoundException;
+
+	/**
+	 * Adds a new user to the project
+	 * @param projectId Project reference
+	 * @param kUserId User reference
+	 * @return Project data after user addition
+	 *
+	 * @throws ProjectNotFoundException No project instance was found in the system
+	 * @throws KowalskiUserNotFoundException No kowalski user was found in the system
+	 */
+	public ProjectDTO addMemberToProject(Integer projectId, Integer kUserId)
+			throws ProjectNotFoundException, KowalskiUserNotFoundException;
+
+	/**
+	 * Removes a user from the project
+	 * @param projectId Project reference
+	 * @param kUserId User reference
+	 * @return Project data after user addition
+	 *
+	 * @throws ProjectNotFoundException No project instance was found in the system
+	 * @throws KowalskiUserNotFoundException No kowalski user was found in the system
+	 */
+	public ProjectDTO removeMemberFromProject(Integer projectId, Integer kUserId)
+			throws ProjectNotFoundException, KowalskiUserNotFoundException;
 }

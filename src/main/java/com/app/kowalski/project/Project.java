@@ -4,7 +4,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -12,6 +14,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -39,6 +43,14 @@ public class Project {
 	@ManyToOne
     @JoinColumn(name="kowalskiuser_kUserId")
 	private KowalskiUser accountable;
+
+	@ManyToMany(cascade=CascadeType.ALL)
+    @JoinTable(
+    	name="Project_KowalskiUser",
+    	joinColumns={@JoinColumn(name = "project_projectId")},
+    	inverseJoinColumns={@JoinColumn(name = "kowalskiuser_kUserId")}
+    )
+    Set<KowalskiUser> members = new HashSet<>();
 
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -74,6 +86,30 @@ public class Project {
 	 */
 	public void setAccountable(KowalskiUser accountable) {
 		this.accountable = accountable;
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public Set<KowalskiUser> getMembers() {
+		return this.members;
+	}
+
+	/**
+	 *
+	 * @param kowalskiUser
+	 */
+	public void addMember(KowalskiUser kowalskiUser) {
+		this.members.add(kowalskiUser);
+	}
+
+	/**
+	 *
+	 * @param kowalskiUser
+	 */
+	public void removeMember(KowalskiUser kowalskiUser) {
+		this.members.remove(kowalskiUser);
 	}
 
 	/**
