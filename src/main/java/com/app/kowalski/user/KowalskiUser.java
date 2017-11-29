@@ -134,6 +134,14 @@ public class KowalskiUser {
 
 	/**
 	 *
+	 * @return
+	 */
+	public List<Project> getAccountableProjects() {
+		return this.accountableProjects;
+	}
+
+	/**
+	 *
 	 * @param project
 	 */
 	public void addAccountableProject(Project project) {
@@ -146,5 +154,13 @@ public class KowalskiUser {
 	 */
 	public void removeAccountableProject(Project project) {
 		this.accountableProjects.remove(project);
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public Set<Project> getProjects() {
+		return this.projects;
 	}
 }

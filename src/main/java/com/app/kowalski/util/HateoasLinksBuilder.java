@@ -65,5 +65,15 @@ public class HateoasLinksBuilder {
 
 		Link selfLink = linkTo(KowalskiUserController.class).slash(kUserId).withSelfRel();
 		kowalskiUserDTO.add(selfLink);
+
+		ResponseEntity<List<ProjectDTO>> accountableLinkBuilder = methodOn(KowalskiUserController.class)
+				.getAccountableProjects(kUserId);
+		Link accountableLink = linkTo(accountableLinkBuilder).withRel("accountables");
+		kowalskiUserDTO.add(accountableLink);
+
+		ResponseEntity<Set<ProjectDTO>> projectsLinkBuilder = methodOn(KowalskiUserController.class)
+				.getProjects(kUserId);
+		Link projectsLink = linkTo(projectsLinkBuilder).withRel("projects");
+		kowalskiUserDTO.add(projectsLink);
 	}
 }

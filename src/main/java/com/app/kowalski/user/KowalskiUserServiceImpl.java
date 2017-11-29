@@ -1,6 +1,7 @@
 package com.app.kowalski.user;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
@@ -8,6 +9,7 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.app.kowalski.project.ProjectDTO;
 import com.app.kowalski.user.exception.KowalskiUserNotFoundException;
 
 @Service
@@ -62,10 +64,40 @@ public class KowalskiUserServiceImpl implements KowalskiUserService {
 	public boolean deleteKowalskiUser(int kowalskiUserId) throws KowalskiUserNotFoundException {
 		try {
 			this.repository.delete(kowalskiUserId);
-		} catch (Exception e) {
+		} catch (EntityNotFoundException e) {
 			throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
 		}
 		return true;
+	}
+
+	@Override
+	public List<ProjectDTO> getAccountableProjects(Integer kUserId) throws KowalskiUserNotFoundException {
+		KowalskiUser kowalskiUser = null;
+
+		try {
+			kowalskiUser = this.repository.getOne(kUserId);
+		} catch (EntityNotFoundException e) {
+			throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		return kowalskiUser.getAccountableProjects().stream()
+				.map(project -> new ProjectDTO(project))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public Set<ProjectDTO> getProjects(Integer kUserId) throws KowalskiUserNotFoundException {
+		KowalskiUser kowalskiUser = null;
+
+		try {
+			kowalskiUser = this.repository.getOne(kUserId);
+		} catch (EntityNotFoundException e) {
+			throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		return kowalskiUser.getProjects().stream()
+				.map(project -> new ProjectDTO(project))
+				.collect(Collectors.toSet());
 	}
 
 }

@@ -1,18 +1,20 @@
 package com.app.kowalski.user;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.kowalski.project.ProjectDTO;
 import com.app.kowalski.user.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.util.HateoasLinksBuilder;
 
@@ -45,11 +47,11 @@ public class KowalskiUserController {
 		return new ResponseEntity<KowalskiUserDTO>(kowalskiUsersDTO, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{userId}", method = RequestMethod.GET)
-	public ResponseEntity<KowalskiUserDTO> getKowalskiUser(@RequestParam int userId) {
+	@RequestMapping(value = "/{kUserId}", method = RequestMethod.GET)
+	public ResponseEntity<KowalskiUserDTO> getKowalskiUser(@PathVariable int kUserId) {
 		KowalskiUserDTO kowalskiUserDTO;
 		try {
-			kowalskiUserDTO = this.kowalskiUserService.getKowalskiUser(userId);
+			kowalskiUserDTO = this.kowalskiUserService.getKowalskiUser(kUserId);
 		} catch (KowalskiUserNotFoundException e) {
 			return new ResponseEntity<KowalskiUserDTO>(HttpStatus.NOT_FOUND);
 		}
@@ -57,10 +59,10 @@ public class KowalskiUserController {
 		return new ResponseEntity<KowalskiUserDTO>(kowalskiUserDTO, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{userId}", method = RequestMethod.PUT)
-	public ResponseEntity<KowalskiUserDTO> editKowalskiUser(@RequestParam int userId,
+	@RequestMapping(value = "/{kUserId}", method = RequestMethod.PUT)
+	public ResponseEntity<KowalskiUserDTO> editKowalskiUser(@PathVariable int kUserId,
 			@RequestBody KowalskiUserDTO kowalskiUserDTO) {
-		kowalskiUserDTO.setkUserId(userId);
+		kowalskiUserDTO.setkUserId(kUserId);
 		try {
 			kowalskiUserDTO = this.kowalskiUserService.editKowaslkiUser(kowalskiUserDTO);
 		} catch (KowalskiUserNotFoundException e) {
@@ -70,13 +72,44 @@ public class KowalskiUserController {
 		return new ResponseEntity<KowalskiUserDTO>(kowalskiUserDTO, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{userId}", method = RequestMethod.DELETE)
-	public ResponseEntity<KowalskiUserDTO> deleteKowalskiUser(@RequestParam int userId) {
+	@RequestMapping(value = "/{kUserId}", method = RequestMethod.DELETE)
+	public ResponseEntity<KowalskiUserDTO> deleteKowalskiUser(@PathVariable int kUserId) {
 		try {
-			boolean ret = this.kowalskiUserService.deleteKowalskiUser(userId);
+			boolean ret = this.kowalskiUserService.deleteKowalskiUser(kUserId);
 		} catch (KowalskiUserNotFoundException e) {
 			return new ResponseEntity<KowalskiUserDTO>(HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<KowalskiUserDTO>(HttpStatus.OK);
 	}
+
+	@RequestMapping(value = "/{kUserId}/accountables", method = RequestMethod.GET)
+	public ResponseEntity<List<ProjectDTO>> getAccountableProjects(@PathVariable int kUserId) {
+		List<ProjectDTO> projectsDTO = null;
+		try {
+			projectsDTO = this.kowalskiUserService.getAccountableProjects(kUserId);
+		} catch (KowalskiUserNotFoundException e) {
+			return new ResponseEntity<List<ProjectDTO>>(HttpStatus.NOT_FOUND);
+		}
+
+		for (ProjectDTO projectDTO : projectsDTO)
+			HateoasLinksBuilder.createHateoasForProject(projectDTO);
+
+		return new ResponseEntity<List<ProjectDTO>>(projectsDTO, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/{kUserId}/projects", method = RequestMethod.GET)
+	public ResponseEntity<Set<ProjectDTO>> getProjects(@PathVariable int kUserId) {
+		Set<ProjectDTO> projectsDTO = null;
+		try {
+			projectsDTO = this.kowalskiUserService.getProjects(kUserId);
+		} catch (KowalskiUserNotFoundException e) {
+			return new ResponseEntity<Set<ProjectDTO>>(HttpStatus.NOT_FOUND);
+		}
+
+		for (ProjectDTO projectDTO : projectsDTO)
+			HateoasLinksBuilder.createHateoasForProject(projectDTO);
+
+		return new ResponseEntity<Set<ProjectDTO>>(projectsDTO, HttpStatus.OK);
+	}
+
 }

@@ -1,7 +1,9 @@
 package com.app.kowalski.user;
 
 import java.util.List;
+import java.util.Set;
 
+import com.app.kowalski.project.ProjectDTO;
 import com.app.kowalski.user.exception.KowalskiUserNotFoundException;
 
 /**
@@ -51,4 +53,22 @@ public interface KowalskiUserService {
 	 * @throws KowalskiUserNotFoundException No KowalskiUser instance found in the system
 	 */
 	public boolean deleteKowalskiUser(int kowalskiUserId) throws KowalskiUserNotFoundException;
+
+	/**
+	 * Returns all projects where given user is responsible
+	 * @param kUserId user reference
+	 * @return List of projects
+	 *
+	 * @throws KowalskiUserNotFoundException No KowalskiUser instance found in the system
+	 */
+	public List<ProjectDTO> getAccountableProjects(Integer kUserId) throws KowalskiUserNotFoundException;
+
+	/**
+	 * Returns all projects where given user is member
+	 * @param kUserId user reference
+	 * @return List of projects
+	 *
+	 * @throws KowalskiUserNotFoundException No KowalskiUser instance found in the system
+	 */
+	public Set<ProjectDTO> getProjects(Integer kUserId) throws KowalskiUserNotFoundException;
 }
