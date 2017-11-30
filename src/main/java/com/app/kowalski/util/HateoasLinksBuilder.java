@@ -48,6 +48,11 @@ public class HateoasLinksBuilder {
 
 		Link projectLink = linkTo(ProjectController.class).slash(activityDTO.getProjectId()).withRel("project");
 		activityDTO.add(projectLink);
+
+		ResponseEntity<KowalskiUserDTO> accountableLinkBuilder = methodOn(ProjectController.class)
+				.getAccountableForActivity(activityDTO.getProjectId(), activityDTO.getActivityId());
+		Link accountableLink = linkTo(accountableLinkBuilder).withRel("accountable");
+		activityDTO.add(accountableLink);
 	}
 
 	public static void createHateoasForTask(TaskDTO taskDTO) {
@@ -66,10 +71,15 @@ public class HateoasLinksBuilder {
 		Link selfLink = linkTo(KowalskiUserController.class).slash(kUserId).withSelfRel();
 		kowalskiUserDTO.add(selfLink);
 
-		ResponseEntity<List<ProjectDTO>> accountableLinkBuilder = methodOn(KowalskiUserController.class)
+		ResponseEntity<List<ProjectDTO>> accountableProjectsLinkBuilder = methodOn(KowalskiUserController.class)
 				.getAccountableProjects(kUserId);
-		Link accountableLink = linkTo(accountableLinkBuilder).withRel("accountables");
-		kowalskiUserDTO.add(accountableLink);
+		Link accountableProjectsLink = linkTo(accountableProjectsLinkBuilder).withRel("accountableProjects");
+		kowalskiUserDTO.add(accountableProjectsLink);
+
+		ResponseEntity<List<ActivityDTO>> accountableActivitiesLinkBuilder = methodOn(KowalskiUserController.class)
+				.getAccountableActivities(kUserId);
+		Link accountableActivitiesLink = linkTo(accountableActivitiesLinkBuilder).withRel("accountableActivities");
+		kowalskiUserDTO.add(accountableActivitiesLink);
 
 		ResponseEntity<Set<ProjectDTO>> projectsLinkBuilder = methodOn(KowalskiUserController.class)
 				.getProjects(kUserId);

@@ -9,6 +9,7 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.app.kowalski.activity.ActivityDTO;
 import com.app.kowalski.project.ProjectDTO;
 import com.app.kowalski.user.exception.KowalskiUserNotFoundException;
 
@@ -98,6 +99,21 @@ public class KowalskiUserServiceImpl implements KowalskiUserService {
 		return kowalskiUser.getProjects().stream()
 				.map(project -> new ProjectDTO(project))
 				.collect(Collectors.toSet());
+	}
+
+	@Override
+	public List<ActivityDTO> getAccountableActivities(Integer kUserId) throws KowalskiUserNotFoundException {
+		KowalskiUser kowalskiUser = null;
+
+		try {
+			kowalskiUser = this.repository.getOne(kUserId);
+		} catch (EntityNotFoundException e) {
+			throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		return kowalskiUser.getAccountableActivities().stream()
+				.map(activity -> new ActivityDTO(activity))
+				.collect(Collectors.toList());
 	}
 
 }

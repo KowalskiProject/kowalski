@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.app.kowalski.activity.ActivityDTO;
+import com.app.kowalski.activity.exception.ActivityNotFoundException;
 import com.app.kowalski.project.exception.ProjectNotFoundException;
 import com.app.kowalski.user.KowalskiUserDTO;
 import com.app.kowalski.user.exception.KowalskiUserNotFoundException;
@@ -149,4 +150,42 @@ public interface ProjectService {
 	 */
 	public ProjectDTO removeMemberFromProject(Integer projectId, Integer kUserId)
 			throws ProjectNotFoundException, KowalskiUserNotFoundException;
+
+	/**
+	 * Returns the accountable user for given activity
+	 * @param projectId project reference
+	 * @param activityId activity reference
+	 * @return user data
+	 *
+	 * @throws ProjectNotFoundException No project instance was found in the system
+	 * @throws ActivityNotFoundException No activity instance was found in the system
+	 */
+	public KowalskiUserDTO getAccountableForActivity(Integer projectId, Integer activityId)
+			throws ProjectNotFoundException, ActivityNotFoundException;
+
+	/**
+	 * Associates given user as accountable for given activity
+	 * @param projectId project reference
+	 * @param activityId activity reference
+	 * @param kUserId kowalski reference
+	 * @return activity data after association
+	 *
+	 * @throws ProjectNotFoundException No project instance was found in the system
+	 * @throws ActivityNotFoundException No activity instance was found in the system
+	 * @throws KowalskiUserNotFoundException No kowalski user was found in the system
+	 */
+	public ActivityDTO setAccountableForActivity(Integer projectId, Integer activityId, Integer kUserId)
+			throws ProjectNotFoundException, ActivityNotFoundException, KowalskiUserNotFoundException;
+
+	/**
+	 * Removes the association of the activity and the accountable user.
+	 * @param projectId project reference
+	 * @param activityId activity reference
+	 * @return activity data after removal
+	 *
+	 * @throws ProjectNotFoundException No project instance was found in the system
+	 * @throws ActivityNotFoundException No activity instance was found in the system
+	 */
+	public ActivityDTO removeAccountableForActivity(Integer projectId, Integer activityId)
+			throws ProjectNotFoundException, ActivityNotFoundException;
 }

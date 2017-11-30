@@ -18,6 +18,7 @@ import javax.persistence.Table;
 
 import com.app.kowalski.project.Project;
 import com.app.kowalski.task.Task;
+import com.app.kowalski.user.KowalskiUser;
 
 @Entity
 @Table(name = "activity")
@@ -36,6 +37,10 @@ public class Activity {
 	@ManyToOne
     @JoinColumn(name="project_projectId")
     private Project project;
+
+	@ManyToOne
+    @JoinColumn(name="kowalskiuser_kUserId")
+	private KowalskiUser accountable;
 
 	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
     private List<Task> tasks = new ArrayList<Task>();
@@ -83,6 +88,20 @@ public class Activity {
 	 */
 	public void setProject(Project project) {
 		this.project = project;
+	}
+
+	/**
+	 * @return the accountable
+	 */
+	public KowalskiUser getAccountable() {
+		return accountable;
+	}
+
+	/**
+	 * @param accountable the accountable to set
+	 */
+	public void setAccountable(KowalskiUser accountable) {
+		this.accountable = accountable;
 	}
 
 	/**

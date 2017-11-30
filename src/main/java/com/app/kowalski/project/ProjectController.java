@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.kowalski.activity.ActivityDTO;
+import com.app.kowalski.activity.exception.ActivityNotFoundException;
 import com.app.kowalski.project.exception.ProjectNotFoundException;
 import com.app.kowalski.user.KowalskiUserDTO;
 import com.app.kowalski.user.exception.KowalskiUserNotFoundException;
@@ -177,6 +178,56 @@ public class ProjectController {
 		HateoasLinksBuilder.createHateoasForProject(projectDTO);
 		return new ResponseEntity<ProjectDTO>(projectDTO, HttpStatus.OK);
 	}
+
+	@RequestMapping(value = "/{projectId}/activities/{activityId}/accountable", method = RequestMethod.GET)
+	public ResponseEntity<KowalskiUserDTO> getAccountableForActivity(
+			@PathVariable Integer projectId, @PathVariable Integer activityId) {
+		KowalskiUserDTO kowalskiUserDTO = null;
+
+		try {
+			kowalskiUserDTO = this.projectService.getAccountableForActivity(projectId, activityId);
+		} catch (ProjectNotFoundException | ActivityNotFoundException e) {
+			return new ResponseEntity<KowalskiUserDTO>(HttpStatus.NOT_FOUND);
+		}
+
+		if (kowalskiUserDTO == null) {
+			return new ResponseEntity<KowalskiUserDTO>(HttpStatus.NOT_FOUND);
+		}
+
+		HateoasLinksBuilder.createHateoasForKowalskiUser(kowalskiUserDTO);
+		return new ResponseEntity<KowalskiUserDTO>(kowalskiUserDTO, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/{projectId}/activities/{activityId}/accountable", method = RequestMethod.POST)
+	public ResponseEntity<ActivityDTO> setAccountableForActivity(
+			@PathVariable Integer projectId, @PathVariable Integer activityId, @RequestBody Integer kUserId) {
+		ActivityDTO activityDTO = null;
+
+		try {
+			activityDTO = this.projectService.setAccountableForActivity(projectId, activityId, kUserId);
+		} catch (ProjectNotFoundException | ActivityNotFoundException | KowalskiUserNotFoundException e) {
+			return new ResponseEntity<ActivityDTO>(HttpStatus.NOT_FOUND);
+		}
+
+		HateoasLinksBuilder.createHateoasForActivity(activityDTO);
+		return new ResponseEntity<ActivityDTO>(activityDTO, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/{projectId}/activities/{activityId}/accountable", method = RequestMethod.DELETE)
+	public ResponseEntity<ActivityDTO> removeAccountableForActivity(
+			@PathVariable Integer projectId, @PathVariable Integer activityId) {
+		ActivityDTO activityDTO = null;
+
+		try {
+			activityDTO = this.projectService.removeAccountableForActivity(projectId, activityId);
+		} catch (ProjectNotFoundException | ActivityNotFoundException e) {
+			return new ResponseEntity<ActivityDTO>(HttpStatus.NOT_FOUND);
+		}
+
+		HateoasLinksBuilder.createHateoasForActivity(activityDTO);
+		return new ResponseEntity<ActivityDTO>(activityDTO, HttpStatus.OK);
+	}
+
 
 	@RequestMapping(value = "/{projectId}/members", method = RequestMethod.GET)
 	public ResponseEntity<Set<KowalskiUserDTO>> getProjectMembers(@PathVariable int projectId) {

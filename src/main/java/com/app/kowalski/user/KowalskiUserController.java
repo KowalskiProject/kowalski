@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.kowalski.activity.ActivityDTO;
 import com.app.kowalski.project.ProjectDTO;
 import com.app.kowalski.user.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.util.HateoasLinksBuilder;
@@ -82,7 +83,7 @@ public class KowalskiUserController {
 		return new ResponseEntity<KowalskiUserDTO>(HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{kUserId}/accountables", method = RequestMethod.GET)
+	@RequestMapping(value = "/{kUserId}/accountableProjects", method = RequestMethod.GET)
 	public ResponseEntity<List<ProjectDTO>> getAccountableProjects(@PathVariable int kUserId) {
 		List<ProjectDTO> projectsDTO = null;
 		try {
@@ -95,6 +96,21 @@ public class KowalskiUserController {
 			HateoasLinksBuilder.createHateoasForProject(projectDTO);
 
 		return new ResponseEntity<List<ProjectDTO>>(projectsDTO, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/{kUserId}/accountableActivities", method = RequestMethod.GET)
+	public ResponseEntity<List<ActivityDTO>> getAccountableActivities(@PathVariable int kUserId) {
+		List<ActivityDTO> activitiesDTO = null;
+		try {
+			activitiesDTO = this.kowalskiUserService.getAccountableActivities(kUserId);
+		} catch (KowalskiUserNotFoundException e) {
+			return new ResponseEntity<List<ActivityDTO>>(HttpStatus.NOT_FOUND);
+		}
+
+		for (ActivityDTO activityDTO : activitiesDTO)
+			HateoasLinksBuilder.createHateoasForActivity(activityDTO);
+
+		return new ResponseEntity<List<ActivityDTO>>(activitiesDTO, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{kUserId}/projects", method = RequestMethod.GET)
