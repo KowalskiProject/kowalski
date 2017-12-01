@@ -49,8 +49,8 @@ public class HateoasLinksBuilder {
 		Link projectLink = linkTo(ProjectController.class).slash(activityDTO.getProjectId()).withRel("project");
 		activityDTO.add(projectLink);
 
-		ResponseEntity<KowalskiUserDTO> accountableLinkBuilder = methodOn(ProjectController.class)
-				.getAccountableForActivity(activityDTO.getProjectId(), activityDTO.getActivityId());
+		ResponseEntity<KowalskiUserDTO> accountableLinkBuilder = methodOn(ActivityController.class)
+				.getAccountableForActivity(activityDTO.getActivityId());
 		Link accountableLink = linkTo(accountableLinkBuilder).withRel("accountable");
 		activityDTO.add(accountableLink);
 	}

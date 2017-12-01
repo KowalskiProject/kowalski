@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import com.app.kowalski.activity.Activity;
 import com.app.kowalski.activity.ActivityDTO;
 import com.app.kowalski.activity.ActivityRepository;
-import com.app.kowalski.activity.exception.ActivityNotFoundException;
 import com.app.kowalski.project.exception.ProjectNotFoundException;
 import com.app.kowalski.user.KowalskiUser;
 import com.app.kowalski.user.KowalskiUserDTO;
@@ -265,92 +264,6 @@ public class ProjectServiceImpl implements ProjectService {
 		project = this.projectRepository.save(project);
 
 		return new ProjectDTO(project);
-	}
-
-	@Override
-	public KowalskiUserDTO getAccountableForActivity(Integer projectId, Integer activityId)
-			throws ProjectNotFoundException, ActivityNotFoundException {
-		Project project = null;
-		Activity activity = null;
-
-		try {
-			project = this.projectRepository.getOne(projectId);
-		} catch (EntityNotFoundException e) {
-			throw new ProjectNotFoundException(e.getMessage(), e.getCause());
-		}
-
-		try {
-			activity = this.activityRepository.getOne(activityId);
-		} catch (EntityNotFoundException e) {
-			throw new ActivityNotFoundException(e.getMessage(), e.getCause());
-		}
-
-		if (activity.getAccountable() != null)
-			return new KowalskiUserDTO(activity.getAccountable());
-		else
-			return null;
-	}
-
-	@Override
-	public ActivityDTO setAccountableForActivity(Integer projectId, Integer activityId, Integer kUserId)
-			throws ProjectNotFoundException, ActivityNotFoundException, KowalskiUserNotFoundException {
-		Project project = null;
-		Activity activity = null;
-		KowalskiUser kowalskiUser = null;
-
-		try {
-			project = this.projectRepository.getOne(projectId);
-		} catch (EntityNotFoundException e) {
-			throw new ProjectNotFoundException(e.getMessage(), e.getCause());
-		}
-
-		try {
-			activity = this.activityRepository.getOne(activityId);
-		} catch (EntityNotFoundException e) {
-			throw new ActivityNotFoundException(e.getMessage(), e.getCause());
-		}
-
-		try {
-			kowalskiUser = this.userRepository.getOne(kUserId);
-		} catch (EntityNotFoundException e) {
-			throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
-		}
-
-		activity.setAccountable(kowalskiUser);
-		kowalskiUser.addAccountableActivity(activity);
-
-		activity = this.activityRepository.save(activity);
-		kowalskiUser = this.userRepository.save(kowalskiUser);
-
-		return new ActivityDTO(activity);
-	}
-
-	@Override
-	public ActivityDTO removeAccountableForActivity(Integer projectId, Integer activityId)
-			throws ProjectNotFoundException, ActivityNotFoundException {
-		Project project = null;
-		Activity activity = null;
-
-		try {
-			project = this.projectRepository.getOne(projectId);
-		} catch (EntityNotFoundException e) {
-			throw new ProjectNotFoundException(e.getMessage(), e.getCause());
-		}
-
-		try {
-			activity = this.activityRepository.getOne(activityId);
-		} catch (EntityNotFoundException e) {
-			throw new ActivityNotFoundException(e.getMessage(), e.getCause());
-		}
-
-		KowalskiUser accountable = activity.getAccountable();
-		activity.setAccountable(null);
-		accountable.removeAccountableActivity(activity);
-
-		activity = this.activityRepository.save(activity);
-		accountable = this.userRepository.save(accountable);
-
-		return new ActivityDTO(activity);
 	}
 
 }

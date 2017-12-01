@@ -1,6 +1,7 @@
 package com.app.kowalski.activity;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
@@ -14,15 +15,21 @@ import com.app.kowalski.project.ProjectDTO;
 import com.app.kowalski.task.Task;
 import com.app.kowalski.task.TaskDTO;
 import com.app.kowalski.task.exception.TaskNotFoundException;
+import com.app.kowalski.user.KowalskiUser;
+import com.app.kowalski.user.KowalskiUserDTO;
+import com.app.kowalski.user.KowalskiUserRepository;
+import com.app.kowalski.user.exception.KowalskiUserNotFoundException;
 
 @Service
 public class ActivityServiceImpl implements ActivityService {
 
 	private final ActivityRepository activityRepository;
+	private final KowalskiUserRepository userRepository;
 
 	@Autowired
-	public ActivityServiceImpl(ActivityRepository activityRepository) {
+	public ActivityServiceImpl(ActivityRepository activityRepository, KowalskiUserRepository userRepository) {
 		this.activityRepository = activityRepository;
+		this.userRepository = userRepository;
 	}
 
 	@Override
@@ -119,6 +126,132 @@ public class ActivityServiceImpl implements ActivityService {
 		this.activityRepository.save(activity);
 
 		return true;
+	}
+
+	@Override
+	public KowalskiUserDTO getAccountableForActivity(Integer activityId) throws ActivityNotFoundException {
+		Activity activity = null;
+
+		try {
+			activity = this.activityRepository.getOne(activityId);
+		} catch (EntityNotFoundException e) {
+			throw new ActivityNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		if (activity.getAccountable() != null)
+			return new KowalskiUserDTO(activity.getAccountable());
+		else
+			return null;
+	}
+
+	@Override
+	public ActivityDTO setAccountableForActivity(Integer activityId, Integer kUserId)
+			throws ActivityNotFoundException, KowalskiUserNotFoundException {
+		Activity activity = null;
+		KowalskiUser kowalskiUser = null;
+
+		try {
+			activity = this.activityRepository.getOne(activityId);
+		} catch (EntityNotFoundException e) {
+			throw new ActivityNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		try {
+			kowalskiUser = this.userRepository.getOne(kUserId);
+		} catch (EntityNotFoundException e) {
+			throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		activity.setAccountable(kowalskiUser);
+		kowalskiUser.addAccountableActivity(activity);
+
+		activity = this.activityRepository.save(activity);
+		kowalskiUser = this.userRepository.save(kowalskiUser);
+
+		return new ActivityDTO(activity);
+	}
+
+	@Override
+	public ActivityDTO removeAccountableForActivity(Integer activityId) throws ActivityNotFoundException {
+		Activity activity = null;
+
+		try {
+			activity = this.activityRepository.getOne(activityId);
+		} catch (EntityNotFoundException e) {
+			throw new ActivityNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		KowalskiUser accountable = activity.getAccountable();
+		activity.setAccountable(null);
+		accountable.removeAccountableActivity(activity);
+
+		activity = this.activityRepository.save(activity);
+		accountable = this.userRepository.save(accountable);
+
+		return new ActivityDTO(activity);
+	}
+
+	@Override
+	public Set<KowalskiUserDTO> getActivityMembers(Integer activityId) throws ActivityNotFoundException {
+		Activity activity = null;
+
+		try {
+			activity = this.activityRepository.getOne(activityId);
+		} catch (EntityNotFoundException e) {
+			throw new ActivityNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		return activity.getMembers().stream()
+				.map(user -> new KowalskiUserDTO(user))
+				.collect(Collectors.toSet());
+	}
+
+	@Override
+	public ActivityDTO addMemberToActivity(Integer activityId, Integer kUserId)
+			throws ActivityNotFoundException, KowalskiUserNotFoundException {
+		Activity activity = null;
+		KowalskiUser kowalskiUser = null;
+
+		try {
+			activity = this.activityRepository.getOne(activityId);
+		} catch (EntityNotFoundException e) {
+			throw new ActivityNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		try {
+			kowalskiUser = this.userRepository.getOne(kUserId);
+		} catch (EntityNotFoundException e) {
+			throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		activity.addMember(kowalskiUser);
+		activity = this.activityRepository.save(activity);
+
+		return new ActivityDTO(activity);
+	}
+
+	@Override
+	public ActivityDTO removeMemberFromActivity(Integer activityId, Integer kUserId)
+			throws ActivityNotFoundException, KowalskiUserNotFoundException {
+		Activity activity = null;
+		KowalskiUser kowalskiUser = null;
+
+		try {
+			activity = this.activityRepository.getOne(activityId);
+		} catch (EntityNotFoundException e) {
+			throw new ActivityNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		try {
+			kowalskiUser = this.userRepository.getOne(kUserId);
+		} catch (EntityNotFoundException e) {
+			throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		activity.removeMember(kowalskiUser);
+		activity = this.activityRepository.save(activity);
+
+		return new ActivityDTO(activity);
 	}
 
 }

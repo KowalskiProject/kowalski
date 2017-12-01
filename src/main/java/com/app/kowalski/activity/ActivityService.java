@@ -1,11 +1,14 @@
 package com.app.kowalski.activity;
 
 import java.util.List;
+import java.util.Set;
 
 import com.app.kowalski.activity.exception.ActivityNotFoundException;
 import com.app.kowalski.project.ProjectDTO;
 import com.app.kowalski.task.TaskDTO;
 import com.app.kowalski.task.exception.TaskNotFoundException;
+import com.app.kowalski.user.KowalskiUserDTO;
+import com.app.kowalski.user.exception.KowalskiUserNotFoundException;
 
 /**
  * Interface to expose allowed methods related to activities.
@@ -73,6 +76,69 @@ public interface ActivityService {
 	 * @throws ActivityNotFoundException No activity instance was found in the system
 	 * @throws TaskNotFoundException No task instance was found in the system
 	 */
-	public boolean deleteTaskFromActivity(int activityId, int taskId) throws ActivityNotFoundException, TaskNotFoundException;
+	public boolean deleteTaskFromActivity(int activityId, int taskId)
+			throws ActivityNotFoundException, TaskNotFoundException;
 
+	/**
+	 * Returns the accountable user for given activity
+	 * @param activityId activity reference
+	 * @return user data
+	 *
+	 * @throws ActivityNotFoundException No activity instance was found in the system
+	 */
+	public KowalskiUserDTO getAccountableForActivity(Integer activityId) throws ActivityNotFoundException;
+
+	/**
+	 * Associates given user as accountable for given activity
+	 * @param activityId activity reference
+	 * @param kUserId kowalski reference
+	 * @return activity data after association
+	 *
+	 * @throws ActivityNotFoundException No activity instance was found in the system
+	 * @throws KowalskiUserNotFoundException No kowalski user was found in the system
+	 */
+	public ActivityDTO setAccountableForActivity(Integer activityId, Integer kUserId)
+			throws ActivityNotFoundException, KowalskiUserNotFoundException;
+
+	/**
+	 * Removes the association of the activity and the accountable user
+	 * @param activityId activity reference
+	 * @return activity data after removal
+	 *
+	 * @throws ActivityNotFoundException No activity instance was found in the system
+	 */
+	public ActivityDTO removeAccountableForActivity(Integer activityId) throws ActivityNotFoundException;
+
+	/**
+	 * Returns all users that belong to the given activity
+	 * @param activityId Activity reference
+	 * @return List of users associated to the activity
+	 *
+	 * @throws ActivityNotFoundException No activity instance was found in the system
+	 */
+	public Set<KowalskiUserDTO> getActivityMembers(Integer activityId) throws ActivityNotFoundException;
+
+	/**
+	 * Adds a new user to the activity
+	 * @param activityId Activity reference
+	 * @param kUserId User reference
+	 * @return Activity data after user addition
+	 *
+	 * @throws ActivityNotFoundException No activity instance was found in the system
+	 * @throws KowalskiUserNotFoundException No kowalski user was found in the system
+	 */
+	public ActivityDTO addMemberToActivity(Integer activityId, Integer kUserId)
+			throws ActivityNotFoundException, KowalskiUserNotFoundException;
+
+	/**
+	 * Removes a user from the activity
+	 * @param activityId Activity reference
+	 * @param kUserId User reference
+	 * @return Activity data after user addition
+	 *
+	 * @throws ActivityNotFoundException No activity instance was found in the system
+	 * @throws KowalskiUserNotFoundException No kowalski user was found in the system
+	 */
+	public ActivityDTO removeMemberFromActivity(Integer activityId, Integer kUserId)
+			throws ActivityNotFoundException, KowalskiUserNotFoundException;
 }

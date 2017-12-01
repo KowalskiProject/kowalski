@@ -40,6 +40,9 @@ public class KowalskiUser {
 	@ManyToMany(mappedBy = "members")
     private Set<Project> projects = new HashSet<>();
 
+	@ManyToMany(mappedBy = "members")
+    private Set<Activity> activities = new HashSet<>();
+
 	public KowalskiUser() {}
 
 	public KowalskiUser convertToKowalskiUser(KowalskiUserDTO kowalskiUserDTO) {
@@ -190,5 +193,9 @@ public class KowalskiUser {
 	 */
 	public Set<Project> getProjects() {
 		return this.projects;
+	}
+
+	public Set<Activity> getActivities() {
+		return this.activities;
 	}
 }
