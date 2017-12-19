@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.app.kowalski.activity.Activity;
+import com.app.kowalski.user.KowalskiUser;
 
 @Entity
 @Table(name = "task")
@@ -31,6 +32,10 @@ public class Task {
 	@ManyToOne
     @JoinColumn(name="activity_activityId")
     private Activity activity;
+
+	@ManyToOne
+    @JoinColumn(name="kowalskiuser_kUserId")
+	private KowalskiUser accountable;
 
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -144,6 +149,20 @@ public class Task {
 	 */
 	public void setActivity(Activity activity) {
 		this.activity = activity;
+	}
+
+	/**
+	 * @return the accountable
+	 */
+	public KowalskiUser getAccountable() {
+		return accountable;
+	}
+
+	/**
+	 * @param accountable the accountable to set
+	 */
+	public void setAccountable(KowalskiUser accountable) {
+		this.accountable = accountable;
 	}
 
 }

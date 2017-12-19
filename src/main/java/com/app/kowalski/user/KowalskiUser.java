@@ -16,6 +16,7 @@ import javax.persistence.Table;
 
 import com.app.kowalski.activity.Activity;
 import com.app.kowalski.project.Project;
+import com.app.kowalski.task.Task;
 
 @Entity
 @Table(name = "kowalskiuser")
@@ -36,6 +37,9 @@ public class KowalskiUser {
 
 	@OneToMany
     private List<Activity> accountableActivities = new ArrayList<Activity>();
+
+	@OneToMany
+    private List<Task> accountableTasks = new ArrayList<Task>();
 
 	@ManyToMany(mappedBy = "members")
     private Set<Project> projects = new HashSet<>();
@@ -185,6 +189,30 @@ public class KowalskiUser {
 	 */
 	public void removeAccountableActivity(Activity activity) {
 		this.accountableActivities.remove(activity);
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public List<Task> getAccountableTasks() {
+		return this.accountableTasks;
+	}
+
+	/**
+	 *
+	 * @param task
+	 */
+	public void addAccountableTask(Task task) {
+		this.accountableTasks.add(task);
+	}
+
+	/**
+	 *
+	 * @param task
+	 */
+	public void removeAccountableTask(Task task) {
+		this.accountableTasks.remove(task);
 	}
 
 	/**
