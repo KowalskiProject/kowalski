@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service;
 import com.app.kowalski.activity.Activity;
 import com.app.kowalski.activity.ActivityDTO;
 import com.app.kowalski.activity.ActivityRepository;
-import com.app.kowalski.project.exception.ProjectNotFoundException;
+import com.app.kowalski.exception.KowalskiUserNotFoundException;
+import com.app.kowalski.exception.ProjectNotFoundException;
 import com.app.kowalski.user.KowalskiUser;
 import com.app.kowalski.user.KowalskiUserDTO;
 import com.app.kowalski.user.KowalskiUserRepository;
-import com.app.kowalski.user.exception.KowalskiUserNotFoundException;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {

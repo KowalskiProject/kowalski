@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Set;
 
 import com.app.kowalski.activity.ActivityDTO;
+import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.project.ProjectDTO;
 import com.app.kowalski.task.TaskDTO;
-import com.app.kowalski.user.exception.KowalskiUserNotFoundException;
 
 /**
  * Expose allowed methods related to Kowalski users.

@@ -1,4 +1,4 @@
-package com.app.kowalski.activity.exception;
+package com.app.kowalski.exception;
 
 @SuppressWarnings("serial")
 public class ActivityNotFoundException extends Exception {

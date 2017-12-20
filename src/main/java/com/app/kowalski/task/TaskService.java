@@ -1,8 +1,8 @@
 package com.app.kowalski.task;
 
-import com.app.kowalski.task.exception.TaskNotFoundException;
+import com.app.kowalski.exception.KowalskiUserNotFoundException;
+import com.app.kowalski.exception.TaskNotFoundException;
 import com.app.kowalski.user.KowalskiUserDTO;
-import com.app.kowalski.user.exception.KowalskiUserNotFoundException;
 
 /**
  * Interface to expose allowed methods related to tasks.

@@ -5,11 +5,11 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.app.kowalski.task.exception.TaskNotFoundException;
+import com.app.kowalski.exception.KowalskiUserNotFoundException;
+import com.app.kowalski.exception.TaskNotFoundException;
 import com.app.kowalski.user.KowalskiUser;
 import com.app.kowalski.user.KowalskiUserDTO;
 import com.app.kowalski.user.KowalskiUserRepository;
-import com.app.kowalski.user.exception.KowalskiUserNotFoundException;
 
 @Service
 public class TaskServiceImpl implements TaskService {

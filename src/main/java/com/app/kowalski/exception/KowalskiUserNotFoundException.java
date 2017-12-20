@@ -1,4 +1,4 @@
-package com.app.kowalski.user.exception;
+package com.app.kowalski.exception;
 
 public class KowalskiUserNotFoundException extends Exception {
 

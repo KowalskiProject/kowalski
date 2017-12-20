@@ -3,12 +3,12 @@ package com.app.kowalski.activity;
 import java.util.List;
 import java.util.Set;
 
-import com.app.kowalski.activity.exception.ActivityNotFoundException;
+import com.app.kowalski.exception.ActivityNotFoundException;
+import com.app.kowalski.exception.KowalskiUserNotFoundException;
+import com.app.kowalski.exception.TaskNotFoundException;
 import com.app.kowalski.project.ProjectDTO;
 import com.app.kowalski.task.TaskDTO;
-import com.app.kowalski.task.exception.TaskNotFoundException;
 import com.app.kowalski.user.KowalskiUserDTO;
-import com.app.kowalski.user.exception.KowalskiUserNotFoundException;
 
 /**
  * Interface to expose allowed methods related to activities.

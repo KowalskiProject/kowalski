@@ -1,4 +1,4 @@
-package com.app.kowalski.project.exception;
+package com.app.kowalski.exception;
 
 @SuppressWarnings("serial")
 public class ProjectNotFoundException extends Exception {

@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.app.kowalski.activity.ActivityDTO;
+import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.project.ProjectDTO;
 import com.app.kowalski.task.TaskDTO;
-import com.app.kowalski.user.exception.KowalskiUserNotFoundException;
 
 @Service
 public class KowalskiUserServiceImpl implements KowalskiUserService {

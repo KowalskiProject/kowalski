@@ -1,4 +1,4 @@
-package com.app.kowalski.task.exception;
+package com.app.kowalski.exception;
 
 public class TaskNotFoundException extends Exception {
 

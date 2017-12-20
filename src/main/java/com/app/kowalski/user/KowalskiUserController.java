@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.kowalski.activity.ActivityDTO;
+import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.project.ProjectDTO;
 import com.app.kowalski.task.TaskDTO;
-import com.app.kowalski.user.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.util.HateoasLinksBuilder;
 
 @RestController
