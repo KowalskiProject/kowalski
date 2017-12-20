@@ -49,6 +49,11 @@ public class HateoasLinksBuilder {
 		Link projectLink = linkTo(ProjectController.class).slash(activityDTO.getProjectId()).withRel("project");
 		activityDTO.add(projectLink);
 
+		ResponseEntity<List<TaskDTO>> tasksLinkBuilder = methodOn(ActivityController.class)
+				.getTasksForActivity(activityDTO.getActivityId());
+		Link tasksLink = linkTo(tasksLinkBuilder).withRel("tasks");
+		activityDTO.add(tasksLink);
+
 		ResponseEntity<KowalskiUserDTO> accountableLinkBuilder = methodOn(ActivityController.class)
 				.getAccountableForActivity(activityDTO.getActivityId());
 		Link accountableLink = linkTo(accountableLinkBuilder).withRel("accountable");
@@ -63,6 +68,11 @@ public class HateoasLinksBuilder {
 
 		Link activityLink = linkTo(ActivityController.class).slash(taskDTO.getActivityId()).withRel("activity");
 		taskDTO.add(activityLink);
+
+		ResponseEntity<KowalskiUserDTO> accountableLinkBuilder = methodOn(TaskController.class)
+				.getAccountableForTask(taskDTO.getTaskId());
+		Link accountableLink = linkTo(accountableLinkBuilder).withRel("accountable");
+		taskDTO.add(accountableLink);
 	}
 
 	public static void createHateoasForKowalskiUser(KowalskiUserDTO kowalskiUserDTO) {
@@ -81,8 +91,12 @@ public class HateoasLinksBuilder {
 		Link accountableActivitiesLink = linkTo(accountableActivitiesLinkBuilder).withRel("accountableActivities");
 		kowalskiUserDTO.add(accountableActivitiesLink);
 
-		ResponseEntity<Set<ProjectDTO>> projectsLinkBuilder = methodOn(KowalskiUserController.class)
-				.getProjects(kUserId);
+		ResponseEntity<List<TaskDTO>> accountableTasksLinkBuilder = methodOn(KowalskiUserController.class)
+				.getAccountableTasks(kUserId);
+		Link accountableTasksLink = linkTo(accountableTasksLinkBuilder).withRel("accountableTasks");
+		kowalskiUserDTO.add(accountableTasksLink);
+
+		ResponseEntity<Set<ProjectDTO>> projectsLinkBuilder = methodOn(KowalskiUserController.class).getProjects(kUserId);
 		Link projectsLink = linkTo(projectsLinkBuilder).withRel("projects");
 		kowalskiUserDTO.add(projectsLink);
 	}
