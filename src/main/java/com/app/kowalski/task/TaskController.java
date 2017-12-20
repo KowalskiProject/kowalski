@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.kowalski.task.exception.TaskNotFoundException;
+import com.app.kowalski.user.KowalskiUserDTO;
+import com.app.kowalski.user.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.util.HateoasLinksBuilder;
 
 @RestController
@@ -53,6 +55,52 @@ public class TaskController {
 		HateoasLinksBuilder.createHateoasForTask(taskDTO);
 
 		return new ResponseEntity<TaskDTO>(taskDTO, HttpStatus.OK);
+	}
 
+	@RequestMapping(value = "/{taskId}/accountable", method = RequestMethod.GET)
+	public ResponseEntity<KowalskiUserDTO> getAccountableForTask(@PathVariable Integer taskId) {
+		KowalskiUserDTO kowalskiUserDTO = null;
+
+		try {
+			kowalskiUserDTO = this.taskService.getAccountableForTask(taskId);
+		} catch (TaskNotFoundException e) {
+			return new ResponseEntity<KowalskiUserDTO>(HttpStatus.NOT_FOUND);
+		}
+
+		if (kowalskiUserDTO == null) {
+			return new ResponseEntity<KowalskiUserDTO>(HttpStatus.NOT_FOUND);
+		}
+
+		HateoasLinksBuilder.createHateoasForKowalskiUser(kowalskiUserDTO);
+		return new ResponseEntity<KowalskiUserDTO>(kowalskiUserDTO, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/{taskId}/accountable", method = RequestMethod.POST)
+	public ResponseEntity<TaskDTO> setAccountableForTask(
+			@PathVariable Integer taskId, @RequestBody Integer kUserId) {
+		TaskDTO taskDTO = null;
+
+		try {
+			taskDTO = this.taskService.setAccountableForTask(taskId, kUserId);
+		} catch (TaskNotFoundException | KowalskiUserNotFoundException e) {
+			return new ResponseEntity<TaskDTO>(HttpStatus.NOT_FOUND);
+		}
+
+		HateoasLinksBuilder.createHateoasForTask(taskDTO);
+		return new ResponseEntity<TaskDTO>(taskDTO, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/{taskId}/accountable", method = RequestMethod.DELETE)
+	public ResponseEntity<TaskDTO> removeAccountableForTask(@PathVariable Integer taskId) {
+		TaskDTO taskDTO = null;
+
+		try {
+			taskDTO = this.taskService.removeAccountableForTask(taskId);
+		} catch (TaskNotFoundException e) {
+			return new ResponseEntity<TaskDTO>(HttpStatus.NOT_FOUND);
+		}
+
+		HateoasLinksBuilder.createHateoasForTask(taskDTO);
+		return new ResponseEntity<TaskDTO>(taskDTO, HttpStatus.OK);
 	}
 }
