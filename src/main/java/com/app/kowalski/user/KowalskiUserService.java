@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.app.kowalski.activity.ActivityDTO;
 import com.app.kowalski.project.ProjectDTO;
+import com.app.kowalski.task.TaskDTO;
 import com.app.kowalski.user.exception.KowalskiUserNotFoundException;
 
 /**
@@ -72,6 +73,15 @@ public interface KowalskiUserService {
 	 * @throws KowalskiUserNotFoundException No KowalskiUser instance found in the system
 	 */
 	public List<ActivityDTO> getAccountableActivities(Integer kUserId) throws KowalskiUserNotFoundException;
+
+	/**
+	 * Returns all tasks where given user is responsible
+	 * @param kUserId user reference
+	 * @return List of tasks
+	 *
+	 * @throws KowalskiUserNotFoundException No KowalskiUser instance found in the system
+	 */
+	public List<TaskDTO> getAccountableTasks(Integer kUserId) throws KowalskiUserNotFoundException;
 
 	/**
 	 * Returns all projects where given user is member

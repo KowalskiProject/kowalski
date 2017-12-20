@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.app.kowalski.activity.ActivityDTO;
 import com.app.kowalski.project.ProjectDTO;
+import com.app.kowalski.task.TaskDTO;
 import com.app.kowalski.user.exception.KowalskiUserNotFoundException;
 
 @Service
@@ -113,6 +114,21 @@ public class KowalskiUserServiceImpl implements KowalskiUserService {
 
 		return kowalskiUser.getAccountableActivities().stream()
 				.map(activity -> new ActivityDTO(activity))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<TaskDTO> getAccountableTasks(Integer kUserId) throws KowalskiUserNotFoundException {
+		KowalskiUser kowalskiUser = null;
+
+		try {
+			kowalskiUser = this.repository.getOne(kUserId);
+		} catch (EntityNotFoundException e) {
+			throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		return kowalskiUser.getAccountableTasks().stream()
+				.map(task -> new TaskDTO(task))
 				.collect(Collectors.toList());
 	}
 
