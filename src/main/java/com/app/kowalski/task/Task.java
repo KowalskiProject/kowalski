@@ -2,7 +2,9 @@ package com.app.kowalski.task;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,9 +12,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.app.kowalski.activity.Activity;
+import com.app.kowalski.timerecord.TimeRecord;
 import com.app.kowalski.user.KowalskiUser;
 
 @Entity
@@ -36,6 +40,9 @@ public class Task {
 	@ManyToOne
     @JoinColumn(name="kowalskiuser_kUserId")
 	private KowalskiUser accountable;
+
+	@OneToMany
+    private List<TimeRecord> timeRecords = new ArrayList<TimeRecord>();
 
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -163,6 +170,13 @@ public class Task {
 	 */
 	public void setAccountable(KowalskiUser accountable) {
 		this.accountable = accountable;
+	}
+
+	/**
+	 * @return the timeRecords
+	 */
+	public List<TimeRecord> getTimeRecords() {
+		return timeRecords;
 	}
 
 }

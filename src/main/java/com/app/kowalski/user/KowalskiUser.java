@@ -17,6 +17,7 @@ import javax.persistence.Table;
 import com.app.kowalski.activity.Activity;
 import com.app.kowalski.project.Project;
 import com.app.kowalski.task.Task;
+import com.app.kowalski.timerecord.TimeRecord;
 
 @Entity
 @Table(name = "kowalskiuser")
@@ -46,6 +47,9 @@ public class KowalskiUser {
 
 	@ManyToMany(mappedBy = "members")
     private Set<Activity> activities = new HashSet<>();
+
+	@OneToMany
+    private List<TimeRecord> timeRecords = new ArrayList<TimeRecord>();
 
 	public KowalskiUser() {}
 
@@ -225,5 +229,12 @@ public class KowalskiUser {
 
 	public Set<Activity> getActivities() {
 		return this.activities;
+	}
+
+	/**
+	 * @return the timeRecords
+	 */
+	public List<TimeRecord> getTimeRecords() {
+		return timeRecords;
 	}
 }
