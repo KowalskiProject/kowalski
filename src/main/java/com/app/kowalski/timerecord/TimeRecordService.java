@@ -21,17 +21,14 @@ public interface TimeRecordService {
 	/**
 	 * Creates a new time record using given parameters.
 	 *
-	 * @param userId User reference
-	 * @param taskId Task reference
-	 * @param reportedTime Spent time by given user in given task
-	 * @param comment Additional comments
+	 * @param timeRecordDTO data to create time record
 	 * @return time record data
 	 *
 	 * @throws KowalskiUserNotFoundException No user was found in the system
 	 * @throws TaskNotFoundException No task was found in the system
 	 * @throws InvalidTimeRecordException Error handling time record parameters
 	 */
-	public TimeRecordDTO addTimeRecord(Integer userId, Integer taskId, String reportedTime, String comment)
+	public TimeRecordDTO addTimeRecord(TimeRecordDTO timeRecordDTO)
 			throws KowalskiUserNotFoundException, TaskNotFoundException, InvalidTimeRecordException;
 
 	/**

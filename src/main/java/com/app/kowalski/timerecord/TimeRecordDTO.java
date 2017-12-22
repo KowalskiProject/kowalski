@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(Include.NON_NULL)
 public class TimeRecordDTO extends ResourceSupport implements Serializable {
 
+	private Integer trId;
 	private Integer userId;
 	private Integer taskId;
 	private String createdDate;
@@ -28,11 +29,26 @@ public class TimeRecordDTO extends ResourceSupport implements Serializable {
 	public TimeRecordDTO() {}
 
 	public TimeRecordDTO(TimeRecord timeRecord) {
+		this.setTrId(timeRecord.getTrId());
 		this.userId = timeRecord.getUser().getkUserId();
 		this.taskId = timeRecord.getTask().getTaskId();
 		this.createdDate = sdf.format(timeRecord.getCreateDate());
 		this.reportedTime = sdfReportedTime.format(timeRecord.getReportedTime());
 		this.comment = timeRecord.getComment();
+	}
+
+	/**
+	 * @return the trId
+	 */
+	public Integer getTrId() {
+		return trId;
+	}
+
+	/**
+	 * @param trId the trId to set
+	 */
+	public void setTrId(Integer trId) {
+		this.trId = trId;
 	}
 
 	/**

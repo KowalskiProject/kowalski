@@ -38,31 +38,31 @@ public class TimeRecordServiceImpl implements TimeRecordService {
 	}
 
 	@Override
-	public TimeRecordDTO addTimeRecord(Integer userId, Integer taskId, String reportedTime, String comment)
+	public TimeRecordDTO addTimeRecord(TimeRecordDTO timeRecordDTO)
 			throws KowalskiUserNotFoundException, TaskNotFoundException, InvalidTimeRecordException {
 		Date reportedTimeDate = null;
 		KowalskiUser user = null;
 		Task task = null;
 
 		try {
-			reportedTimeDate = sdfReportedTime.parse(reportedTime);
+			reportedTimeDate = sdfReportedTime.parse(timeRecordDTO.getReportedTime());
 		} catch (ParseException e) {
 			throw new InvalidTimeRecordException(e.getMessage(), e.getCause());
 		}
 
 		try {
-			user = this.userRepository.getOne(userId);
+			user = this.userRepository.getOne(timeRecordDTO.getUserId());
 		} catch (EntityNotFoundException e) {
 			throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
 		}
 
 		try {
-			task = this.taskRepository.getOne(taskId);
+			task = this.taskRepository.getOne(timeRecordDTO.getTaskId());
 		} catch (EntityNotFoundException e) {
 			throw new TaskNotFoundException(e.getMessage(), e.getCause());
 		}
 
-		TimeRecord timeRecord = new TimeRecord(user, task, reportedTimeDate, comment);
+		TimeRecord timeRecord = new TimeRecord(user, task, reportedTimeDate, timeRecordDTO.getComment());
 		timeRecord = this.trRepository.save(timeRecord);
 
 		return new TimeRecordDTO(timeRecord);

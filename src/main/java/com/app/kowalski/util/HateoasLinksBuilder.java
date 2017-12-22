@@ -15,6 +15,8 @@ import com.app.kowalski.project.ProjectController;
 import com.app.kowalski.project.ProjectDTO;
 import com.app.kowalski.task.TaskController;
 import com.app.kowalski.task.TaskDTO;
+import com.app.kowalski.timerecord.TimeRecordController;
+import com.app.kowalski.timerecord.TimeRecordDTO;
 import com.app.kowalski.user.KowalskiUserController;
 import com.app.kowalski.user.KowalskiUserDTO;
 
@@ -99,5 +101,12 @@ public class HateoasLinksBuilder {
 		ResponseEntity<Set<ProjectDTO>> projectsLinkBuilder = methodOn(KowalskiUserController.class).getProjects(kUserId);
 		Link projectsLink = linkTo(projectsLinkBuilder).withRel("projects");
 		kowalskiUserDTO.add(projectsLink);
+	}
+
+	public static void createHateoasForTimeRecord(TimeRecordDTO timeRecordDTO) {
+		Integer trId = timeRecordDTO.getTrId();
+
+		Link selfLink = linkTo(TimeRecordController.class).slash(trId).withSelfRel();
+		timeRecordDTO.add(selfLink);
 	}
 }
