@@ -20,7 +20,7 @@ public class TimeRecord {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer taskId;
+	private Integer trId;
 
 	@ManyToOne(cascade=CascadeType.ALL)
     @JoinColumn(name="kowalskiuser_kUserId")
@@ -44,18 +44,28 @@ public class TimeRecord {
 		this.comment = comment;
 	}
 
-	/**
-	 * @return the taskId
-	 */
-	public Integer getTaskId() {
-		return taskId;
+	public TimeRecord editTimeRecord(KowalskiUser user, Task task, Date reportedTime, String comment) {
+		this.user = user;
+		this.task = task;
+		this.createDate = new Date();
+		this.reportedTime = reportedTime;
+		this.comment = comment;
+
+		return this;
 	}
 
 	/**
-	 * @param taskId the taskId to set
+	 * @return the taskId
 	 */
-	public void setTaskId(Integer taskId) {
-		this.taskId = taskId;
+	public Integer getTrId() {
+		return trId;
+	}
+
+	/**
+	 * @param trId the trId to set
+	 */
+	public void setTrId(Integer trId) {
+		this.trId = trId;
 	}
 
 	/**
