@@ -1,5 +1,7 @@
 package com.app.kowalski.task;
 
+import java.util.List;
+
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.exception.TaskNotFoundException;
 import com.app.kowalski.user.KowalskiUserDTO;
@@ -62,4 +64,13 @@ public interface TaskService {
 	 * @throws TaskNotFoundException No task instance was found in the system
 	 */
 	public TaskDTO removeAccountableForTask(Integer taskId) throws TaskNotFoundException;
+
+	/**
+	 * Returns all tasks where given user is responsible
+	 * @param kUserId user reference
+	 * @return List of tasks
+	 *
+	 * @throws KowalskiUserNotFoundException No KowalskiUser instance found in the system
+	 */
+	public List<TaskDTO> getAccountableTasksForUser(Integer kUserId) throws KowalskiUserNotFoundException;
 }

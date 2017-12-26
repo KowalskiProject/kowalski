@@ -1,5 +1,8 @@
 package com.app.kowalski.task;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,10 +92,7 @@ public class TaskServiceImpl implements TaskService {
 		}
 
 		task.setAccountable(kowalskiUser);
-		kowalskiUser.addAccountableTask(task);
-
 		task = this.taskRepository.save(task);
-		kowalskiUser = this.userRepository.save(kowalskiUser);
 
 		return new TaskDTO(task);
 	}
@@ -110,12 +110,25 @@ public class TaskServiceImpl implements TaskService {
 
 		KowalskiUser accountable = task.getAccountable();
 		task.setAccountable(null);
-		accountable.removeAccountableTask(task);
 
 		task = this.taskRepository.save(task);
-		accountable = this.userRepository.save(accountable);
 
 		return new TaskDTO(task);
+	}
+
+	@Override
+	public List<TaskDTO> getAccountableTasksForUser(Integer kUserId) throws KowalskiUserNotFoundException {
+		KowalskiUser kowalskiUser = null;
+
+		try {
+			kowalskiUser = this.userRepository.getOne(kUserId);
+		} catch (EntityNotFoundException e) {
+			throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		return this.taskRepository.findByAccountable(kowalskiUser).stream()
+				.map(task -> new TaskDTO(task))
+				.collect(Collectors.toList());
 	}
 
 }

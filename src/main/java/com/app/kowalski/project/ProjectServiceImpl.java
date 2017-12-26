@@ -184,8 +184,8 @@ public class ProjectServiceImpl implements ProjectService {
 		project.setAccountable(kowalskiUser);
 		project = this.projectRepository.save(project);
 
-		kowalskiUser.addAccountableProject(project);
-		kowalskiUser = this.userRepository.save(kowalskiUser);
+		//kowalskiUser.addAccountableProject(project);
+		//kowalskiUser = this.userRepository.save(kowalskiUser);
 
 		return new ProjectDTO(project);
 	}
@@ -203,10 +203,10 @@ public class ProjectServiceImpl implements ProjectService {
 
 		KowalskiUser accountable = project.getAccountable();
 		project.setAccountable(null);
-		accountable.removeAccountableProject(project);
+		//accountable.removeAccountableProject(project);
 
 		project = this.projectRepository.save(project);
-		accountable = this.userRepository.save(accountable);
+		//accountable = this.userRepository.save(accountable);
 
 		return new ProjectDTO(project);
 	}
@@ -274,6 +274,21 @@ public class ProjectServiceImpl implements ProjectService {
 		project = this.projectRepository.save(project);
 
 		return new ProjectDTO(project);
+	}
+
+	@Override
+	public List<ProjectDTO> getAccountableProjectsForUser(Integer kUserId) throws KowalskiUserNotFoundException {
+		KowalskiUser kowalskiUser = null;
+
+		try {
+			kowalskiUser = this.userRepository.getOne(kUserId);
+		} catch (EntityNotFoundException e) {
+			throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		return this.projectRepository.findByAccountable(kowalskiUser).stream()
+				.map(project -> new ProjectDTO(project))
+				.collect(Collectors.toList());
 	}
 
 }

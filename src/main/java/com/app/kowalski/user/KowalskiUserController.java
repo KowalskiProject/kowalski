@@ -15,9 +15,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.kowalski.activity.ActivityDTO;
+import com.app.kowalski.activity.ActivityService;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.project.ProjectDTO;
+import com.app.kowalski.project.ProjectService;
 import com.app.kowalski.task.TaskDTO;
+import com.app.kowalski.task.TaskService;
 import com.app.kowalski.util.HateoasLinksBuilder;
 
 @RestController
@@ -27,10 +30,17 @@ public class KowalskiUserController {
 	@Autowired
 	HttpServletRequest request;
 	private KowalskiUserService kowalskiUserService;
+	private ProjectService projectService;
+	private ActivityService activityService;
+	private TaskService taskService;
 
 	@Autowired
-	KowalskiUserController(KowalskiUserService kowalskiUserService) {
+	KowalskiUserController(KowalskiUserService kowalskiUserService, ProjectService projectService,
+			ActivityService activityService, TaskService taskService) {
 		this.kowalskiUserService = kowalskiUserService;
+		this.projectService = projectService;
+		this.activityService = activityService;
+		this.taskService = taskService;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -88,7 +98,7 @@ public class KowalskiUserController {
 	public ResponseEntity<List<ProjectDTO>> getAccountableProjects(@PathVariable int kUserId) {
 		List<ProjectDTO> projectsDTO = null;
 		try {
-			projectsDTO = this.kowalskiUserService.getAccountableProjects(kUserId);
+			projectsDTO = this.projectService.getAccountableProjectsForUser(kUserId);
 		} catch (KowalskiUserNotFoundException e) {
 			return new ResponseEntity<List<ProjectDTO>>(HttpStatus.NOT_FOUND);
 		}
@@ -103,7 +113,7 @@ public class KowalskiUserController {
 	public ResponseEntity<List<ActivityDTO>> getAccountableActivities(@PathVariable int kUserId) {
 		List<ActivityDTO> activitiesDTO = null;
 		try {
-			activitiesDTO = this.kowalskiUserService.getAccountableActivities(kUserId);
+			activitiesDTO = this.activityService.getAccountableActivitiesForUser(kUserId);
 		} catch (KowalskiUserNotFoundException e) {
 			return new ResponseEntity<List<ActivityDTO>>(HttpStatus.NOT_FOUND);
 		}
@@ -118,7 +128,7 @@ public class KowalskiUserController {
 	public ResponseEntity<List<TaskDTO>> getAccountableTasks(@PathVariable int kUserId) {
 		List<TaskDTO> tasksDTO = null;
 		try {
-			tasksDTO = this.kowalskiUserService.getAccountableTasks(kUserId);
+			tasksDTO = this.taskService.getAccountableTasksForUser(kUserId);
 		} catch (KowalskiUserNotFoundException e) {
 			return new ResponseEntity<List<TaskDTO>>(HttpStatus.NOT_FOUND);
 		}

@@ -150,4 +150,12 @@ public interface ProjectService {
 	public ProjectDTO removeMemberFromProject(Integer projectId, Integer kUserId)
 			throws ProjectNotFoundException, KowalskiUserNotFoundException;
 
+	/**
+	 * Returns all projects where given user is responsible
+	 * @param kUserId user reference
+	 * @return List of projects
+	 *
+	 * @throws KowalskiUserNotFoundException No KowalskiUser instance found in the system
+	 */
+	public List<ProjectDTO> getAccountableProjectsForUser(Integer kUserId) throws KowalskiUserNotFoundException;
 }

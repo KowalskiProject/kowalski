@@ -16,7 +16,6 @@ import javax.persistence.Table;
 
 import com.app.kowalski.activity.Activity;
 import com.app.kowalski.project.Project;
-import com.app.kowalski.task.Task;
 import com.app.kowalski.timerecord.TimeRecord;
 
 @Entity
@@ -32,15 +31,6 @@ public class KowalskiUser {
 	private String email;
 	private String password;
 	private Date creationDate;
-
-	@OneToMany
-    private List<Project> accountableProjects = new ArrayList<Project>();
-
-	@OneToMany
-    private List<Activity> accountableActivities = new ArrayList<Activity>();
-
-	@OneToMany
-    private List<Task> accountableTasks = new ArrayList<Task>();
 
 	@ManyToMany(mappedBy = "members")
     private Set<Project> projects = new HashSet<>();
@@ -153,78 +143,6 @@ public class KowalskiUser {
 	 */
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
-	}
-
-	/**
-	 *
-	 * @return
-	 */
-	public List<Project> getAccountableProjects() {
-		return this.accountableProjects;
-	}
-
-	/**
-	 *
-	 * @param project
-	 */
-	public void addAccountableProject(Project project) {
-		this.accountableProjects.add(project);
-	}
-
-	/**
-	 *
-	 * @param project
-	 */
-	public void removeAccountableProject(Project project) {
-		this.accountableProjects.remove(project);
-	}
-
-	/**
-	 *
-	 * @return
-	 */
-	public List<Activity> getAccountableActivities() {
-		return this.accountableActivities;
-	}
-
-	/**
-	 *
-	 * @param activity
-	 */
-	public void addAccountableActivity(Activity activity) {
-		this.accountableActivities.add(activity);
-	}
-
-	/**
-	 *
-	 * @param activity
-	 */
-	public void removeAccountableActivity(Activity activity) {
-		this.accountableActivities.remove(activity);
-	}
-
-	/**
-	 *
-	 * @return
-	 */
-	public List<Task> getAccountableTasks() {
-		return this.accountableTasks;
-	}
-
-	/**
-	 *
-	 * @param task
-	 */
-	public void addAccountableTask(Task task) {
-		this.accountableTasks.add(task);
-	}
-
-	/**
-	 *
-	 * @param task
-	 */
-	public void removeAccountableTask(Task task) {
-		this.accountableTasks.remove(task);
 	}
 
 	/**

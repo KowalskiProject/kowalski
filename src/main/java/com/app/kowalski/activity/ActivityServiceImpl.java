@@ -170,9 +170,6 @@ public class ActivityServiceImpl implements ActivityService {
 		activity.setAccountable(kowalskiUser);
 		activity = this.activityRepository.save(activity);
 
-		kowalskiUser.addAccountableActivity(activity);
-		kowalskiUser = this.userRepository.save(kowalskiUser);
-
 		return new ActivityDTO(activity);
 	}
 
@@ -189,10 +186,8 @@ public class ActivityServiceImpl implements ActivityService {
 
 		KowalskiUser accountable = activity.getAccountable();
 		activity.setAccountable(null);
-		accountable.removeAccountableActivity(activity);
 
 		activity = this.activityRepository.save(activity);
-		accountable = this.userRepository.save(accountable);
 
 		return new ActivityDTO(activity);
 	}
@@ -261,4 +256,18 @@ public class ActivityServiceImpl implements ActivityService {
 		return new ActivityDTO(activity);
 	}
 
+	@Override
+	public List<ActivityDTO> getAccountableActivitiesForUser(Integer kUserId) throws KowalskiUserNotFoundException {
+		KowalskiUser kowalskiUser = null;
+
+		try {
+			kowalskiUser = this.userRepository.getOne(kUserId);
+		} catch (EntityNotFoundException e) {
+			throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		return this.activityRepository.findByAccountable(kowalskiUser).stream()
+				.map(activity -> new ActivityDTO(activity))
+				.collect(Collectors.toList());
+	}
 }

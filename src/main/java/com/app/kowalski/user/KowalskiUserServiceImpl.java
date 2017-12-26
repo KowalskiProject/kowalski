@@ -10,10 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.app.kowalski.activity.ActivityDTO;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.project.ProjectDTO;
-import com.app.kowalski.task.TaskDTO;
 
 @Service
 public class KowalskiUserServiceImpl implements KowalskiUserService {
@@ -77,21 +75,6 @@ public class KowalskiUserServiceImpl implements KowalskiUserService {
 	}
 
 	@Override
-	public List<ProjectDTO> getAccountableProjects(Integer kUserId) throws KowalskiUserNotFoundException {
-		KowalskiUser kowalskiUser = null;
-
-		try {
-			kowalskiUser = this.repository.getOne(kUserId);
-		} catch (EntityNotFoundException e) {
-			throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
-		}
-
-		return kowalskiUser.getAccountableProjects().stream()
-				.map(project -> new ProjectDTO(project))
-				.collect(Collectors.toList());
-	}
-
-	@Override
 	public Set<ProjectDTO> getProjects(Integer kUserId) throws KowalskiUserNotFoundException {
 		KowalskiUser kowalskiUser = null;
 
@@ -104,36 +87,6 @@ public class KowalskiUserServiceImpl implements KowalskiUserService {
 		return kowalskiUser.getProjects().stream()
 				.map(project -> new ProjectDTO(project))
 				.collect(Collectors.toSet());
-	}
-
-	@Override
-	public List<ActivityDTO> getAccountableActivities(Integer kUserId) throws KowalskiUserNotFoundException {
-		KowalskiUser kowalskiUser = null;
-
-		try {
-			kowalskiUser = this.repository.getOne(kUserId);
-		} catch (EntityNotFoundException e) {
-			throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
-		}
-
-		return kowalskiUser.getAccountableActivities().stream()
-				.map(activity -> new ActivityDTO(activity))
-				.collect(Collectors.toList());
-	}
-
-	@Override
-	public List<TaskDTO> getAccountableTasks(Integer kUserId) throws KowalskiUserNotFoundException {
-		KowalskiUser kowalskiUser = null;
-
-		try {
-			kowalskiUser = this.repository.getOne(kUserId);
-		} catch (EntityNotFoundException e) {
-			throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
-		}
-
-		return kowalskiUser.getAccountableTasks().stream()
-				.map(task -> new TaskDTO(task))
-				.collect(Collectors.toList());
 	}
 
 }
