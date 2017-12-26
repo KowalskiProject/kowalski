@@ -61,6 +61,14 @@ public class Activity {
 
 	public Activity() {}
 
+	public Activity(String name, String description, String status, Date startDate, Date endDate) {
+		this.name = name;
+		this.description = description;
+		this.status = status;
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+
 	public Activity convertToActivity(ActivityDTO activityDTO) {
 		this.name = activityDTO.getName();
 		this.description = activityDTO.getDescription();

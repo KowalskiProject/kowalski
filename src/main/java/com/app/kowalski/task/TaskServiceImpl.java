@@ -4,6 +4,7 @@ import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.exception.TaskNotFoundException;
@@ -37,6 +38,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
+	@Transactional
 	public TaskDTO editTask(TaskDTO taskDTO) throws TaskNotFoundException {
 		Task task = null;
 
@@ -68,6 +70,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
+	@Transactional
 	public TaskDTO setAccountableForTask(Integer taskId, Integer kUserId)
 			throws TaskNotFoundException, KowalskiUserNotFoundException {
 		Task task = null;
@@ -95,6 +98,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
+	@Transactional
 	public TaskDTO removeAccountableForTask(Integer taskId) throws TaskNotFoundException {
 		Task task = null;
 

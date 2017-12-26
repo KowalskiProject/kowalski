@@ -37,6 +37,13 @@ public class TimeRecordDTO extends ResourceSupport implements Serializable {
 		this.comment = timeRecord.getComment();
 	}
 
+	public TimeRecordDTO(Integer userId, Integer taskId, String reportedTime, String comment) {
+		this.userId = userId;
+		this.taskId = taskId;
+		this.reportedTime = reportedTime;
+		this.comment = comment;
+	}
+
 	/**
 	 * @return the trId
 	 */

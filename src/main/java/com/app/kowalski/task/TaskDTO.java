@@ -41,6 +41,14 @@ public class TaskDTO extends ResourceSupport implements Serializable {
 		this.activityId = task.getActivity().getActivityId();
 	}
 
+	public TaskDTO(String name, String description, String status, String startDate, String endDate) {
+		this.name = name;
+		this.description = description;
+		this.status = status;
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+
 	/**
 	 * @return the taskId
 	 */

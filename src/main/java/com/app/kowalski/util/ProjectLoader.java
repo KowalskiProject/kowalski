@@ -1,141 +1,152 @@
 package com.app.kowalski.util;
 
-import java.util.Date;
-
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
-import com.app.kowalski.activity.Activity;
-import com.app.kowalski.activity.ActivityRepository;
-import com.app.kowalski.project.Project;
-import com.app.kowalski.project.ProjectRepository;
-import com.app.kowalski.task.Task;
-import com.app.kowalski.user.KowalskiUser;
-import com.app.kowalski.user.KowalskiUserRepository;
+import com.app.kowalski.activity.ActivityDTO;
+import com.app.kowalski.activity.ActivityService;
+import com.app.kowalski.exception.ActivityNotFoundException;
+import com.app.kowalski.exception.InvalidTimeRecordException;
+import com.app.kowalski.exception.KowalskiUserNotFoundException;
+import com.app.kowalski.exception.ProjectNotFoundException;
+import com.app.kowalski.exception.TaskNotFoundException;
+import com.app.kowalski.project.ProjectDTO;
+import com.app.kowalski.project.ProjectService;
+import com.app.kowalski.task.TaskDTO;
+import com.app.kowalski.task.TaskService;
+import com.app.kowalski.timerecord.TimeRecordDTO;
+import com.app.kowalski.timerecord.TimeRecordService;
+import com.app.kowalski.user.KowalskiUserDTO;
+import com.app.kowalski.user.KowalskiUserService;
 
 @Component
 public class ProjectLoader implements ApplicationListener<ContextRefreshedEvent> {
 
-	private ProjectRepository projectRepository;
-	private ActivityRepository activityRepository;
-	private KowalskiUserRepository kowalskiUserRepository;
-
-	private Logger log = Logger.getLogger(ProjectLoader.class);
+	private KowalskiUserService kowalskiUserService;
+	private ProjectService projectService;
+	private ActivityService activityService;
+	private TaskService taskService;
+	private TimeRecordService trService;
 
 	@Autowired
-	public void setProjectRepository(ProjectRepository projectRepository,
-			ActivityRepository activityRepository, KowalskiUserRepository kowalskiUserRepository) {
-		this.projectRepository = projectRepository;
-		this.activityRepository = activityRepository;
-		this.kowalskiUserRepository = kowalskiUserRepository;
+	public void setProjectService(KowalskiUserService kowalskiUserService, ProjectService projectService,
+			ActivityService activityService, TaskService taskService, TimeRecordService trService) {
+		this.kowalskiUserService = kowalskiUserService;
+		this.projectService = projectService;
+		this.activityService = activityService;
+		this.taskService = taskService;
+		this.trService = trService;
 	}
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
+		/*******************************************************************************
+		 * Users
+		 *******************************************************************************/
+		KowalskiUserDTO k1 = new KowalskiUserDTO("Cartman", "cartman", "cartman@kowalski.com", "cartman");
+		KowalskiUserDTO k2 = new KowalskiUserDTO("Stan", "stan", "stan@kowalski.com", "stan");
+		KowalskiUserDTO k3 = new KowalskiUserDTO("Kyle", "kyle", "kyle@kowalski.com", "kyle");
+		KowalskiUserDTO k4 = new KowalskiUserDTO("Kenny", "kenny", "kenny@kowalski.com", "kenny");
 
-		Project p1 = new Project();
-		p1.setName("Projeto 1");
-		p1.setCode("ABC1");
-		p1.setDescription("Pequena descrição do projeto");
-		p1.setStartDate(new Date());
-		p1.setEndDate(new Date());
-		p1 = projectRepository.save(p1);
+		k1 = kowalskiUserService.addKowaslkiUser(k1);
+		k2 = kowalskiUserService.addKowaslkiUser(k2);
+		k3 = kowalskiUserService.addKowaslkiUser(k3);
+		k4 = kowalskiUserService.addKowaslkiUser(k4);
 
-		Activity a1 = new Activity();
-		a1.setName("Levantamento de requisitos");
-		a1.setDescription("Requisitos do projeto");
-		a1.setStartDate(new Date());
-		a1.setEndDate(new Date());
-		a1.setStatus("Progress");
+		/*******************************************************************************
+		 * Projects
+		 *******************************************************************************/
+		ProjectDTO p1 = new ProjectDTO("Projeto 1", "ABC1", "Pequena descrição do projeto", "2017-12-20", "2018-12-20");
+		p1 = projectService.addProject(p1);
 
-		Activity a2 = new Activity();
-		a2.setName("Implementação do back-end");
-		a2.setDescription("Código projeto");
-		a2.setStartDate(new Date());
-		a2.setEndDate(new Date());
-		a2.setStatus("Progress");
+		try {
+			projectService.setAccountableForProject(p1.getProjectId(), k1.getkUserId());
+		} catch (ProjectNotFoundException | KowalskiUserNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-		Activity a3 = new Activity();
-		a3.setName("Implementação do front-end");
-		a3.setDescription("Código do projeto");
-		a3.setStartDate(new Date());
-		a3.setEndDate(new Date());
-		a3.setStatus("Progress");
+		/*******************************************************************************
+		 * Activities
+		 *******************************************************************************/
+		ActivityDTO a1 = new ActivityDTO("Levantamento de requisitos", "Requisitos do projeto", "Progress", "2017-12-20", "2018-12-20");
+		ActivityDTO a2 = new ActivityDTO("Implementação do back-end", "Código projeto", "Progress", "2017-12-20", "2018-12-20");
+		ActivityDTO a3 = new ActivityDTO("Implementação do front-end", "Código do projeto", "Progress", "2017-12-20", "2018-12-20");
 
-		p1.addActivity(a1);
-		p1.addActivity(a2);
-		p1.addActivity(a3);
+		try {
+			a1 = projectService.addActivityForProject(p1.getProjectId(), a1);
+			a2 = projectService.addActivityForProject(p1.getProjectId(), a2);
+			a3 = projectService.addActivityForProject(p1.getProjectId(), a3);
+		} catch (ProjectNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-		Task t1 = new Task();
-		t1.setName("Pesquisa de funcionalidades");
-		t1.setDescription("Pesquisa para elaboração dos requisitos");
-		t1.setStartDate(new Date());
-		t1.setEndDate(new Date());
-		t1.setStatus("Progress");
+		try {
+			a1 = activityService.setAccountableForActivity(a1.getActivityId(), k2.getkUserId());
+			a2 = activityService.setAccountableForActivity(a2.getActivityId(), k3.getkUserId());
+			a3 = activityService.setAccountableForActivity(a3.getActivityId(), k4.getkUserId());
+		} catch (ActivityNotFoundException | KowalskiUserNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-		Task t2 = new Task();
-		t2.setName("Reunião com o cliente");
-		t2.setDescription("Discussão para levantamento de requisitos");
-		t2.setStartDate(new Date());
-		t2.setEndDate(new Date());
-		t2.setStatus("Progress");
+		/*******************************************************************************
+		 * Tasks
+		 *******************************************************************************/
+		TaskDTO t1 = new TaskDTO("Pesquisa de funcionalidades", "Pesquisa para elaboração dos requisitos", "Progress", "2017-12-20", "2018-12-20");
+		TaskDTO t2 = new TaskDTO("Reunião com o cliente", "Discussão para levantamento de requisitos", "Done", "2017-12-20", "2018-12-20");
+		TaskDTO t3 = new TaskDTO("Implementação e teste da classe A", "Classe de código do back-end", "Progress", "2017-12-20", "2018-12-20");
+		TaskDTO t4 = new TaskDTO("Implementação e teste da classe B", "Classe de código do front-end", "Progress", "2017-12-20", "2018-12-20");
 
-		Task t3 = new Task();
-		t3.setName("Implementação e teste da classe A");
-		t3.setDescription("Classe de código do back-end");
-		t3.setStartDate(new Date());
-		t3.setEndDate(new Date());
-		t3.setStatus("Progress");
+		try {
+			t1 = activityService.addTaskForActivity(a1.getActivityId(), t1);
+			t2 = activityService.addTaskForActivity(a1.getActivityId(), t2);
+			t3 = activityService.addTaskForActivity(a2.getActivityId(), t3);
+			t4 = activityService.addTaskForActivity(a3.getActivityId(), t4);
+		} catch (ActivityNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-		Task t4 = new Task();
-		t4.setName("Implementação e teste da classe B");
-		t4.setDescription("Classe de código do front-end");
-		t4.setStartDate(new Date());
-		t4.setEndDate(new Date());
-		t4.setStatus("Progress");
+		try {
+			t1 = taskService.setAccountableForTask(t1.getTaskId(), k4.getkUserId());
+			t2 = taskService.setAccountableForTask(t2.getTaskId(), k3.getkUserId());
+			t3 = taskService.setAccountableForTask(t3.getTaskId(), k2.getkUserId());
+			t4 = taskService.setAccountableForTask(t4.getTaskId(), k1.getkUserId());
+		} catch (TaskNotFoundException | KowalskiUserNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-		a1.addTask(t1);
-		a1.addTask(t2);
-		a2.addTask(t3);
-		a3.addTask(t4);
+		/*******************************************************************************
+		 * Time records
+		 *******************************************************************************/
+		TimeRecordDTO tr1 = new TimeRecordDTO(k1.getkUserId(), t1.getTaskId(), "08:00", "Comment 1");
+		TimeRecordDTO tr2 = new TimeRecordDTO(k2.getkUserId(), t2.getTaskId(), "08:00", "Comment 2");
+		TimeRecordDTO tr3 = new TimeRecordDTO(k3.getkUserId(), t3.getTaskId(), "08:00", "Comment 3");
+		TimeRecordDTO tr4 = new TimeRecordDTO(k4.getkUserId(), t4.getTaskId(), "08:00", "Comment 4");
 
-		projectRepository.save(p1);
+		TimeRecordDTO tr5 = new TimeRecordDTO(k1.getkUserId(), t1.getTaskId(), "08:00", "Comment 5");
+		TimeRecordDTO tr6 = new TimeRecordDTO(k2.getkUserId(), t2.getTaskId(), "08:00", "Comment 6");
+		TimeRecordDTO tr7 = new TimeRecordDTO(k3.getkUserId(), t3.getTaskId(), "08:00", "Comment 7");
+		TimeRecordDTO tr8 = new TimeRecordDTO(k4.getkUserId(), t4.getTaskId(), "08:00", "Comment 8");
 
-		log.info("Projeto " + p1.getName() + " added successfully");
-
-		KowalskiUser k1 = new KowalskiUser();
-		k1.setName("Cartman");
-		k1.setUsername("cartman");
-		k1.setEmail("cartman@kowalski.com");
-		k1.setPassword("cartman");
-
-		KowalskiUser k2 = new KowalskiUser();
-		k2.setName("Stan");
-		k2.setUsername("stan");
-		k2.setEmail("stan@kowalski.com");
-		k2.setPassword("stan");
-
-		KowalskiUser k3 = new KowalskiUser();
-		k3.setName("Kyle");
-		k3.setUsername("kyle");
-		k3.setEmail("kyle@kowalski.com");
-		k3.setPassword("kyle");
-
-		KowalskiUser k4 = new KowalskiUser();
-		k4.setName("Kenny");
-		k4.setUsername("kenny");
-		k4.setEmail("kenny@kowalski.com");
-		k4.setPassword("kenny");
-
-		kowalskiUserRepository.save(k1);
-		kowalskiUserRepository.save(k2);
-		kowalskiUserRepository.save(k3);
-		kowalskiUserRepository.save(k4);
-
-		log.info("Users added successfully");
+		try {
+			tr1 = trService.addTimeRecord(tr1);
+			tr2 = trService.addTimeRecord(tr2);
+			tr3 = trService.addTimeRecord(tr3);
+			tr4 = trService.addTimeRecord(tr4);
+			tr5 = trService.addTimeRecord(tr5);
+			tr6 = trService.addTimeRecord(tr6);
+			tr7 = trService.addTimeRecord(tr7);
+			tr8 = trService.addTimeRecord(tr8);
+		} catch (KowalskiUserNotFoundException | TaskNotFoundException | InvalidTimeRecordException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

@@ -10,6 +10,7 @@ import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.app.kowalski.exception.InvalidTimeRecordException;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
@@ -38,6 +39,7 @@ public class TimeRecordServiceImpl implements TimeRecordService {
 	}
 
 	@Override
+	@Transactional
 	public TimeRecordDTO addTimeRecord(TimeRecordDTO timeRecordDTO)
 			throws KowalskiUserNotFoundException, TaskNotFoundException, InvalidTimeRecordException {
 		Date reportedTimeDate = null;
@@ -65,6 +67,12 @@ public class TimeRecordServiceImpl implements TimeRecordService {
 		TimeRecord timeRecord = new TimeRecord(user, task, reportedTimeDate, timeRecordDTO.getComment());
 		timeRecord = this.trRepository.save(timeRecord);
 
+		/*user.addTimeRecord(timeRecord);
+		user = this.userRepository.save(user);
+
+		task.addTimeRecord(timeRecord);
+		task = this.taskRepository.save(task);*/
+
 		return new TimeRecordDTO(timeRecord);
 	}
 
@@ -82,6 +90,7 @@ public class TimeRecordServiceImpl implements TimeRecordService {
 	}
 
 	@Override
+	@Transactional
 	public TimeRecordDTO editTimeRecord(Integer trId, TimeRecordDTO timeRecordDTO)
 			throws KowalskiUserNotFoundException, TaskNotFoundException,
 			InvalidTimeRecordException, TimeRecordNotFoundException {
@@ -121,6 +130,7 @@ public class TimeRecordServiceImpl implements TimeRecordService {
 	}
 
 	@Override
+	@Transactional
 	public boolean deleteTimeRecord(Integer trId) throws TimeRecordNotFoundException {
 		try {
 			this.trRepository.delete(trId);

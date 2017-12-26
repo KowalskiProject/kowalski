@@ -8,6 +8,7 @@ import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.app.kowalski.exception.ActivityNotFoundException;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
@@ -42,6 +43,7 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 
 	@Override
+	@Transactional
 	public ActivityDTO editActivity(ActivityDTO activityDTO) throws ActivityNotFoundException {
 		// check business rules here
 		try {
@@ -83,6 +85,7 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 
 	@Override
+	@Transactional
 	public TaskDTO addTaskForActivity(int activityId, TaskDTO taskDTO) throws ActivityNotFoundException {
 		Activity activity = null;
 		Task task = null;
@@ -105,6 +108,7 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 
 	@Override
+	@Transactional
 	public boolean deleteTaskFromActivity(int activityId, int taskId)
 			throws ActivityNotFoundException, TaskNotFoundException {
 		Activity activity = null;
@@ -145,6 +149,7 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 
 	@Override
+	@Transactional
 	public ActivityDTO setAccountableForActivity(Integer activityId, Integer kUserId)
 			throws ActivityNotFoundException, KowalskiUserNotFoundException {
 		Activity activity = null;
@@ -163,15 +168,16 @@ public class ActivityServiceImpl implements ActivityService {
 		}
 
 		activity.setAccountable(kowalskiUser);
-		kowalskiUser.addAccountableActivity(activity);
-
 		activity = this.activityRepository.save(activity);
+
+		kowalskiUser.addAccountableActivity(activity);
 		kowalskiUser = this.userRepository.save(kowalskiUser);
 
 		return new ActivityDTO(activity);
 	}
 
 	@Override
+	@Transactional
 	public ActivityDTO removeAccountableForActivity(Integer activityId) throws ActivityNotFoundException {
 		Activity activity = null;
 
@@ -231,6 +237,7 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 
 	@Override
+	@Transactional
 	public ActivityDTO removeMemberFromActivity(Integer activityId, Integer kUserId)
 			throws ActivityNotFoundException, KowalskiUserNotFoundException {
 		Activity activity = null;

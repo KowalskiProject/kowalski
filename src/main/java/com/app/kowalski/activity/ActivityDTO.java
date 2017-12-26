@@ -41,6 +41,14 @@ public class ActivityDTO extends ResourceSupport implements Serializable {
 		this.setProjectId(activity.getProject().getProjectId());
 	}
 
+	public ActivityDTO(String name, String description, String status, String startDate, String endDate) {
+		this.name = name;
+		this.description = description;
+		this.status = status;
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+
 	/**
 	 * @return the activityId
 	 */

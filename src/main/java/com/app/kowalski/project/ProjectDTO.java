@@ -31,6 +31,14 @@ public class ProjectDTO extends ResourceSupport implements Serializable {
 
 	public ProjectDTO() {}
 
+	public ProjectDTO(String name, String code, String description, String startDate, String endDate) {
+		this.name = name;
+		this.code = code;
+		this.description = description;
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+
 	public ProjectDTO(Project project) {
 		this.projectId = project.getProjectId();
 		this.name = project.getName();

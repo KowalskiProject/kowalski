@@ -48,6 +48,14 @@ public class Task {
 
 	public Task() {}
 
+	public Task(String name, String description, String status, Date startDate, Date endDate) {
+		this.name = name;
+		this.description = description;
+		this.status = status;
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+
 	public Task convertToTask(TaskDTO taskDTO) {
 		this.name = taskDTO.getName();
 		this.description = taskDTO.getDescription();
@@ -179,4 +187,19 @@ public class Task {
 		return timeRecords;
 	}
 
+	/**
+	 *
+	 * @param timeRecord
+	 */
+	public void addTimeRecord(TimeRecord timeRecord) {
+		this.timeRecords.add(timeRecord);
+	}
+
+	/**
+	 *
+	 * @param timeRecord
+	 */
+	public void removeTimeRecord(TimeRecord timeRecord) {
+		this.timeRecords.remove(timeRecord);
+	}
 }

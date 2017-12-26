@@ -8,6 +8,7 @@ import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.app.kowalski.activity.ActivityDTO;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
@@ -42,6 +43,7 @@ public class KowalskiUserServiceImpl implements KowalskiUserService {
 	}
 
 	@Override
+	@Transactional
 	public KowalskiUserDTO addKowaslkiUser(KowalskiUserDTO kowalskiUserDTO) {
 		// check business rules here
 		KowalskiUser kowalskiUser = new KowalskiUser().convertToKowalskiUser(kowalskiUserDTO);
@@ -50,6 +52,7 @@ public class KowalskiUserServiceImpl implements KowalskiUserService {
 	}
 
 	@Override
+	@Transactional
 	public KowalskiUserDTO editKowaslkiUser(KowalskiUserDTO kowalskiUserDTO) throws KowalskiUserNotFoundException {
 		// check business rules here
 		try {
@@ -63,6 +66,7 @@ public class KowalskiUserServiceImpl implements KowalskiUserService {
 	}
 
 	@Override
+	@Transactional
 	public boolean deleteKowalskiUser(int kowalskiUserId) throws KowalskiUserNotFoundException {
 		try {
 			this.repository.delete(kowalskiUserId);

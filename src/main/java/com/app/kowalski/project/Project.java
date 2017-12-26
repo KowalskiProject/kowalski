@@ -56,6 +56,14 @@ public class Project {
 
 	public Project() {}
 
+	public Project(String name, String code, String description, Date startDate, Date endDate) {
+		this.name = name;
+		this.code = code;
+		this.description = description;
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+
 	/**
 	 * Read all parameters from DTO and save them into project instance
 	 *

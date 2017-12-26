@@ -53,6 +53,14 @@ public class KowalskiUser {
 
 	public KowalskiUser() {}
 
+	public KowalskiUser(String name, String username, String email, String password) {
+		this.name = name;
+		this.username = username;
+		this.email = email;
+		this.password = password;
+		this.creationDate = new Date();
+	}
+
 	public KowalskiUser convertToKowalskiUser(KowalskiUserDTO kowalskiUserDTO) {
 		this.name = kowalskiUserDTO.getName();
 		this.username = kowalskiUserDTO.getUsername();
@@ -236,5 +244,21 @@ public class KowalskiUser {
 	 */
 	public List<TimeRecord> getTimeRecords() {
 		return timeRecords;
+	}
+
+	/**
+	 *
+	 * @param timeRecord
+	 */
+	public void addTimeRecord(TimeRecord timeRecord) {
+		this.timeRecords.add(timeRecord);
+	}
+
+	/**
+	 *
+	 * @param timeRecord
+	 */
+	public void removeTimeRecord(TimeRecord timeRecord) {
+		this.timeRecords.remove(timeRecord);
 	}
 }

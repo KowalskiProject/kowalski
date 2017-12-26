@@ -8,6 +8,7 @@ import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.app.kowalski.activity.Activity;
 import com.app.kowalski.activity.ActivityDTO;
@@ -51,6 +52,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
+	@Transactional
 	public ProjectDTO addProject(ProjectDTO projectDTO) {
 		// check business rules here
 		Project project = new Project().convertToProject(projectDTO);
@@ -59,6 +61,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
+	@Transactional
 	public ProjectDTO editProject(ProjectDTO projectDTO) throws ProjectNotFoundException {
 		// check business rules here
 		try {
@@ -72,6 +75,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
+	@Transactional
 	public boolean deleteProject(int id) throws ProjectNotFoundException {
 		try {
 			this.projectRepository.delete(id);
@@ -97,6 +101,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
+	@Transactional
 	public ActivityDTO addActivityForProject(int projectId, ActivityDTO activityDTO) throws ProjectNotFoundException {
 		Project project = null;
 		Activity activity = null;
@@ -119,6 +124,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
+	@Transactional
 	public boolean deleteActivityFromProject(int projectId, int activityId) throws ProjectNotFoundException {
 		Project project = null;
 		try {
@@ -157,6 +163,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
+	@Transactional
 	public ProjectDTO setAccountableForProject(Integer projectId, Integer kUserId)
 			throws ProjectNotFoundException, KowalskiUserNotFoundException {
 		Project project = null;
@@ -175,15 +182,16 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 
 		project.setAccountable(kowalskiUser);
-		kowalskiUser.addAccountableProject(project);
-
 		project = this.projectRepository.save(project);
+
+		kowalskiUser.addAccountableProject(project);
 		kowalskiUser = this.userRepository.save(kowalskiUser);
 
 		return new ProjectDTO(project);
 	}
 
 	@Override
+	@Transactional
 	public ProjectDTO removeAccountableForProject(Integer projectId) throws ProjectNotFoundException {
 		Project project = null;
 
@@ -219,6 +227,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
+	@Transactional
 	public ProjectDTO addMemberToProject(Integer projectId, Integer kUserId)
 			throws ProjectNotFoundException, KowalskiUserNotFoundException {
 		Project project = null;
@@ -243,6 +252,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
+	@Transactional
 	public ProjectDTO removeMemberFromProject(Integer projectId, Integer kUserId)
 			throws ProjectNotFoundException, KowalskiUserNotFoundException {
 		Project project = null;
