@@ -1,5 +1,7 @@
 package com.app.kowalski.timerecord;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.kowalski.exception.InvalidTimeRecordException;
@@ -28,6 +31,22 @@ public class TimeRecordController {
 	@Autowired
 	TimeRecordController(TimeRecordService trService) {
 		this.trService = trService;
+	}
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ResponseEntity<List<TimeRecordDTO>> getTimeRecords(
+			@RequestParam(value = "userId", required = true) Integer userId,
+			@RequestParam(value = "from", required = false) String startDate,
+			@RequestParam(value = "to", required = false) String endDate) {
+		List<TimeRecordDTO> timeRecords = null;
+
+		try {
+			timeRecords = trService.getAllRecordsForUser(userId, startDate, endDate);
+		} catch (KowalskiUserNotFoundException | InvalidTimeRecordException e) {
+			return new ResponseEntity<List<TimeRecordDTO>>(HttpStatus.NOT_FOUND);
+		}
+
+		return new ResponseEntity<List<TimeRecordDTO>>(timeRecords, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{trId}", method = RequestMethod.GET)

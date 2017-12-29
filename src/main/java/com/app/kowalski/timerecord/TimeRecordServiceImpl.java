@@ -1,6 +1,5 @@
 package com.app.kowalski.timerecord;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
@@ -28,9 +27,6 @@ public class TimeRecordServiceImpl implements TimeRecordService {
 	private final TimeRecordRepository trRepository;
 	private final KowalskiUserRepository userRepository;
 	private final TaskRepository taskRepository;
-
-	private static final SimpleDateFormat sdfReportedDay = new SimpleDateFormat("yyyy-MM-dd");
-	private static final SimpleDateFormat sdfReportedTime = new SimpleDateFormat("HH:mm");
 
 	@Autowired
 	public TimeRecordServiceImpl(TimeRecordRepository trRepository, KowalskiUserRepository userRepository,
@@ -152,8 +148,28 @@ public class TimeRecordServiceImpl implements TimeRecordService {
 	}
 
 	@Override
-	public List<TimeRecordDTO> getAllRecordsForUser(Integer userId) throws KowalskiUserNotFoundException {
+	public List<TimeRecordDTO> getAllRecordsForUser(Integer userId, String startDate, String endDate)
+			throws KowalskiUserNotFoundException, InvalidTimeRecordException {
 		KowalskiUser user = null;
+		LocalDate start = null;
+		LocalDate end = null;
+		List<TimeRecord> results = null;
+
+		if (startDate != null) {
+			try {
+				start = LocalDate.parse(startDate);
+			} catch (DateTimeParseException e) {
+				throw new InvalidTimeRecordException(e.getMessage(), e.getCause());
+			}
+		}
+
+		if (endDate != null) {
+			try {
+				end = LocalDate.parse(endDate);
+			} catch (DateTimeParseException e) {
+				throw new InvalidTimeRecordException(e.getMessage(), e.getCause());
+			}
+		}
 
 		try {
 			user = this.userRepository.getOne(userId);
@@ -161,7 +177,14 @@ public class TimeRecordServiceImpl implements TimeRecordService {
 			throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
 		}
 
-		List<TimeRecord> results = this.trRepository.findByUser(user);
+		if (start == null && end == null)
+			results = this.trRepository.findByUser(user);
+		else if (start != null && end == null)
+			results = this.trRepository.findByUserAndReportedDayGreaterThanEqual(user, start);
+		else if (start == null && end != null)
+			results = this.trRepository.findByUserAndReportedDayLessThanEqual(user, end);
+		else if (start != null && end != null)
+			results = this.trRepository.findByUserAndReportedDayBetween(user, start, end);
 
 		return results.stream()
 				.map(timeRecord -> new TimeRecordDTO(timeRecord))

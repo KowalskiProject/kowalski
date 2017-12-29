@@ -67,11 +67,15 @@ public interface TimeRecordService {
 	/**
 	 * Returns all time records for given user
 	 * @param userId user reference
+	 * @param startDate initial date to get records
+	 * @param endDate final date to get records
 	 * @return List of records
 	 *
 	 * @throws KowalskiUserNotFoundException No user was found in the system
+	 * @throws InvalidTimeRecordException Error handling time record parameters
 	 */
-	public List<TimeRecordDTO> getAllRecordsForUser(Integer userId) throws KowalskiUserNotFoundException;
+	public List<TimeRecordDTO> getAllRecordsForUser(Integer userId, String startDate, String endDate)
+			throws KowalskiUserNotFoundException, InvalidTimeRecordException;
 
 	/**
 	 * Returns all time records for given task
