@@ -1,8 +1,9 @@
 package com.app.kowalski.timerecord;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,7 @@ public class TimeRecordServiceImpl implements TimeRecordService {
 	private final KowalskiUserRepository userRepository;
 	private final TaskRepository taskRepository;
 
+	private static final SimpleDateFormat sdfReportedDay = new SimpleDateFormat("yyyy-MM-dd");
 	private static final SimpleDateFormat sdfReportedTime = new SimpleDateFormat("HH:mm");
 
 	@Autowired
@@ -42,13 +44,20 @@ public class TimeRecordServiceImpl implements TimeRecordService {
 	@Transactional
 	public TimeRecordDTO addTimeRecord(TimeRecordDTO timeRecordDTO)
 			throws KowalskiUserNotFoundException, TaskNotFoundException, InvalidTimeRecordException {
-		Date reportedTimeDate = null;
+		LocalDate reportedDay = null;
+		LocalTime reportedTime = null;
 		KowalskiUser user = null;
 		Task task = null;
 
 		try {
-			reportedTimeDate = sdfReportedTime.parse(timeRecordDTO.getReportedTime());
-		} catch (ParseException e) {
+			reportedDay = LocalDate.parse(timeRecordDTO.getReportedDay());
+		} catch (DateTimeParseException e) {
+			throw new InvalidTimeRecordException(e.getMessage(), e.getCause());
+		}
+
+		try {
+			reportedTime = LocalTime.parse(timeRecordDTO.getReportedTime());
+		} catch (DateTimeParseException e) {
 			throw new InvalidTimeRecordException(e.getMessage(), e.getCause());
 		}
 
@@ -64,14 +73,8 @@ public class TimeRecordServiceImpl implements TimeRecordService {
 			throw new TaskNotFoundException(e.getMessage(), e.getCause());
 		}
 
-		TimeRecord timeRecord = new TimeRecord(user, task, reportedTimeDate, timeRecordDTO.getComment());
+		TimeRecord timeRecord = new TimeRecord(user, task, reportedDay, reportedTime, timeRecordDTO.getComment());
 		timeRecord = this.trRepository.save(timeRecord);
-
-		/*user.addTimeRecord(timeRecord);
-		user = this.userRepository.save(user);
-
-		task.addTimeRecord(timeRecord);
-		task = this.taskRepository.save(task);*/
 
 		return new TimeRecordDTO(timeRecord);
 	}
@@ -94,7 +97,8 @@ public class TimeRecordServiceImpl implements TimeRecordService {
 	public TimeRecordDTO editTimeRecord(Integer trId, TimeRecordDTO timeRecordDTO)
 			throws KowalskiUserNotFoundException, TaskNotFoundException,
 			InvalidTimeRecordException, TimeRecordNotFoundException {
-		Date reportedTimeDate = null;
+		LocalDate reportedDay = null;
+		LocalTime reportedTime = null;
 		TimeRecord timeRecord = null;
 		KowalskiUser user = null;
 		Task task = null;
@@ -118,12 +122,18 @@ public class TimeRecordServiceImpl implements TimeRecordService {
 		}
 
 		try {
-			reportedTimeDate = sdfReportedTime.parse(timeRecordDTO.getReportedTime());
-		} catch (ParseException e) {
+			reportedDay = LocalDate.parse(timeRecordDTO.getReportedDay());
+		} catch (DateTimeParseException e) {
 			throw new InvalidTimeRecordException(e.getMessage(), e.getCause());
 		}
 
-		timeRecord = timeRecord.editTimeRecord(user, task, reportedTimeDate, timeRecordDTO.getComment());
+		try {
+			reportedTime = LocalTime.parse(timeRecordDTO.getReportedTime());
+		} catch (DateTimeParseException e) {
+			throw new InvalidTimeRecordException(e.getMessage(), e.getCause());
+		}
+
+		timeRecord = timeRecord.editTimeRecord(user, task, reportedDay, reportedTime, timeRecordDTO.getComment());
 		timeRecord = this.trRepository.save(timeRecord);
 
 		return new TimeRecordDTO(timeRecord);

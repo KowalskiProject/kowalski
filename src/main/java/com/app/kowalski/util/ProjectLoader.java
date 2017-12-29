@@ -124,21 +124,23 @@ public class ProjectLoader implements ApplicationListener<ContextRefreshedEvent>
 		/*******************************************************************************
 		 * Time records
 		 *******************************************************************************/
-		TimeRecordDTO tr1 = new TimeRecordDTO(k1.getkUserId(), t1.getTaskId(), "08:00", "Comment 1");
-		TimeRecordDTO tr2 = new TimeRecordDTO(k2.getkUserId(), t2.getTaskId(), "08:00", "Comment 2");
-		TimeRecordDTO tr3 = new TimeRecordDTO(k3.getkUserId(), t3.getTaskId(), "08:00", "Comment 3");
-		TimeRecordDTO tr4 = new TimeRecordDTO(k4.getkUserId(), t4.getTaskId(), "08:00", "Comment 4");
+		TimeRecordDTO tr1 = new TimeRecordDTO(k1.getkUserId(), t1.getTaskId(), "2017-12-15", "08:00", "Comment 1");
+		TimeRecordDTO tr2 = new TimeRecordDTO(k2.getkUserId(), t2.getTaskId(), "2017-12-16", "08:00", "Comment 2");
+		TimeRecordDTO tr3 = new TimeRecordDTO(k3.getkUserId(), t3.getTaskId(), "2017-12-17", "08:00", "Comment 3");
+		TimeRecordDTO tr4 = new TimeRecordDTO(k4.getkUserId(), t3.getTaskId(), "2017-12-18", "02:00", "Comment 4");
+		TimeRecordDTO tr4a = new TimeRecordDTO(k4.getkUserId(), t4.getTaskId(), "2017-12-18", "06:00", "Comment 4a");
 
-		TimeRecordDTO tr5 = new TimeRecordDTO(k1.getkUserId(), t1.getTaskId(), "08:00", "Comment 5");
-		TimeRecordDTO tr6 = new TimeRecordDTO(k2.getkUserId(), t2.getTaskId(), "08:00", "Comment 6");
-		TimeRecordDTO tr7 = new TimeRecordDTO(k3.getkUserId(), t3.getTaskId(), "08:00", "Comment 7");
-		TimeRecordDTO tr8 = new TimeRecordDTO(k4.getkUserId(), t4.getTaskId(), "08:00", "Comment 8");
+		TimeRecordDTO tr5 = new TimeRecordDTO(k1.getkUserId(), t1.getTaskId(), "2017-12-19", "08:00", "Comment 5");
+		TimeRecordDTO tr6 = new TimeRecordDTO(k2.getkUserId(), t2.getTaskId(), "2017-12-20", "08:00", "Comment 6");
+		TimeRecordDTO tr7 = new TimeRecordDTO(k3.getkUserId(), t3.getTaskId(), "2017-12-21", "08:00", "Comment 7");
+		TimeRecordDTO tr8 = new TimeRecordDTO(k4.getkUserId(), t4.getTaskId(), "2017-12-22", "08:00", "Comment 8");
 
 		try {
 			tr1 = trService.addTimeRecord(tr1);
 			tr2 = trService.addTimeRecord(tr2);
 			tr3 = trService.addTimeRecord(tr3);
 			tr4 = trService.addTimeRecord(tr4);
+			tr4a = trService.addTimeRecord(tr4a);
 			tr5 = trService.addTimeRecord(tr5);
 			tr6 = trService.addTimeRecord(tr6);
 			tr7 = trService.addTimeRecord(tr7);

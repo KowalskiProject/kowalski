@@ -2,6 +2,7 @@ package com.app.kowalski.timerecord;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 
 import org.springframework.hateoas.ResourceSupport;
 
@@ -20,11 +21,13 @@ public class TimeRecordDTO extends ResourceSupport implements Serializable {
 	private Integer userId;
 	private Integer taskId;
 	private String createdDate;
+	private String reportedDay;
 	private String reportedTime;
 	private String comment;
 
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	private static final SimpleDateFormat sdfReportedTime = new SimpleDateFormat("yyyy-MM-dd");
+	private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
 	public TimeRecordDTO() {}
 
@@ -33,13 +36,15 @@ public class TimeRecordDTO extends ResourceSupport implements Serializable {
 		this.userId = timeRecord.getUser().getkUserId();
 		this.taskId = timeRecord.getTask().getTaskId();
 		this.createdDate = sdf.format(timeRecord.getCreateDate());
-		this.reportedTime = sdfReportedTime.format(timeRecord.getReportedTime());
+		this.reportedDay = timeRecord.getReportedDay().format(dateFormatter);
+		this.reportedTime = timeRecord.getReportedTime().format(timeFormatter);
 		this.comment = timeRecord.getComment();
 	}
 
-	public TimeRecordDTO(Integer userId, Integer taskId, String reportedTime, String comment) {
+	public TimeRecordDTO(Integer userId, Integer taskId, String reportedDay, String reportedTime, String comment) {
 		this.userId = userId;
 		this.taskId = taskId;
+		this.reportedDay = reportedDay;
 		this.reportedTime = reportedTime;
 		this.comment = comment;
 	}
@@ -98,6 +103,20 @@ public class TimeRecordDTO extends ResourceSupport implements Serializable {
 	 */
 	public void setCreatedDate(String createdDate) {
 		this.createdDate = createdDate;
+	}
+
+	/**
+	 * @return the reportedDay
+	 */
+	public String getReportedDay() {
+		return reportedDay;
+	}
+
+	/**
+	 * @param reportedDay the reportedDay to set
+	 */
+	public void setReportedDay(String reportedDay) {
+		this.reportedDay = reportedDay;
 	}
 
 	/**

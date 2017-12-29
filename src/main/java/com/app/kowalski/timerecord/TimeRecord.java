@@ -1,5 +1,7 @@
 package com.app.kowalski.timerecord;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -31,23 +33,27 @@ public class TimeRecord {
     private Task task;
 
 	private Date createDate;
-	private Date reportedTime;
+	private LocalDate reportedDay;
+	private LocalTime reportedTime;
 	private String comment;
 
 	public TimeRecord() {}
 
-	public TimeRecord(KowalskiUser user, Task task, Date reportedTime, String comment) {
+	public TimeRecord(KowalskiUser user, Task task, LocalDate reportedDay, LocalTime reportedTime, String comment) {
 		this.user = user;
 		this.task = task;
 		this.createDate = new Date();
+		this.reportedDay = reportedDay;
 		this.reportedTime = reportedTime;
 		this.comment = comment;
 	}
 
-	public TimeRecord editTimeRecord(KowalskiUser user, Task task, Date reportedTime, String comment) {
+	public TimeRecord editTimeRecord(KowalskiUser user, Task task, LocalDate reportedDay, LocalTime reportedTime,
+			String comment) {
 		this.user = user;
 		this.task = task;
 		this.createDate = new Date();
+		this.reportedDay = reportedDay;
 		this.reportedTime = reportedTime;
 		this.comment = comment;
 
@@ -111,16 +117,30 @@ public class TimeRecord {
 	}
 
 	/**
+	 * @return the reportedDay
+	 */
+	public LocalDate getReportedDay() {
+		return reportedDay;
+	}
+
+	/**
+	 * @param reportedDay the reportedDay to set
+	 */
+	public void setReportedDay(LocalDate reportedDay) {
+		this.reportedDay = reportedDay;
+	}
+
+	/**
 	 * @return the reportedTime
 	 */
-	public Date getReportedTime() {
+	public LocalTime getReportedTime() {
 		return reportedTime;
 	}
 
 	/**
 	 * @param reportedTime the reportedTime to set
 	 */
-	public void setReportedTime(Date reportedTime) {
+	public void setReportedTime(LocalTime reportedTime) {
 		this.reportedTime = reportedTime;
 	}
 
