@@ -20,6 +20,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.app.kowalski.activitygroup.ActivityGroup;
 import com.app.kowalski.project.Project;
 import com.app.kowalski.task.Task;
 import com.app.kowalski.user.KowalskiUser;
@@ -56,6 +57,14 @@ public class Activity {
     	inverseJoinColumns={@JoinColumn(name = "kowalskiuser_kUserId")}
     )
     Set<KowalskiUser> members = new HashSet<>();
+
+	@ManyToMany(cascade=CascadeType.ALL)
+    @JoinTable(
+    	name="Activity_ActivityGroup",
+    	joinColumns={@JoinColumn(name = "activity_activityId")},
+    	inverseJoinColumns={@JoinColumn(name = "activitygroup_activityGroupId")}
+    )
+    Set<ActivityGroup> groups = new HashSet<>();
 
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -242,6 +251,30 @@ public class Activity {
 	 */
 	public void removeMember(KowalskiUser kowalskiUser) {
 		this.members.remove(kowalskiUser);
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public Set<ActivityGroup> getGroups() {
+		return this.groups;
+	}
+
+	/**
+	 *
+	 * @param activityGroup
+	 */
+	public void addActivityGroup(ActivityGroup activityGroup) {
+		this.groups.add(activityGroup);
+	}
+
+	/**
+	 *
+	 * @param activityGroup
+	 */
+	public void removeActivityGroup(ActivityGroup activityGroup) {
+		this.groups.remove(activityGroup);
 	}
 
 }
