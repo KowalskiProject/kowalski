@@ -1,5 +1,6 @@
 package com.app.kowalski.user;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -12,15 +13,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.kowalski.activity.ActivityDTO;
 import com.app.kowalski.activity.ActivityService;
+import com.app.kowalski.exception.InvalidTimeRecordException;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.project.ProjectDTO;
 import com.app.kowalski.project.ProjectService;
 import com.app.kowalski.task.TaskDTO;
 import com.app.kowalski.task.TaskService;
+import com.app.kowalski.timerecord.TimeRecordDTO;
+import com.app.kowalski.timerecord.TimeRecordService;
 import com.app.kowalski.util.HateoasLinksBuilder;
 
 @RestController
@@ -33,14 +38,19 @@ public class KowalskiUserController {
 	private ProjectService projectService;
 	private ActivityService activityService;
 	private TaskService taskService;
+	private TimeRecordService trService;
+
+	public static final LocalDate today = LocalDate.now();
+	public static final LocalDate oneWeekLater = today.minusDays(7);
 
 	@Autowired
 	KowalskiUserController(KowalskiUserService kowalskiUserService, ProjectService projectService,
-			ActivityService activityService, TaskService taskService) {
+			ActivityService activityService, TaskService taskService, TimeRecordService trService) {
 		this.kowalskiUserService = kowalskiUserService;
 		this.projectService = projectService;
 		this.activityService = activityService;
 		this.taskService = taskService;
+		this.trService = trService;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -152,6 +162,22 @@ public class KowalskiUserController {
 			HateoasLinksBuilder.createHateoasForProject(projectDTO);
 
 		return new ResponseEntity<Set<ProjectDTO>>(projectsDTO, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/{kUserId}/timerecords", method = RequestMethod.GET)
+	public ResponseEntity<List<TimeRecordDTO>> getTimeRecords(
+			@PathVariable int kUserId,
+			@RequestParam(value = "from", required = false) String startDate,
+			@RequestParam(value = "to", required = false) String endDate) {
+		List<TimeRecordDTO> timeRecords = null;
+
+		try {
+			timeRecords = trService.getAllRecordsForUser(kUserId, startDate, endDate);
+		} catch (KowalskiUserNotFoundException | InvalidTimeRecordException e) {
+			return new ResponseEntity<List<TimeRecordDTO>>(HttpStatus.NOT_FOUND);
+		}
+
+		return new ResponseEntity<List<TimeRecordDTO>>(timeRecords, HttpStatus.OK);
 	}
 
 }

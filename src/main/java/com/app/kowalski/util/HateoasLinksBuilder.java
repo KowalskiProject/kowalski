@@ -101,6 +101,11 @@ public class HateoasLinksBuilder {
 		ResponseEntity<Set<ProjectDTO>> projectsLinkBuilder = methodOn(KowalskiUserController.class).getProjects(kUserId);
 		Link projectsLink = linkTo(projectsLinkBuilder).withRel("projects");
 		kowalskiUserDTO.add(projectsLink);
+
+		ResponseEntity<List<TimeRecordDTO>> trLinkBuilder = methodOn(KowalskiUserController.class).getTimeRecords(
+				kUserId, KowalskiUserController.today.toString(), KowalskiUserController.oneWeekLater.toString());
+		Link trLink = linkTo(trLinkBuilder).withRel("timerecords");
+		kowalskiUserDTO.add(trLink);
 	}
 
 	public static void createHateoasForTimeRecord(TimeRecordDTO timeRecordDTO) {
