@@ -80,9 +80,13 @@ public interface TimeRecordService {
 	/**
 	 * Returns all time records for given task
 	 * @param taskId task reference
+	 * @param startDate initial date to get records
+	 * @param endDate final date to get records
 	 * @return List of records
 	 *
 	 * @throws TaskNotFoundException No task was found in the system
+	 * @throws InvalidTimeRecordException Error handling time record parameters
 	 */
-	public List<TimeRecordDTO> getAllRecordsForTask(Integer taskId) throws TaskNotFoundException;
+	public List<TimeRecordDTO> getAllRecordsForTask(Integer taskId, String startDate, String endDate)
+			throws TaskNotFoundException, InvalidTimeRecordException;
 }

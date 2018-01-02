@@ -16,4 +16,8 @@ public interface TimeRecordRepository extends JpaRepository<TimeRecord, Integer>
 	List<TimeRecord> findByUserAndReportedDayBetween(KowalskiUser user, LocalDate start, LocalDate end);
 
 	List<TimeRecord> findByTask(Task task);
+	List<TimeRecord> findByTaskAndReportedDayGreaterThanEqual(Task task, LocalDate start);
+	List<TimeRecord> findByTaskAndReportedDayLessThanEqual(Task task, LocalDate end);
+	List<TimeRecord> findByTaskAndReportedDayBetween(Task task, LocalDate start, LocalDate end);
+
 }
