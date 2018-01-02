@@ -192,8 +192,28 @@ public class TimeRecordServiceImpl implements TimeRecordService {
 	}
 
 	@Override
-	public List<TimeRecordDTO> getAllRecordsForTask(Integer taskId) throws TaskNotFoundException {
+	public List<TimeRecordDTO> getAllRecordsForTask(Integer taskId, String startDate, String endDate)
+			throws TaskNotFoundException, InvalidTimeRecordException {
 		Task task = null;
+		LocalDate start = null;
+		LocalDate end = null;
+		List<TimeRecord> results = null;
+
+		if (startDate != null) {
+			try {
+				start = LocalDate.parse(startDate);
+			} catch (DateTimeParseException e) {
+				throw new InvalidTimeRecordException(e.getMessage(), e.getCause());
+			}
+		}
+
+		if (endDate != null) {
+			try {
+				end = LocalDate.parse(endDate);
+			} catch (DateTimeParseException e) {
+				throw new InvalidTimeRecordException(e.getMessage(), e.getCause());
+			}
+		}
 
 		try {
 			task = this.taskRepository.getOne(taskId);
@@ -201,7 +221,14 @@ public class TimeRecordServiceImpl implements TimeRecordService {
 			throw new TaskNotFoundException(e.getMessage(), e.getCause());
 		}
 
-		List<TimeRecord> results = this.trRepository.findByTask(task);
+		if (start == null && end == null)
+			results = this.trRepository.findByTask(task);
+		else if (start != null && end == null)
+			results = this.trRepository.findByTaskAndReportedDayGreaterThanEqual(task, start);
+		else if (start == null && end != null)
+			results = this.trRepository.findByTaskAndReportedDayLessThanEqual(task, end);
+		else if (start != null && end != null)
+			results = this.trRepository.findByTaskAndReportedDayBetween(task, start, end);
 
 		return results.stream()
 				.map(timeRecord -> new TimeRecordDTO(timeRecord))
