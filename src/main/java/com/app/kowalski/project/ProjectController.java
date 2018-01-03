@@ -5,14 +5,15 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import io.swagger.annotations.Api;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.app.kowalski.activity.ActivityDTO;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
@@ -21,7 +22,11 @@ import com.app.kowalski.user.KowalskiUserDTO;
 import com.app.kowalski.util.HateoasLinksBuilder;
 
 @RestController
-@RequestMapping("/projects")
+@RequestMapping(path = "/projects" ,
+		produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+)
+//This annotation is needed due Apache Shiro
+@Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ProjectController {
 
 	@Autowired
@@ -33,7 +38,8 @@ public class ProjectController {
 		this.projectService = projectService;
 	}
 
-	@RequestMapping(method = RequestMethod.GET)
+	@GetMapping
+	@RequiresPermissions("apis:read")
 	public ResponseEntity<List<ProjectDTO>> getProjects() {
 		List<ProjectDTO> projectsDTO = this.projectService.getProjects();
 
@@ -43,7 +49,8 @@ public class ProjectController {
 		return new ResponseEntity<List<ProjectDTO>>(projectsDTO, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{projectId}", method = RequestMethod.GET)
+	@GetMapping(value = "/{projectId}")
+	@RequiresPermissions("apis:read")
 	public ResponseEntity<ProjectDTO> getProjectById(@PathVariable int projectId) {
 		ProjectDTO projectDTO = null;
 
@@ -58,7 +65,8 @@ public class ProjectController {
 		return new ResponseEntity<ProjectDTO>(projectDTO, HttpStatus.OK);
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
+	@PostMapping
+    @RequiresPermissions("apis:read")
 	public ResponseEntity<ProjectDTO> addProject(@RequestBody ProjectDTO projectDTO) {
 		projectDTO = this.projectService.addProject(projectDTO);
 		HateoasLinksBuilder.createHateoasForProject(projectDTO);
@@ -66,7 +74,8 @@ public class ProjectController {
 		return new ResponseEntity<ProjectDTO>(projectDTO, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{projectId}", method = RequestMethod.PUT)
+	@PostMapping(value = "/{projectId}")
+	@RequiresPermissions("apis:write")
 	public ResponseEntity<ProjectDTO> editProject(@PathVariable("id") int id, @RequestBody ProjectDTO projectDTO) {
 		projectDTO.setProjectId(id);
 
@@ -81,7 +90,8 @@ public class ProjectController {
 		return new ResponseEntity<ProjectDTO>(projectDTO, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{projectId}", method = RequestMethod.DELETE)
+	@DeleteMapping(value = "/{projectId}")
+	@RequiresPermissions("apis:write")
 	public ResponseEntity<String> deleteProject(@PathVariable("id") int projectId) {
 		try {
 			boolean ret = this.projectService.deleteProject(projectId);
@@ -92,7 +102,8 @@ public class ProjectController {
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{projectId}/activities", method = RequestMethod.GET)
+	@GetMapping(value = "/{projectId}/activities")
+	@RequiresPermissions("apis:read")
 	public ResponseEntity<List<ActivityDTO>> getActivitiesForProject(@PathVariable int projectId) {
 		List<ActivityDTO> activitiesDTO = null;
 
@@ -108,7 +119,8 @@ public class ProjectController {
 		return new ResponseEntity<List<ActivityDTO>>(activitiesDTO, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{projectId}/activities", method = RequestMethod.POST)
+	@PostMapping(value = "/{projectId}/activities")
+	@RequiresPermissions("apis:write")
 	public ResponseEntity<ActivityDTO> addActivityForProject(@PathVariable int projectId, @RequestBody ActivityDTO activityDTO) {
 		try {
 			activityDTO = this.projectService.addActivityForProject(projectId, activityDTO);
@@ -121,7 +133,8 @@ public class ProjectController {
 		return new ResponseEntity<ActivityDTO>(activityDTO, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{projectId}/activities/{activityId}", method = RequestMethod.DELETE)
+	@DeleteMapping(value = "/{projectId}/activities/{activityId}")
+	@RequiresPermissions("apis:write")
 	public ResponseEntity<ActivityDTO> deleteActivityForProject(@PathVariable int projectId, @PathVariable int activityId) {
 		try {
 			boolean ret = this.projectService.deleteActivityFromProject(projectId, activityId);
@@ -132,7 +145,8 @@ public class ProjectController {
 		return new ResponseEntity<ActivityDTO>(HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{projectId}/accountable", method = RequestMethod.GET)
+	@GetMapping(value = "/{projectId}/accountable")
+	@RequiresPermissions("apis:read")
 	public ResponseEntity<KowalskiUserDTO> getAccountableForProject(@PathVariable int projectId) {
 		KowalskiUserDTO kowalskiUserDTO = null;
 
@@ -150,7 +164,8 @@ public class ProjectController {
 		return new ResponseEntity<KowalskiUserDTO>(kowalskiUserDTO, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{projectId}/accountable", method = RequestMethod.POST)
+	@PostMapping(value = "/{projectId}/accountable")
+	@RequiresPermissions("apis:write")
 	public ResponseEntity<ProjectDTO> setAccountableForProject(@PathVariable Integer projectId, @RequestBody Integer kUserId) {
 		ProjectDTO projectDTO = null;
 
@@ -164,7 +179,8 @@ public class ProjectController {
 		return new ResponseEntity<ProjectDTO>(projectDTO, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{projectId}/accountable", method = RequestMethod.DELETE)
+	@DeleteMapping(value = "/{projectId}/accountable")
+	@RequiresPermissions("apis:write")
 	public ResponseEntity<ProjectDTO> removeAccountableForProject(@PathVariable Integer projectId) {
 		ProjectDTO projectDTO = null;
 
@@ -178,7 +194,8 @@ public class ProjectController {
 		return new ResponseEntity<ProjectDTO>(projectDTO, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{projectId}/members", method = RequestMethod.GET)
+	@GetMapping(value = "/{projectId}/members")
+	@RequiresPermissions("apis:read")
 	public ResponseEntity<Set<KowalskiUserDTO>> getProjectMembers(@PathVariable int projectId) {
 		Set<KowalskiUserDTO> projectUsersDTO = null;
 
@@ -194,7 +211,8 @@ public class ProjectController {
 		return new ResponseEntity<Set<KowalskiUserDTO>>(projectUsersDTO, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{projectId}/members", method = RequestMethod.POST)
+	@PostMapping(value = "/{projectId}/members")
+	@RequiresPermissions("apis:write")
 	public ResponseEntity<ProjectDTO> addMemberToProject(@PathVariable Integer projectId, @RequestBody Integer kUserId) {
 		ProjectDTO projectDTO = null;
 
@@ -208,7 +226,8 @@ public class ProjectController {
 		return new ResponseEntity<ProjectDTO>(projectDTO, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{projectId}/members/{userId}", method = RequestMethod.DELETE)
+	@DeleteMapping(value = "/{projectId}/members/{userId}")
+	@RequiresPermissions("apis:write")
 	public ResponseEntity<ProjectDTO> removeMemberFromProject(@PathVariable Integer projectId, @PathVariable Integer userId) {
 		ProjectDTO projectDTO = null;
 
