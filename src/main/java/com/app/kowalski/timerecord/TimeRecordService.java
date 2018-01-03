@@ -6,6 +6,7 @@ import com.app.kowalski.exception.InvalidTimeRecordException;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.exception.TaskNotFoundException;
 import com.app.kowalski.exception.TimeRecordNotFoundException;
+import com.app.kowalski.timerecordreview.TimeRecordReviewDTO;
 
 /**
  * Interface to expose allowed methods related to time records.
@@ -89,4 +90,25 @@ public interface TimeRecordService {
 	 */
 	public List<TimeRecordDTO> getAllRecordsForTask(Integer taskId, String startDate, String endDate)
 			throws TaskNotFoundException, InvalidTimeRecordException;
+
+	/**
+	 * Returns all reviews associated to given time record
+	 * @param trId time record reference
+	 * @return List of reviews
+	 *
+	 * @throws TimeRecordNotFoundException No time record was found in the system
+	 */
+	public List<TimeRecordReviewDTO> getTimeRecordReviews(Integer trId) throws TimeRecordNotFoundException;
+
+	/**
+	 * Includes a new review for given time record
+	 * @param trId time record reference
+	 * @param trReviewDTO time record review data
+	 * @return time record review data
+	 *
+	 * @throws TimeRecordNotFoundException No time record was found in the system
+	 * @throws KowalskiUserNotFoundException No user was found in the system
+	 */
+	public TimeRecordReviewDTO addTimeRecordReview(Integer trId, TimeRecordReviewDTO trReviewDTO)
+			throws TimeRecordNotFoundException, KowalskiUserNotFoundException;
 }

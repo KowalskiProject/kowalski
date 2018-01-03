@@ -1,5 +1,7 @@
 package com.app.kowalski.timerecord;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import com.app.kowalski.exception.InvalidTimeRecordException;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.exception.TaskNotFoundException;
 import com.app.kowalski.exception.TimeRecordNotFoundException;
+import com.app.kowalski.timerecordreview.TimeRecordReviewDTO;
 import com.app.kowalski.util.HateoasLinksBuilder;
 
 @RestController
@@ -80,6 +83,19 @@ public class TimeRecordController {
 		}
 
 		return new ResponseEntity<String>(HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/{trId}/reviews", method = RequestMethod.GET)
+	public ResponseEntity<List<TimeRecordReviewDTO>> getTimeRecordReviews(@PathVariable Integer trId) {
+		List<TimeRecordReviewDTO> reviews = null;
+
+		try {
+			reviews = this.trService.getTimeRecordReviews(trId);
+		} catch (TimeRecordNotFoundException e) {
+			return new ResponseEntity<List<TimeRecordReviewDTO>>(HttpStatus.NOT_FOUND);
+		}
+
+		return new ResponseEntity<List<TimeRecordReviewDTO>>(reviews, HttpStatus.OK);
 	}
 
 }
