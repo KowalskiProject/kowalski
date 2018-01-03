@@ -1,4 +1,4 @@
-package com.app.kowalski.timerecord;
+package com.app.kowalski.da.entities;
 
 public enum TimeRecordState {
 	NEW,

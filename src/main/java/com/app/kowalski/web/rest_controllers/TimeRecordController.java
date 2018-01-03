@@ -21,7 +21,7 @@ import com.app.kowalski.exception.InvalidTimeRecordException;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.exception.TaskNotFoundException;
 import com.app.kowalski.exception.TimeRecordNotFoundException;
-import com.app.kowalski.timerecordreview.TimeRecordReviewDTO;
+import com.app.kowalski.dto.TimeRecordReviewDTO;
 import com.app.kowalski.util.HateoasLinksBuilder;
 
 @RestController

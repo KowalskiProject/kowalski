@@ -9,8 +9,10 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 
 import com.app.kowalski.da.entities.TimeRecord;
+import com.app.kowalski.da.entities.TimeRecordReview;
 import com.app.kowalski.da.repositories.TimeRecordRepository;
 import com.app.kowalski.dto.TimeRecordDTO;
+import com.app.kowalski.dto.TimeRecordReviewDTO;
 import com.app.kowalski.services.TimeRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
