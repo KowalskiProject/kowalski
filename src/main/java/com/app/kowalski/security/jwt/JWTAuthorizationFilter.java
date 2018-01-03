@@ -1,4 +1,4 @@
-package com.app.kowalski.JWTSupport;
+package com.app.kowalski.security.jwt;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;

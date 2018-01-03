@@ -2,9 +2,9 @@ package com.app.kowalski.config;
 
 
 
-import com.app.kowalski.JWTSupport.JWTAuthenticationFilter;
-import com.app.kowalski.JWTSupport.JWTAuthorizationFilter;
-import com.app.kowalski.JWTSupport.JWTHelperService;
+import com.app.kowalski.security.jwt.JWTAuthenticationFilter;
+import com.app.kowalski.security.jwt.JWTAuthorizationFilter;
+import com.app.kowalski.security.jwt.JWTHelperService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

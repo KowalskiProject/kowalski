@@ -1,4 +1,4 @@
-package com.app.kowalski.JWTSupport;
+package com.app.kowalski.security.jwt;
 
 public class AccountCredentials {
     private String username;
