@@ -2,7 +2,9 @@ package com.app.kowalski.timerecord;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -11,9 +13,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.app.kowalski.task.Task;
+import com.app.kowalski.timerecordreview.TimeRecordReview;
 import com.app.kowalski.user.KowalskiUser;
 
 @Entity
@@ -24,11 +28,11 @@ public class TimeRecord {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer trId;
 
-	@ManyToOne(cascade=CascadeType.ALL)
+	@ManyToOne
     @JoinColumn(name="kowalskiuser_kUserId")
     private KowalskiUser user;
 
-	@ManyToOne(cascade=CascadeType.ALL)
+	@ManyToOne
     @JoinColumn(name="task_taskId")
     private Task task;
 
@@ -36,6 +40,11 @@ public class TimeRecord {
 	private LocalDate reportedDay;
 	private LocalTime reportedTime;
 	private String comment;
+
+	private TimeRecordState state;
+
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
+	private List<TimeRecordReview> reviews = new ArrayList<TimeRecordReview>();
 
 	public TimeRecord() {}
 
@@ -46,6 +55,7 @@ public class TimeRecord {
 		this.reportedDay = reportedDay;
 		this.reportedTime = reportedTime;
 		this.comment = comment;
+		this.state = TimeRecordState.NEW;
 	}
 
 	public TimeRecord editTimeRecord(KowalskiUser user, Task task, LocalDate reportedDay, LocalTime reportedTime,
@@ -156,5 +166,34 @@ public class TimeRecord {
 	 */
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	/**
+	 * @return the state
+	 */
+	public TimeRecordState getState() {
+		return state;
+	}
+
+	/**
+	 * @param state the state to set
+	 */
+	public void setState(TimeRecordState state) {
+		this.state = state;
+	}
+
+	/**
+	 * @return the reviews
+	 */
+	public List<TimeRecordReview> getReviews() {
+		return reviews;
+	}
+
+	/**
+	 *
+	 * @param review
+	 */
+	public void addReview(TimeRecordReview review) {
+		this.reviews.add(review);
 	}
 }

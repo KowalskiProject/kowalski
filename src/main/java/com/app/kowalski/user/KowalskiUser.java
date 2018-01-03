@@ -1,9 +1,7 @@
 package com.app.kowalski.user;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -11,12 +9,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.app.kowalski.activity.Activity;
 import com.app.kowalski.project.Project;
-import com.app.kowalski.timerecord.TimeRecord;
 
 @Entity
 @Table(name = "kowalskiuser")
@@ -37,9 +33,6 @@ public class KowalskiUser {
 
 	@ManyToMany(mappedBy = "members")
     private Set<Activity> activities = new HashSet<>();
-
-	@OneToMany
-    private List<TimeRecord> timeRecords = new ArrayList<TimeRecord>();
 
 	public KowalskiUser() {}
 
@@ -157,26 +150,4 @@ public class KowalskiUser {
 		return this.activities;
 	}
 
-	/**
-	 * @return the timeRecords
-	 */
-	public List<TimeRecord> getTimeRecords() {
-		return timeRecords;
-	}
-
-	/**
-	 *
-	 * @param timeRecord
-	 */
-	public void addTimeRecord(TimeRecord timeRecord) {
-		this.timeRecords.add(timeRecord);
-	}
-
-	/**
-	 *
-	 * @param timeRecord
-	 */
-	public void removeTimeRecord(TimeRecord timeRecord) {
-		this.timeRecords.remove(timeRecord);
-	}
 }

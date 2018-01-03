@@ -18,6 +18,8 @@ import com.app.kowalski.exception.TaskNotFoundException;
 import com.app.kowalski.exception.TimeRecordNotFoundException;
 import com.app.kowalski.task.Task;
 import com.app.kowalski.task.TaskRepository;
+import com.app.kowalski.timerecordreview.TimeRecordReview;
+import com.app.kowalski.timerecordreview.TimeRecordReviewDTO;
 import com.app.kowalski.user.KowalskiUser;
 import com.app.kowalski.user.KowalskiUserRepository;
 
@@ -70,7 +72,7 @@ public class TimeRecordServiceImpl implements TimeRecordService {
 		}
 
 		TimeRecord timeRecord = new TimeRecord(user, task, reportedDay, reportedTime, timeRecordDTO.getComment());
-		timeRecord = this.trRepository.save(timeRecord);
+		timeRecord = this.trRepository.saveAndFlush(timeRecord);
 
 		return new TimeRecordDTO(timeRecord);
 	}
@@ -233,6 +235,55 @@ public class TimeRecordServiceImpl implements TimeRecordService {
 		return results.stream()
 				.map(timeRecord -> new TimeRecordDTO(timeRecord))
 				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<TimeRecordReviewDTO> getTimeRecordReviews(Integer trId) throws TimeRecordNotFoundException {
+		TimeRecord timeRecord = null;
+
+		try {
+			timeRecord = this.trRepository.getOne(trId);
+		} catch (EntityNotFoundException e) {
+			throw new TimeRecordNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		return timeRecord.getReviews().stream()
+				.map(timeRecordReview -> new TimeRecordReviewDTO(timeRecordReview))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	@Transactional
+	public TimeRecordReviewDTO addTimeRecordReview(Integer trId, TimeRecordReviewDTO trReviewDTO)
+			throws TimeRecordNotFoundException, KowalskiUserNotFoundException {
+		TimeRecord timeRecord = null;
+		KowalskiUser reviewer = null;
+
+		try {
+			timeRecord = this.trRepository.getOne(trId);
+			trReviewDTO.setPreviousState(timeRecord.getState().toString());
+		} catch (EntityNotFoundException e) {
+			throw new TimeRecordNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		try {
+			reviewer = this.userRepository.getOne(trReviewDTO.getReviewerId());
+		} catch (EntityNotFoundException e) {
+			throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
+		}
+
+		TimeRecordReview trReview = new TimeRecordReview(trReviewDTO, reviewer);
+		trReview.setTimeRecord(timeRecord);
+
+		timeRecord.addReview(trReview);
+		timeRecord.setState(trReview.getNextState());
+
+		timeRecord = this.trRepository.saveAndFlush(timeRecord);
+
+		// update time record review id
+		trReview = timeRecord.getReviews().get(timeRecord.getReviews().size() - 1);
+
+		return new TimeRecordReviewDTO(trReview);
 	}
 
 }

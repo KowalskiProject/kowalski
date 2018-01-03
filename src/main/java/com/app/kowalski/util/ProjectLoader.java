@@ -12,12 +12,14 @@ import com.app.kowalski.exception.InvalidTimeRecordException;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.exception.ProjectNotFoundException;
 import com.app.kowalski.exception.TaskNotFoundException;
+import com.app.kowalski.exception.TimeRecordNotFoundException;
 import com.app.kowalski.project.ProjectDTO;
 import com.app.kowalski.project.ProjectService;
 import com.app.kowalski.task.TaskDTO;
 import com.app.kowalski.task.TaskService;
 import com.app.kowalski.timerecord.TimeRecordDTO;
 import com.app.kowalski.timerecord.TimeRecordService;
+import com.app.kowalski.timerecordreview.TimeRecordReviewDTO;
 import com.app.kowalski.user.KowalskiUserDTO;
 import com.app.kowalski.user.KowalskiUserService;
 
@@ -149,6 +151,21 @@ public class ProjectLoader implements ApplicationListener<ContextRefreshedEvent>
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		/*******************************************************************************
+		 * Time record reviews
+		 *******************************************************************************/
+		TimeRecordReviewDTO trReview1 = new TimeRecordReviewDTO("approved", "Sem comentarios", k4.getkUserId());
+		TimeRecordReviewDTO trReview2 = new TimeRecordReviewDTO("rejected", "Apontamento invalido", k4.getkUserId());
+
+		try {
+			trReview1 = trService.addTimeRecordReview(tr1.getTrId(), trReview1);
+			trReview2 = trService.addTimeRecordReview(tr2.getTrId(), trReview2);
+		} catch (TimeRecordNotFoundException | KowalskiUserNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 }

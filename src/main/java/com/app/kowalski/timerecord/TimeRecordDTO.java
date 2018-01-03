@@ -24,6 +24,7 @@ public class TimeRecordDTO extends ResourceSupport implements Serializable {
 	private String reportedDay;
 	private String reportedTime;
 	private String comment;
+	private String state;
 
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -32,13 +33,14 @@ public class TimeRecordDTO extends ResourceSupport implements Serializable {
 	public TimeRecordDTO() {}
 
 	public TimeRecordDTO(TimeRecord timeRecord) {
-		this.setTrId(timeRecord.getTrId());
+		this.trId = timeRecord.getTrId();
 		this.userId = timeRecord.getUser().getkUserId();
 		this.taskId = timeRecord.getTask().getTaskId();
 		this.createdDate = sdf.format(timeRecord.getCreateDate());
 		this.reportedDay = timeRecord.getReportedDay().format(dateFormatter);
 		this.reportedTime = timeRecord.getReportedTime().format(timeFormatter);
 		this.comment = timeRecord.getComment();
+		this.state = timeRecord.getState().toString();
 	}
 
 	public TimeRecordDTO(Integer userId, Integer taskId, String reportedDay, String reportedTime, String comment) {
@@ -145,6 +147,20 @@ public class TimeRecordDTO extends ResourceSupport implements Serializable {
 	 */
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	/**
+	 * @return the state
+	 */
+	public String getState() {
+		return state;
+	}
+
+	/**
+	 * @param state the state to set
+	 */
+	public void setState(String state) {
+		this.state = state;
 	}
 
 }
