@@ -1,4 +1,4 @@
-package com.app.kowalski.JWTSupport;
+package com.app.kowalski.security.jwt;
 
 import com.google.gson.Gson;
 import io.jsonwebtoken.Claims;
@@ -12,9 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;

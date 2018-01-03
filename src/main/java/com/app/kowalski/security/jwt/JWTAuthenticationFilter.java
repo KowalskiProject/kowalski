@@ -1,4 +1,4 @@
-package com.app.kowalski.JWTSupport;
+package com.app.kowalski.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.authentication.AuthenticationManager;
