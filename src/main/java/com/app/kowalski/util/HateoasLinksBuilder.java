@@ -9,16 +9,16 @@ import java.util.Set;
 import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
 
-import com.app.kowalski.activity.ActivityController;
-import com.app.kowalski.activity.ActivityDTO;
-import com.app.kowalski.project.ProjectController;
-import com.app.kowalski.project.ProjectDTO;
-import com.app.kowalski.task.TaskController;
-import com.app.kowalski.task.TaskDTO;
-import com.app.kowalski.timerecord.TimeRecordController;
-import com.app.kowalski.timerecord.TimeRecordDTO;
-import com.app.kowalski.user.KowalskiUserController;
-import com.app.kowalski.user.KowalskiUserDTO;
+import com.app.kowalski.web.rest_controllers.ActivityController;
+import com.app.kowalski.dto.ActivityDTO;
+import com.app.kowalski.web.rest_controllers.ProjectController;
+import com.app.kowalski.dto.ProjectDTO;
+import com.app.kowalski.web.rest_controllers.TaskController;
+import com.app.kowalski.dto.TaskDTO;
+import com.app.kowalski.web.rest_controllers.TimeRecordController;
+import com.app.kowalski.dto.TimeRecordDTO;
+import com.app.kowalski.web.rest_controllers.KowalskiUserController;
+import com.app.kowalski.dto.KowalskiUserDTO;
 
 public class HateoasLinksBuilder {
 
