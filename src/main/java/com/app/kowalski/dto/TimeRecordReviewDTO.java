@@ -1,7 +1,8 @@
-package com.app.kowalski.timerecordreview;
+package com.app.kowalski.dto;
 
 import java.io.Serializable;
 
+import com.app.kowalski.da.entities.TimeRecordReview;
 import org.springframework.hateoas.ResourceSupport;
 
 import com.fasterxml.jackson.annotation.JsonInclude;

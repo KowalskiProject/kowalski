@@ -16,9 +16,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.app.kowalski.task.Task;
-import com.app.kowalski.timerecordreview.TimeRecordReview;
-import com.app.kowalski.user.KowalskiUser;
+import com.app.kowalski.da.entities.Task;
+import com.app.kowalski.da.entities.KowalskiUser;
 
 @Entity
 @Table(name = "timerecord")

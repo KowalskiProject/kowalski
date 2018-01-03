@@ -1,24 +1,16 @@
 package com.app.kowalski.util;
 
+import com.app.kowalski.dto.*;
+import com.app.kowalski.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
-import com.app.kowalski.dto.ActivityDTO;
 import com.app.kowalski.services.ActivityService;
-import com.app.kowalski.exception.ActivityNotFoundException;
-import com.app.kowalski.exception.InvalidTimeRecordException;
-import com.app.kowalski.exception.KowalskiUserNotFoundException;
-import com.app.kowalski.exception.ProjectNotFoundException;
-import com.app.kowalski.exception.TaskNotFoundException;
-import com.app.kowalski.dto.ProjectDTO;
 import com.app.kowalski.services.ProjectService;
-import com.app.kowalski.dto.TaskDTO;
 import com.app.kowalski.services.TaskService;
-import com.app.kowalski.dto.TimeRecordDTO;
 import com.app.kowalski.services.TimeRecordService;
-import com.app.kowalski.dto.KowalskiUserDTO;
 import com.app.kowalski.services.KowalskiUserService;
 
 @Component

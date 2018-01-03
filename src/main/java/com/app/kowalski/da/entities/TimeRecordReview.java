@@ -1,4 +1,4 @@
-package com.app.kowalski.timerecordreview;
+package com.app.kowalski.da.entities;
 
 import java.util.Date;
 
@@ -10,9 +10,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.app.kowalski.timerecord.TimeRecord;
-import com.app.kowalski.timerecord.TimeRecordState;
-import com.app.kowalski.user.KowalskiUser;
+import com.app.kowalski.dto.TimeRecordReviewDTO;
+
 
 @Entity
 @Table(name = "timerecordreview")
