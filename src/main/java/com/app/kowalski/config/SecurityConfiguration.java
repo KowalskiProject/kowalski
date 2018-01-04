@@ -11,12 +11,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configurers.provisioning.InMemoryUserDetailsManagerConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -30,8 +33,18 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
 	public static final String ROLE_USER = "USER";
 	public static final String ROLE_ADMIN = "ADMIN";
 
-    @Value("${kowalski.login_url ?:/login}")
-	private String SIGN_UP_URL = "";
+    @Value("${kowalski.login.ad_domain}")
+	public String Domain;
+    @Value("${kowalski.login.ad_url}")
+    public String ldap_url;
+
+    @Value("${kowalski.login.url ?:/login}")
+	private String SIGN_UP_URL;
+
+    @Value("${kowalski.login.local.user}")
+    private String localUser;
+    @Value("${kowalski.login.local.password}")
+    private String localUserPassword;
 
     @Autowired
     private JWTHelperService jwtHelperService;
@@ -52,11 +65,24 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser("user").password("password").roles(ROLE_USER);
-        auth.inMemoryAuthentication().withUser("admin").password("password").roles(ROLE_ADMIN);
+    public void configureGlobal(AuthenticationManagerBuilder auth, AuthenticationProvider provider) throws Exception {
 
+        inMemoryConfigurer().withUser(localUser).password(localUserPassword)
+                .authorities(ROLE_ADMIN)
+                .and()
+                .configure(auth);
+
+        auth.authenticationProvider(provider);
     }
+
+    @Bean
+    public AuthenticationProvider adProvider(){
+        ActiveDirectoryLdapAuthenticationProvider provider = new ActiveDirectoryLdapAuthenticationProvider(this.Domain, this.ldap_url);
+        provider.setConvertSubErrorCodesToExceptions(true);
+        provider.setUseAuthenticationRequestCredentials(true);
+        return provider;
+    }
+
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
@@ -68,6 +94,10 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/v2/api-docs/**", "/configuration/ui/**", "/swagger-resources/**", "/configuration/security/**", "/swagger-ui.html", "/webjars/**");
+    }
+
+    private InMemoryUserDetailsManagerConfigurer<AuthenticationManagerBuilder> inMemoryConfigurer() {
+        return new InMemoryUserDetailsManagerConfigurer<>();
     }
 
 }
