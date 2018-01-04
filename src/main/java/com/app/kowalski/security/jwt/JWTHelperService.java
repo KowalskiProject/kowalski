@@ -48,8 +48,6 @@ public class JWTHelperService {
     public void addAuthentication(HttpServletResponse response, Authentication auth) {
         Gson gson = new Gson();
         DefaultClaims claim = new DefaultClaims();
-        List<String> authorities = auth.getAuthorities().stream().map(authority -> authority.getAuthority().toString()).collect(Collectors.toList());
-        claim.put("authorities",gson.toJson(authorities.toArray()));
         claim.setSubject(auth.getName());
         Date expiration = new Date(System.currentTimeMillis() + EXPIRATION_TIME);
 
@@ -75,16 +73,9 @@ public class JWTHelperService {
                         .getBody();
                 String user = claim.getSubject();
                 List<String> authorities = gson.fromJson((String) claim.get("authorities"), List.class);
-                List<GrantedAuthority> lg;
-
-                if(!CollectionUtils.isEmpty(authorities)){
-                    lg = authorities.stream().map((authority) -> new SimpleGrantedAuthority(authority)).collect(Collectors.toList());
-                }else{
-                    lg = Collections.emptyList();
-                }
 
                 if (user != null) {
-                    return new UsernamePasswordAuthenticationToken(user, null, lg);
+                    return new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
                 }
             }catch (Exception e){
                 //TODO LOG
