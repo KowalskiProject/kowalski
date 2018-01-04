@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Service
 public class JWTHelperService {
 
-    @Value("${kowalski.token.expiration ?:260000}")
+    @Value("${kowalski.token.expiration ?:26000000}")
     private long EXPIRATION_TIME;
     @Value("${kowalski.token.secret ?:MySecret}")
     private String SECRET;
@@ -51,13 +51,15 @@ public class JWTHelperService {
         List<String> authorities = auth.getAuthorities().stream().map(authority -> authority.getAuthority().toString()).collect(Collectors.toList());
         claim.put("authorities",gson.toJson(authorities.toArray()));
         claim.setSubject(auth.getName());
+        Date expiration = new Date(System.currentTimeMillis() + EXPIRATION_TIME);
 
         String JWT = Jwts.builder()
                 .setClaims(claim)
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .setExpiration(expiration)
                 .signWith(SignatureAlgorithm.HS512, SECRET)
                 .compact();
 
+        response.setHeader("expires", Long.toString(expiration.getTime()));
         response.addHeader(HEADER_STRING, TOKEN_PREFIX + " " + JWT);
     }
 
