@@ -20,8 +20,10 @@ public class DefaultSecurity  extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().anyRequest().permitAll()
                 .and().cors()
                 .and().csrf().disable();
+        http.headers().frameOptions().disable();
 
     }
+
     /**
      * CORS Configurations
      * @return
