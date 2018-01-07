@@ -2,9 +2,6 @@ package com.app.kowalski.config;
 
 
 
-import com.app.kowalski.security.jwt.JWTAuthenticationFilter;
-import com.app.kowalski.security.jwt.JWTAuthorizationFilter;
-import com.app.kowalski.security.jwt.JWTHelperService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -25,7 +22,11 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-@Profile("secure")
+import com.app.kowalski.security.jwt.JWTAuthenticationFilter;
+import com.app.kowalski.security.jwt.JWTAuthorizationFilter;
+import com.app.kowalski.security.jwt.JWTHelperService;
+
+@Profile("prod")
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {

@@ -1,3 +1,11 @@
+def loadConfiguration() {
+    def environment = hasProperty('env') ? env : 'dev'
+    project.ext.set 'environment', environment
+}
+
+loadConfiguration()
+println "*** Target environment: $environment"
+
 buildscript {
     repositories {
         mavenCentral()
@@ -24,12 +32,11 @@ tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
 }
 
-
-
 repositories {
      jcenter()
      maven { url "http://repo.maven.apache.org/maven2" }
 }
+
 dependencies {
     compile 'com.google.code.gson:gson:2.8.2'
 	compile 'mysql:mysql-connector-java'
@@ -45,4 +52,13 @@ dependencies {
     compile group: 'org.springframework.hateoas', name: 'spring-hateoas', version:'0.23.0.RELEASE'
     testCompile(group: 'org.springframework.boot', name: 'spring-boot-starter-test', version:'1.5.8.RELEASE')
     testCompile group: 'org.springframework.security', name: 'spring-security-test', version:'4.2.3.RELEASE'
+}
+
+processResources {
+	def environment = project.ext.environment
+	expand project.properties
+}
+
+bootRun {
+	systemProperty 'spring.profiles.active', project.ext.environment
 }
