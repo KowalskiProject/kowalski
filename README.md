@@ -12,7 +12,7 @@ There is no official release of KowalskiProject yet. Currently, the project is u
 
 ```
 $ cd kowalski
-$ mvn spring-boot:run
+$ gradlew bootRun
 ```
 
 The REST API documentation is provided through Swagger - available at *http://localhost:5000/swagger-ui.html*
