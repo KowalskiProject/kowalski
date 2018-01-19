@@ -2,6 +2,8 @@ package com.app.kowalski.config;
 
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -26,17 +28,25 @@ import com.app.kowalski.security.jwt.JWTAuthenticationFilter;
 import com.app.kowalski.security.jwt.JWTAuthorizationFilter;
 import com.app.kowalski.security.jwt.JWTHelperService;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
+import java.util.Hashtable;
+
 @Profile("prod")
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
 
+    private static Logger LOG = LoggerFactory.getLogger(SecurityConfiguration.class);
+
 	public static final String ROLE_USER = "USER";
 	public static final String ROLE_ADMIN = "ADMIN";
 
-    @Value("${kowalski.login.ad_domain}")
+    @Value("${kowalski.login.ad_domain ?:''}")
 	public String Domain;
-    @Value("${kowalski.login.ad_url}")
+    @Value("${kowalski.login.ad_url ?:''}")
     public String ldap_url;
 
     @Value("${kowalski.login.url ?:/login}")
@@ -73,15 +83,35 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
                 .and()
                 .configure(auth);
 
-        auth.authenticationProvider(provider);
+        if(provider != null) {
+            LOG.info("Using Active Directory Provider");
+            auth.authenticationProvider(provider);
+        }
     }
 
     @Bean
     public AuthenticationProvider adProvider(){
-        ActiveDirectoryLdapAuthenticationProvider provider = new ActiveDirectoryLdapAuthenticationProvider(this.Domain, this.ldap_url);
-        provider.setConvertSubErrorCodesToExceptions(true);
-        provider.setUseAuthenticationRequestCredentials(true);
-        return provider;
+        try {
+
+            testLdapConnection(this.ldap_url);
+
+            ActiveDirectoryLdapAuthenticationProvider provider = new ActiveDirectoryLdapAuthenticationProvider(this.Domain, this.ldap_url);
+            provider.setConvertSubErrorCodesToExceptions(true);
+            provider.setUseAuthenticationRequestCredentials(true);
+            return provider;
+        }catch (Exception e){
+            LOG.error("Could not create the Active Directory Provider: ",  e);
+        }
+        return null;
+    }
+
+    private void testLdapConnection(String ldap_url) throws NamingException {
+        Hashtable env = new Hashtable(11);
+        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+
+        env.put(Context.PROVIDER_URL, ldap_url);
+
+        DirContext ctx = new InitialDirContext(env);
     }
 
 
