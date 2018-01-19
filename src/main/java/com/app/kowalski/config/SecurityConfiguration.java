@@ -1,11 +1,6 @@
 package com.app.kowalski.config;
 
-import java.util.Hashtable;
 
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -33,6 +29,12 @@ import com.app.kowalski.security.jwt.JWTAuthenticationFilter;
 import com.app.kowalski.security.jwt.JWTAuthorizationFilter;
 import com.app.kowalski.security.jwt.JWTHelperService;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
+import java.util.Hashtable;
+
 @Configuration
 @PropertySource("classpath:application.properties")
 @EnableWebSecurity
@@ -43,11 +45,10 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
 	public static final String ROLE_USER = "USER";
 	public static final String ROLE_ADMIN = "ADMIN";
 
-    @Value("${kowalski.login.ad_domain}")
-	public String ad_domain;
-
-    @Value("${kowalski.login.ad_url}")
-    public String ad_url;
+    @Value("${kowalski.login.ad.domain}")
+	public String Domain;
+    @Value("${kowalski.login.ad.url}")
+    public String ldap_url;
 
     @Value("${kowalski.login.url}")
 	private String SIGN_UP_URL;
@@ -93,10 +94,10 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
     @Bean
     public AuthenticationProvider addProvider(){
         try {
-        	if (!this.ad_url.isEmpty()) {
-        		testLdapConnection(this.ad_url);
+        	if (!this.ldap_url.isEmpty()) {
+        		testLdapConnection(this.ldap_url);
 
-                ActiveDirectoryLdapAuthenticationProvider provider = new ActiveDirectoryLdapAuthenticationProvider(this.ad_domain, this.ad_url);
+                ActiveDirectoryLdapAuthenticationProvider provider = new ActiveDirectoryLdapAuthenticationProvider(this.Domain, this.ldap_url);
                 provider.setConvertSubErrorCodesToExceptions(true);
                 provider.setUseAuthenticationRequestCredentials(true);
                 return provider;
