@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Service
 public class JWTHelperService {
 
-    @Value("${kowalski.token.expiration ?:26000000}")
+    @Value("${kowalski.token.expiration ?: 180000}")
     private long EXPIRATION_TIME;
     @Value("${kowalski.token.secret ?:MySecret}")
     private String SECRET;
