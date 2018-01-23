@@ -33,6 +33,11 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
         Authentication authentication = jwtHelperService.getAuthentication(req);
 
+        if(authentication != null){
+            //Renew token
+            jwtHelperService.addAuthentication(res,authentication);
+        }
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(req, res);
     }
