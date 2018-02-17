@@ -1,6 +1,11 @@
 package com.app.kowalski.config;
 
+import java.util.Hashtable;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -28,13 +32,6 @@ import com.app.kowalski.security.jwt.JWTAuthenticationFilter;
 import com.app.kowalski.security.jwt.JWTAuthorizationFilter;
 import com.app.kowalski.security.jwt.JWTHelperService;
 
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
-import java.util.Hashtable;
-
-@Profile("prod")
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
@@ -54,6 +51,7 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
 
     @Value("${kowalski.login.local.user}")
     private String localUser;
+
     @Value("${kowalski.login.local.password}")
     private String localUserPassword;
 
@@ -92,7 +90,6 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
     @Bean
     public AuthenticationProvider adProvider(){
         try {
-
             testLdapConnection(this.ldap_url);
 
             ActiveDirectoryLdapAuthenticationProvider provider = new ActiveDirectoryLdapAuthenticationProvider(this.Domain, this.ldap_url);
@@ -100,7 +97,7 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
             provider.setUseAuthenticationRequestCredentials(true);
             return provider;
         }catch (Exception e){
-            LOG.error("Could not create the Active Directory Provider: ",  e);
+            LOG.error("***** Could not create the Active Directory Provider *****");
         }
         return null;
     }
