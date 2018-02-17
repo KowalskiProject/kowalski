@@ -6,13 +6,23 @@ The main target of this project is creating a simple project management tool tha
 
 Although it could (theoretically) be used as the main project management tool, the main KowalskiProject target is working as a hub for project information related to Brazilian computing law (activities, people assigned to activities, motivation, description, finance reports). There already are lots of good options to manage development teams in R&D environments (Jira, Taiga, PivotalTracker, Trello and others), but these alternatives do not have specific rules and procedures oriented to writing reports and managing information according Brazilian regulations. Ideally KowalskiProject should be used together with other management tools.
 
-## Instructions (development stage)
+## How to run
 
-There is no official release of KowalskiProject yet. Currently, the project is under development (back-end written in Java 8 with Spring Boot, Maven 3 as package manager), so the instructions to run the code are, essentially, the same ones to run a generic [spring boot application](https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-running-your-application.html):
+### Requirements
+Kowalski project requires a database running in order to run accordingly. There is a script (Ubuntu based) inside _data_ folder that creates a dummy database inside a docker container to accelerate the development of Kowalski features:
+
+```sh
+cd data
+./dev_database.sh create
+```
+
+This script will verify if docker is installed with the required permissions, fetch and run a mysql:latest container and create a dummy database inside it. After that, **you are responsible for running this container before runnning Kowalski application**.
+
+### Running the application
+There is no official release of KowalskiProject yet. Currently, the project is under development (back-end written in Java 8 with Spring Boot, Gradle as package manager), so the instructions to run the code are, essentially, the same ones to run a generic [spring boot application](https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-running-your-application.html):
 
 ```
-$ cd kowalski
 $ gradlew bootRun
 ```
 
-The REST API documentation is provided through Swagger - available at *http://localhost:5000/swagger-ui.html*
+The REST API documentation is provided through Swagger - available at *http://localhost:8000/swagger-ui.html*
