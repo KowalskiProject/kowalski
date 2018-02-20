@@ -6,11 +6,13 @@ package com.app.kowalski.dto;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 
-import com.app.kowalski.da.entities.Project;
 import org.springframework.hateoas.ResourceSupport;
 
+import com.app.kowalski.da.entities.Project;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Class used to expose project's parameters through the REST API
@@ -21,7 +23,11 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class ProjectDTO extends ResourceSupport implements Serializable {
 
 	private Integer projectId;
+
+	@ApiModelProperty(required = true)
 	private String name;
+
+	@ApiModelProperty(required = true)
 	private String code;
 	private String description;
 	private String startDate;
@@ -43,9 +49,14 @@ public class ProjectDTO extends ResourceSupport implements Serializable {
 	public ProjectDTO(Project project) {
 		this.projectId = project.getProjectId();
 		this.name = project.getName();
+		this.code = project.getCode();
 		this.description = project.getDescription();
-		this.startDate = sdf.format(project.getStartDate());
-		this.endDate = sdf.format(project.getEndDate());
+
+		try {
+			this.startDate = sdf.format(project.getStartDate());
+			this.endDate = sdf.format(project.getEndDate());
+		} catch (NullPointerException e) {}
+
 		if (project.getAccountable() != null)
 			this.setAccountableId(project.getAccountable().getkUserId());
 		else
