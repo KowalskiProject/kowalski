@@ -19,6 +19,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import com.app.kowalski.dto.ProjectDTO;
 
@@ -30,7 +31,10 @@ public class Project {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer projectId;
 
+	@NotNull
 	private String name;
+
+	@NotNull
 	private String code;
 	private String description;
 	private Date startDate;
@@ -76,7 +80,7 @@ public class Project {
 		try {
 			this.startDate = sdf.parse(projectDTO.getStartDate());
 			this.endDate = sdf.parse(projectDTO.getEndDate());
-		} catch (ParseException e) {}
+		} catch (ParseException | NullPointerException e) {}
 
 		return this;
 	}
