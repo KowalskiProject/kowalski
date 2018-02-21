@@ -6,22 +6,23 @@ import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
-import com.app.kowalski.da.entities.Project;
-import com.app.kowalski.da.repositories.ProjectRepository;
-import com.app.kowalski.dto.ProjectDTO;
-import com.app.kowalski.services.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.app.kowalski.da.entities.Activity;
-import com.app.kowalski.dto.ActivityDTO;
+import com.app.kowalski.da.entities.KowalskiUser;
+import com.app.kowalski.da.entities.Project;
 import com.app.kowalski.da.repositories.ActivityRepository;
+import com.app.kowalski.da.repositories.KowalskiUserRepository;
+import com.app.kowalski.da.repositories.ProjectRepository;
+import com.app.kowalski.dto.ActivityDTO;
+import com.app.kowalski.dto.KowalskiUserDTO;
+import com.app.kowalski.dto.ProjectDTO;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.exception.ProjectNotFoundException;
-import com.app.kowalski.da.entities.KowalskiUser;
-import com.app.kowalski.dto.KowalskiUserDTO;
-import com.app.kowalski.da.repositories.KowalskiUserRepository;
+import com.app.kowalski.services.ProjectService;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -57,8 +58,11 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	@Transactional
-	public ProjectDTO addProject(ProjectDTO projectDTO) {
-		// check business rules here
+	public ProjectDTO addProject(ProjectDTO projectDTO) throws DataIntegrityViolationException {
+		// already exists a project with this code: abort
+		if (this.projectRepository.findByCode(projectDTO.getCode()).size() > 0) {
+			throw new DataIntegrityViolationException(projectDTO.getCode());
+		}
 		Project project = new Project().convertToProject(projectDTO);
 		project = this.projectRepository.save(project);
 		return new ProjectDTO(project);
