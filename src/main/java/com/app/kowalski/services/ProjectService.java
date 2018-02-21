@@ -3,11 +3,13 @@ package com.app.kowalski.services;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.dao.DataIntegrityViolationException;
+
 import com.app.kowalski.dto.ActivityDTO;
+import com.app.kowalski.dto.KowalskiUserDTO;
 import com.app.kowalski.dto.ProjectDTO;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.exception.ProjectNotFoundException;
-import com.app.kowalski.dto.KowalskiUserDTO;
 
 /**
  * Interface to expose allowed methods related to projects.
@@ -39,8 +41,10 @@ public interface ProjectService {
 	 * Includes a new project in the system.
 	 * @param projectDTO Project to be included into system.
 	 * @return Included project
+	 *
+	 * @throws DataIntegrityViolationException there is a conflict with the current state of the resource
 	 */
-	public ProjectDTO addProject(ProjectDTO projectDTO);
+	public ProjectDTO addProject(ProjectDTO projectDTO) throws DataIntegrityViolationException;
 
 	/**
 	 * Edits a project through given id
