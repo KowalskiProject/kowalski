@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
-import com.app.kowalski.dto.ProjectDTO;
-import com.app.kowalski.services.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.kowalski.dto.ActivityDTO;
+import com.app.kowalski.dto.KowalskiUserDTO;
+import com.app.kowalski.dto.ProjectDTO;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.exception.ProjectNotFoundException;
-import com.app.kowalski.dto.KowalskiUserDTO;
+import com.app.kowalski.services.ProjectService;
 import com.app.kowalski.util.HateoasLinksBuilder;
 
 @RestController
@@ -61,8 +63,12 @@ public class ProjectController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<ProjectDTO> addProject(@RequestBody ProjectDTO projectDTO) {
-		projectDTO = this.projectService.addProject(projectDTO);
+	public ResponseEntity<ProjectDTO> addProject(@Valid @RequestBody ProjectDTO projectDTO) {
+		try {
+			projectDTO = this.projectService.addProject(projectDTO);
+		} catch (DataIntegrityViolationException e) {
+			return new ResponseEntity<ProjectDTO>(HttpStatus.CONFLICT);
+		}
 		HateoasLinksBuilder.createHateoasForProject(projectDTO);
 
 		return new ResponseEntity<ProjectDTO>(projectDTO, HttpStatus.OK);

@@ -27,7 +27,8 @@ public class JWTHelperService {
     private String SECRET;
     private final String TOKEN_PREFIX = "Bearer";
     private final String HEADER_STRING = "Authorization";
-
+    private final String EXPOSE_HEADERS = "Access-Control-Expose-Headers";
+    private final String EXPOSE_HEADERS_STRING = "Authorization";
 
     public long getExpirationTime() {
         return EXPIRATION_TIME;
@@ -59,6 +60,7 @@ public class JWTHelperService {
 
         response.setHeader("expires", Long.toString(expiration.getTime()));
         response.addHeader(HEADER_STRING, TOKEN_PREFIX + " " + JWT);
+        response.addHeader(EXPOSE_HEADERS, EXPOSE_HEADERS_STRING);
     }
 
     public Authentication getAuthentication(HttpServletRequest request) {
