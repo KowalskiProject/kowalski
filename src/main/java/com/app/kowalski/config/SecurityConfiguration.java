@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -33,6 +34,7 @@ import com.app.kowalski.security.jwt.JWTAuthorizationFilter;
 import com.app.kowalski.security.jwt.JWTHelperService;
 
 @Configuration
+@PropertySource("classpath:application.properties")
 @EnableWebSecurity
 public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
 
@@ -41,12 +43,13 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
 	public static final String ROLE_USER = "USER";
 	public static final String ROLE_ADMIN = "ADMIN";
 
-    @Value("${kowalski.login.ad_domain ?:''}")
-	public String Domain;
-    @Value("${kowalski.login.ad_url ?:''}")
-    public String ldap_url;
+    @Value("${kowalski.login.ad_domain}")
+	public String ad_domain;
 
-    @Value("${kowalski.login.url ?:/login}")
+    @Value("${kowalski.login.ad_url}")
+    public String ad_url;
+
+    @Value("${kowalski.login.url}")
 	private String SIGN_UP_URL;
 
     @Value("${kowalski.login.local.user}")
@@ -88,16 +91,20 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public AuthenticationProvider adProvider(){
+    public AuthenticationProvider addProvider(){
         try {
-            testLdapConnection(this.ldap_url);
+        	if (!this.ad_url.isEmpty()) {
+        		testLdapConnection(this.ad_url);
 
-            ActiveDirectoryLdapAuthenticationProvider provider = new ActiveDirectoryLdapAuthenticationProvider(this.Domain, this.ldap_url);
-            provider.setConvertSubErrorCodesToExceptions(true);
-            provider.setUseAuthenticationRequestCredentials(true);
-            return provider;
-        }catch (Exception e){
-            LOG.error("***** Could not create the Active Directory Provider *****");
+                ActiveDirectoryLdapAuthenticationProvider provider = new ActiveDirectoryLdapAuthenticationProvider(this.ad_domain, this.ad_url);
+                provider.setConvertSubErrorCodesToExceptions(true);
+                provider.setUseAuthenticationRequestCredentials(true);
+                return provider;
+        	} else {
+        		LOG.info("+++ No active directory URL found. Skipping provider...");
+        	}
+        } catch (Exception e){
+            LOG.error("***** Could not create authentication provider *****", e);
         }
         return null;
     }
@@ -105,9 +112,7 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
     private void testLdapConnection(String ldap_url) throws NamingException {
         Hashtable env = new Hashtable(11);
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-
         env.put(Context.PROVIDER_URL, ldap_url);
-
         DirContext ctx = new InitialDirContext(env);
     }
 
