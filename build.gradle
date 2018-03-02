@@ -1,9 +1,13 @@
 buildscript {
     repositories {
         mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE")
+        classpath "gradle.plugin.com.palantir.gradle.docker:gradle-docker:0.19.2"
     }
 }
 
@@ -12,6 +16,8 @@ apply plugin: 'maven'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
+apply plugin: "com.palantir.docker"
+
 
 group = 'com.app'
 version = '0.0.1-SNAPSHOT'
@@ -20,8 +26,21 @@ description = "kowalski"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
 tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.app.kowalski.KowalskiApplication'
+    }
+}
+
+docker {
+    name "kowalski/${jar.baseName}"
+    files jar.archivePath
+    buildArgs(['JAR_FILE': "${jar.archiveName}"])
 }
 
 repositories {

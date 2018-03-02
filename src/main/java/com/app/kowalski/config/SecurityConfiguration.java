@@ -43,10 +43,10 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
 	public static final String ROLE_USER = "USER";
 	public static final String ROLE_ADMIN = "ADMIN";
 
-    @Value("${kowalski.login.ad_domain}")
+    @Value("${kowalski.login.ad.domain}")
 	public String ad_domain;
 
-    @Value("${kowalski.login.ad_url}")
+    @Value("${kowalski.login.ad.url}")
     public String ad_url;
 
     @Value("${kowalski.login.url}")
