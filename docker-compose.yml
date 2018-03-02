@@ -6,6 +6,8 @@ services:
       KOWALSKI_LOGIN_AD_URL: "ldap://openldap"
       KOWALSKI_LOGIN_AD_DOMAIN: "kowalski.org"
       SPRING_DATASOURCE_URL: jdbc:mysql://kowalski-db/kowalskidb?useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
     ports:
       - 8000:8000
     depends_on:
