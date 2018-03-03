@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Set;
 
 import com.app.kowalski.dto.KowalskiUserDTO;
-import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.dto.ProjectDTO;
+import com.app.kowalski.exception.KowalskiUserNotFoundException;
 
 /**
  * Expose allowed methods related to Kowalski users.
@@ -45,15 +45,6 @@ public interface KowalskiUserService {
 	 * @throws KowalskiUserNotFoundException No KowalskiUser instance found in the system
 	 */
 	public KowalskiUserDTO editKowaslkiUser(KowalskiUserDTO kowalskiUserDTO) throws KowalskiUserNotFoundException;
-
-	/**
-	 * Removes a kowalski user from the system.
-	 * @param kowalskiUserId kowalski user reference
-	 * @return true if the kowalski user was removed successfully, false otherwise
-	 *
-	 * @throws KowalskiUserNotFoundException No KowalskiUser instance found in the system
-	 */
-	public boolean deleteKowalskiUser(int kowalskiUserId) throws KowalskiUserNotFoundException;
 
 	/**
 	 * Returns all projects where given user is member

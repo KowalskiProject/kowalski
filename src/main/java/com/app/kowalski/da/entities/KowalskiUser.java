@@ -24,8 +24,8 @@ public class KowalskiUser {
 	private String name;
 	private String username;
 	private String email;
-	private String password;
 	private Date creationDate;
+	private boolean active;
 
 	@ManyToMany(mappedBy = "members")
     private Set<Project> projects = new HashSet<>();
@@ -35,22 +35,20 @@ public class KowalskiUser {
 
 	public KowalskiUser() {}
 
-	public KowalskiUser(String name, String username, String email, String password) {
+	public KowalskiUser(String name, String username, String email) {
 		this.name = name;
 		this.username = username;
 		this.email = email;
-		this.password = password;
 		this.creationDate = new Date();
+		this.active = true;
 	}
 
-	public KowalskiUser convertToKowalskiUser(KowalskiUserDTO kowalskiUserDTO) {
+	public KowalskiUser(KowalskiUserDTO kowalskiUserDTO) {
 		this.name = kowalskiUserDTO.getName();
 		this.username = kowalskiUserDTO.getUsername();
 		this.email = kowalskiUserDTO.getEmail();
-		this.password = kowalskiUserDTO.getPassword();
 		this.creationDate = new Date();
-
-		return this;
+		this.active = kowalskiUserDTO.isActive();
 	}
 
 	/**
@@ -110,20 +108,6 @@ public class KowalskiUser {
 	}
 
 	/**
-	 * @return the password
-	 */
-	public String getPassword() {
-		return password;
-	}
-
-	/**
-	 * @param password the password to set
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	/**
 	 * @return the creationDate
 	 */
 	public Date getCreationDate() {
@@ -147,6 +131,14 @@ public class KowalskiUser {
 
 	public Set<Activity> getActivities() {
 		return this.activities;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 }

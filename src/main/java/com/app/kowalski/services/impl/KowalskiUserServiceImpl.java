@@ -6,16 +6,16 @@ import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
-import com.app.kowalski.da.entities.KowalskiUser;
-import com.app.kowalski.da.repositories.KowalskiUserRepository;
-import com.app.kowalski.dto.KowalskiUserDTO;
-import com.app.kowalski.services.KowalskiUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.app.kowalski.exception.KowalskiUserNotFoundException;
+import com.app.kowalski.da.entities.KowalskiUser;
+import com.app.kowalski.da.repositories.KowalskiUserRepository;
+import com.app.kowalski.dto.KowalskiUserDTO;
 import com.app.kowalski.dto.ProjectDTO;
+import com.app.kowalski.exception.KowalskiUserNotFoundException;
+import com.app.kowalski.services.KowalskiUserService;
 
 @Service
 public class KowalskiUserServiceImpl implements KowalskiUserService {
@@ -47,8 +47,7 @@ public class KowalskiUserServiceImpl implements KowalskiUserService {
 	@Override
 	@Transactional
 	public KowalskiUserDTO addKowaslkiUser(KowalskiUserDTO kowalskiUserDTO) {
-		// check business rules here
-		KowalskiUser kowalskiUser = new KowalskiUser().convertToKowalskiUser(kowalskiUserDTO);
+		KowalskiUser kowalskiUser = new KowalskiUser(kowalskiUserDTO);
 		kowalskiUser = this.repository.save(kowalskiUser);
 		return new KowalskiUserDTO(kowalskiUser);
 	}
@@ -56,26 +55,20 @@ public class KowalskiUserServiceImpl implements KowalskiUserService {
 	@Override
 	@Transactional
 	public KowalskiUserDTO editKowaslkiUser(KowalskiUserDTO kowalskiUserDTO) throws KowalskiUserNotFoundException {
-		// check business rules here
-		try {
-			KowalskiUser kowalskiUser = this.repository.getOne(kowalskiUserDTO.getkUserId());
-			kowalskiUser = kowalskiUser.convertToKowalskiUser(kowalskiUserDTO);
-			kowalskiUser = this.repository.save(kowalskiUser);
-			return new KowalskiUserDTO(kowalskiUser);
-		} catch (EntityNotFoundException e) {
-			throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
-		}
-	}
+		KowalskiUser kowalskiUser = null;
 
-	@Override
-	@Transactional
-	public boolean deleteKowalskiUser(int kowalskiUserId) throws KowalskiUserNotFoundException {
 		try {
-			this.repository.delete(kowalskiUserId);
+			kowalskiUser = this.repository.getOne(kowalskiUserDTO.getkUserId());
 		} catch (EntityNotFoundException e) {
 			throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
 		}
-		return true;
+
+		kowalskiUser = new KowalskiUser(kowalskiUserDTO);
+		kowalskiUser.setkUserId(kowalskiUserDTO.getkUserId());
+
+		kowalskiUser = this.repository.save(kowalskiUser);
+
+		return new KowalskiUserDTO(kowalskiUser);
 	}
 
 	@Override

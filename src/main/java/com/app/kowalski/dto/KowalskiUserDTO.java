@@ -2,11 +2,13 @@ package com.app.kowalski.dto;
 
 import java.io.Serializable;
 
-import com.app.kowalski.da.entities.KowalskiUser;
 import org.springframework.hateoas.ResourceSupport;
 
+import com.app.kowalski.da.entities.KowalskiUser;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Class used to expose kowalski user's parameters through the REST API
@@ -17,19 +19,28 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class KowalskiUserDTO extends ResourceSupport implements Serializable {
 
 	private Integer kUserId;
+
+	@ApiModelProperty(required = true)
 	private String name;
+
+	@ApiModelProperty(required = true)
 	private String username;
+
+	@ApiModelProperty(required = true)
 	private String email;
-	private String password;
+
 	private String creationDate;
+
+	// users are created as active by design
+	private boolean active = true;
 
 	public KowalskiUserDTO() {}
 
-	public KowalskiUserDTO(String name, String username, String email, String password) {
+	public KowalskiUserDTO(String name, String username, String email, boolean active) {
 		this.name = name;
 		this.username = username;
 		this.email = email;
-		this.password = password;
+		this.active = active;
 	}
 
 	public KowalskiUserDTO(KowalskiUser kowalskiUser) {
@@ -37,6 +48,7 @@ public class KowalskiUserDTO extends ResourceSupport implements Serializable {
 		this.name = kowalskiUser.getName();
 		this.username = kowalskiUser.getUsername();
 		this.email = kowalskiUser.getEmail();
+		this.active = kowalskiUser.isActive();
 	}
 
 	/**
@@ -96,20 +108,6 @@ public class KowalskiUserDTO extends ResourceSupport implements Serializable {
 	}
 
 	/**
-	 * @return the password
-	 */
-	public String getPassword() {
-		return password;
-	}
-
-	/**
-	 * @param password the password to set
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	/**
 	 * @return the creationDate
 	 */
 	public String getCreationDate() {
@@ -121,6 +119,20 @@ public class KowalskiUserDTO extends ResourceSupport implements Serializable {
 	 */
 	public void setCreationDate(String creationDate) {
 		this.creationDate = creationDate;
+	}
+
+	/**
+	 * @return the active
+	 */
+	public boolean isActive() {
+		return active;
+	}
+
+	/**
+	 * @param active the active to set
+	 */
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 }
