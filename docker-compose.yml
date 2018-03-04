@@ -1,0 +1,51 @@
+version: '3'
+services:
+  kowalski:
+    image: kowalski/kowalski
+    environment:
+      KOWALSKI_LOGIN_AD_URL: "ldap://openldap"
+      KOWALSKI_LOGIN_AD_DOMAIN: "kowalski.org"
+      SPRING_DATASOURCE_URL: jdbc:mysql://kowalski-db/kowalskidb?useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    ports:
+      - 8000:8000
+    depends_on:
+      - kowalski-db
+      - openldap
+    links:
+      - openldap
+      - kowalski-db
+  kowalski-db:
+    image: mysql
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: kowalskidb
+    restart: always
+    volumes:
+      - kowalski-db-data:/var/lib/mysql
+  openldap:
+    image: osixia/openldap
+    container_name: openldap
+    ports:
+      - 389:389
+      - 639:639
+    hostname: "kowalski.org"
+  phpldapadmin:
+    image: osixia/phpldapadmin
+    container_name: phpldapadmin
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: "openldap"
+    ports:
+      - 8080:80
+      - 4443:443
+    links:
+      - openldap
+
+volumes:
+  kowalski-db-data:
+  kowalski-devldap-data:
+  kowalski-devldap-config-data:
