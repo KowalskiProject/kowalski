@@ -54,4 +54,13 @@ public interface KowalskiUserService {
 	 * @throws KowalskiUserNotFoundException No KowalskiUser instance found in the system
 	 */
 	public Set<ProjectDTO> getProjects(Integer kUserId) throws KowalskiUserNotFoundException;
+
+	/**
+	 * Returns a kowalski user for given username
+	 * @param username kowalski username
+	 * @return user data
+	 *
+	 * @throws KowalskiUserNotFoundException No KowalskiUser instance found in the system
+	 */
+	public KowalskiUserDTO getKowalskiUserByUsername(String username) throws KowalskiUserNotFoundException;
 }

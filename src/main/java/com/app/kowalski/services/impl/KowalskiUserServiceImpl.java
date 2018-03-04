@@ -86,4 +86,18 @@ public class KowalskiUserServiceImpl implements KowalskiUserService {
 				.collect(Collectors.toSet());
 	}
 
+	@Override
+	public KowalskiUserDTO getKowalskiUserByUsername(String username) throws KowalskiUserNotFoundException {
+		try {
+			KowalskiUser kowalskiUser = this.repository.findByUsername(username);
+
+			if (kowalskiUser == null)
+				throw new KowalskiUserNotFoundException("User not found for given username = " + username);
+
+			return new KowalskiUserDTO(kowalskiUser);
+		} catch (EntityNotFoundException e) {
+			throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
+		}
+	}
+
 }

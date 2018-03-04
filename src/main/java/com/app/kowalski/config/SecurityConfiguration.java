@@ -32,6 +32,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.app.kowalski.security.jwt.JWTAuthenticationFilter;
 import com.app.kowalski.security.jwt.JWTAuthorizationFilter;
 import com.app.kowalski.security.jwt.JWTHelperService;
+import com.app.kowalski.services.KowalskiUserService;
 
 @Configuration
 @PropertySource("classpath:application.properties")
@@ -61,6 +62,9 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
     @Autowired
     private JWTHelperService jwtHelperService;
 
+    @Autowired
+    private KowalskiUserService userService;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
@@ -70,7 +74,7 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
                     .anyRequest()
                         .authenticated()
                 .and()
-                    .addFilterBefore(new JWTAuthenticationFilter(authenticationManager(),jwtHelperService), UsernamePasswordAuthenticationFilter.class)
+                    .addFilterBefore(new JWTAuthenticationFilter(authenticationManager(),jwtHelperService, userService), UsernamePasswordAuthenticationFilter.class)
                     .addFilterBefore(new JWTAuthorizationFilter(authenticationManager(), jwtHelperService), UsernamePasswordAuthenticationFilter.class)
                 // this disables session creation on Spring Security
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
