@@ -6,8 +6,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.app.kowalski.dto.*;
-import com.app.kowalski.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -20,8 +18,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.kowalski.dto.ActivityDTO;
+import com.app.kowalski.dto.KowalskiUserDTO;
+import com.app.kowalski.dto.ProjectDTO;
+import com.app.kowalski.dto.TaskDTO;
+import com.app.kowalski.dto.TimeRecordDTO;
 import com.app.kowalski.exception.InvalidTimeRecordException;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
+import com.app.kowalski.services.ActivityService;
+import com.app.kowalski.services.KowalskiUserService;
+import com.app.kowalski.services.ProjectService;
+import com.app.kowalski.services.TaskService;
+import com.app.kowalski.services.TimeRecordService;
 import com.app.kowalski.util.HateoasLinksBuilder;
 
 @RestController
@@ -62,9 +70,9 @@ public class KowalskiUserController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<KowalskiUserDTO> addKowalskiUser(@RequestBody KowalskiUserDTO kowalskiUserDTO) {
-		KowalskiUserDTO kowalskiUsersDTO = this.kowalskiUserService.addKowaslkiUser(kowalskiUserDTO);
+		kowalskiUserDTO = this.kowalskiUserService.addKowaslkiUser(kowalskiUserDTO);
 		HateoasLinksBuilder.createHateoasForKowalskiUser(kowalskiUserDTO);
-		return new ResponseEntity<KowalskiUserDTO>(kowalskiUsersDTO, HttpStatus.OK);
+		return new ResponseEntity<KowalskiUserDTO>(kowalskiUserDTO, HttpStatus.CREATED);
 	}
 
 	@RequestMapping(value = "/{kUserId}", method = RequestMethod.GET)
