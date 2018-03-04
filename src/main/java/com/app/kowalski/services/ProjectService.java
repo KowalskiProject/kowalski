@@ -1,7 +1,6 @@
 package com.app.kowalski.services;
 
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.dao.DataIntegrityViolationException;
 
@@ -129,7 +128,7 @@ public interface ProjectService {
 	 *
 	 * @throws ProjectNotFoundException No project instance was found in the system
 	 */
-	public Set<KowalskiUserDTO> getProjectMembers(Integer projectId) throws ProjectNotFoundException;
+	public List<KowalskiUserDTO> getProjectMembers(Integer projectId) throws ProjectNotFoundException;
 
 	/**
 	 * Adds a new user to the project

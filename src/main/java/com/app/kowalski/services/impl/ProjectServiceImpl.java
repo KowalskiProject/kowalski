@@ -1,7 +1,6 @@
 package com.app.kowalski.services.impl;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
@@ -220,7 +219,8 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public Set<KowalskiUserDTO> getProjectMembers(Integer projectId) throws ProjectNotFoundException {
+	@Transactional
+	public List<KowalskiUserDTO> getProjectMembers(Integer projectId) throws ProjectNotFoundException {
 		Project project = null;
 
 		try {
@@ -231,7 +231,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 		return project.getMembers().stream()
 				.map(user -> new KowalskiUserDTO(user))
-				.collect(Collectors.toSet());
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -254,7 +254,7 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 
 		project.addMember(kowalskiUser);
-		project = this.projectRepository.save(project);
+		project = this.projectRepository.saveAndFlush(project);
 
 		return new ProjectDTO(project);
 	}

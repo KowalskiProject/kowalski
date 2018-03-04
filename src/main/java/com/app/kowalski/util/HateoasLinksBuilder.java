@@ -9,16 +9,16 @@ import java.util.Set;
 import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
 
-import com.app.kowalski.web.rest_controllers.ActivityController;
 import com.app.kowalski.dto.ActivityDTO;
-import com.app.kowalski.web.rest_controllers.ProjectController;
-import com.app.kowalski.dto.ProjectDTO;
-import com.app.kowalski.web.rest_controllers.TaskController;
-import com.app.kowalski.dto.TaskDTO;
-import com.app.kowalski.web.rest_controllers.TimeRecordController;
-import com.app.kowalski.dto.TimeRecordDTO;
-import com.app.kowalski.web.rest_controllers.KowalskiUserController;
 import com.app.kowalski.dto.KowalskiUserDTO;
+import com.app.kowalski.dto.ProjectDTO;
+import com.app.kowalski.dto.TaskDTO;
+import com.app.kowalski.dto.TimeRecordDTO;
+import com.app.kowalski.web.rest_controllers.ActivityController;
+import com.app.kowalski.web.rest_controllers.KowalskiUserController;
+import com.app.kowalski.web.rest_controllers.ProjectController;
+import com.app.kowalski.web.rest_controllers.TaskController;
+import com.app.kowalski.web.rest_controllers.TimeRecordController;
 
 public class HateoasLinksBuilder {
 
@@ -36,7 +36,7 @@ public class HateoasLinksBuilder {
 		Link accountableLink = linkTo(accountableLinkBuilder).withRel("accountable");
 		projectDTO.add(accountableLink);
 
-		ResponseEntity<Set<KowalskiUserDTO>> membersLinkBuilder = methodOn(ProjectController.class)
+		ResponseEntity<List<KowalskiUserDTO>> membersLinkBuilder = methodOn(ProjectController.class)
 				.getProjectMembers(projectDTO.getProjectId());
 		Link membersLink = linkTo(membersLinkBuilder).withRel("members");
 		projectDTO.add(membersLink);

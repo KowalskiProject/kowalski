@@ -1,7 +1,6 @@
 package com.app.kowalski.web.rest_controllers;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -187,33 +186,39 @@ public class ProjectController {
 	}
 
 	@RequestMapping(value = "/{projectId}/members", method = RequestMethod.GET)
-	public ResponseEntity<Set<KowalskiUserDTO>> getProjectMembers(@PathVariable int projectId) {
-		Set<KowalskiUserDTO> projectUsersDTO = null;
+	public ResponseEntity<List<KowalskiUserDTO>> getProjectMembers(@PathVariable int projectId) {
+		List<KowalskiUserDTO> projectUsersDTO = null;
 
 		try {
 			projectUsersDTO = this.projectService.getProjectMembers(projectId);
 		} catch (ProjectNotFoundException e) {
-			return new ResponseEntity<Set<KowalskiUserDTO>>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<List<KowalskiUserDTO>>(HttpStatus.NOT_FOUND);
 		}
 
 		for (KowalskiUserDTO kowalskiUserDTO : projectUsersDTO)
 			HateoasLinksBuilder.createHateoasForKowalskiUser(kowalskiUserDTO);
 
-		return new ResponseEntity<Set<KowalskiUserDTO>>(projectUsersDTO, HttpStatus.OK);
+		return new ResponseEntity<List<KowalskiUserDTO>>(projectUsersDTO, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{projectId}/members", method = RequestMethod.POST)
-	public ResponseEntity<ProjectDTO> addMemberToProject(@PathVariable Integer projectId, @RequestBody Integer kUserId) {
-		ProjectDTO projectDTO = null;
+	public ResponseEntity<List<KowalskiUserDTO>> addMemberToProject(@PathVariable Integer projectId,
+			@RequestBody List<Integer> kUserIdList) {
+		List<KowalskiUserDTO> projectMembers = null;
 
 		try {
-			projectDTO = this.projectService.addMemberToProject(projectId, kUserId);
+			for (Integer userId : kUserIdList)
+				this.projectService.addMemberToProject(projectId, userId);
+
+			projectMembers = this.projectService.getProjectMembers(projectId);
 		} catch (ProjectNotFoundException | KowalskiUserNotFoundException e) {
-			return new ResponseEntity<ProjectDTO>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<List<KowalskiUserDTO>>(HttpStatus.NOT_FOUND);
 		}
 
-		HateoasLinksBuilder.createHateoasForProject(projectDTO);
-		return new ResponseEntity<ProjectDTO>(projectDTO, HttpStatus.OK);
+		for (KowalskiUserDTO kowalskiUserDTO : projectMembers)
+			HateoasLinksBuilder.createHateoasForKowalskiUser(kowalskiUserDTO);
+
+		return new ResponseEntity<List<KowalskiUserDTO>>(projectMembers, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{projectId}/members/{userId}", method = RequestMethod.DELETE)
