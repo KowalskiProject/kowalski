@@ -1,5 +1,5 @@
 #!/bin/sh
-# wait-for-postgres.sh
+# wait-for-mysql.sh
 
 set -e
 cmd="$@"
