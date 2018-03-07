@@ -203,7 +203,7 @@ public class ProjectController {
 
 	@RequestMapping(value = "/{projectId}/members", method = RequestMethod.POST)
 	public ResponseEntity<List<KowalskiUserDTO>> addMemberToProject(@PathVariable Integer projectId,
-			@RequestBody List<Integer> kUserIdList) {
+			@RequestBody int[] kUserIdList) {
 		List<KowalskiUserDTO> projectMembers = null;
 
 		try {
