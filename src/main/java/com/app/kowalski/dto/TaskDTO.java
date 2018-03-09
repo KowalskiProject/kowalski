@@ -6,11 +6,13 @@ package com.app.kowalski.dto;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 
-import com.app.kowalski.da.entities.Task;
 import org.springframework.hateoas.ResourceSupport;
 
+import com.app.kowalski.da.entities.Task;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Class used to expose tasks' parameters through the REST API
@@ -21,12 +23,17 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class TaskDTO extends ResourceSupport implements Serializable {
 
 	private Integer taskId;
+
+	@ApiModelProperty(required = true)
 	private String name;
+
+	@ApiModelProperty(required = true)
 	private String description;
 	private String status;
 	private String startDate;
 	private String endDate;
 	private Integer activityId;
+	private Integer accountableId;
 
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -37,17 +44,13 @@ public class TaskDTO extends ResourceSupport implements Serializable {
 		this.name = task.getName();
 		this.description = task.getDescription();
 		this.status = task.getStatus();
-		this.startDate = sdf.format(task.getStartDate());
-		this.endDate = sdf.format(task.getEndDate());
+		try {
+			this.startDate = sdf.format(task.getStartDate());
+			this.endDate = sdf.format(task.getEndDate());
+		} catch (NullPointerException e) {}
 		this.activityId = task.getActivity().getActivityId();
-	}
-
-	public TaskDTO(String name, String description, String status, String startDate, String endDate) {
-		this.name = name;
-		this.description = description;
-		this.status = status;
-		this.startDate = startDate;
-		this.endDate = endDate;
+		if (task.getAccountable() != null)
+			this.accountableId = task.getAccountable().getkUserId();
 	}
 
 	/**
@@ -146,6 +149,20 @@ public class TaskDTO extends ResourceSupport implements Serializable {
 	 */
 	public void setActivityId(Integer activityId) {
 		this.activityId = activityId;
+	}
+
+	/**
+	 * @return the accountableId
+	 */
+	public Integer getAccountableId() {
+		return accountableId;
+	}
+
+	/**
+	 * @param accountableId the accountableId to set
+	 */
+	public void setAccountableId(Integer accountableId) {
+		this.accountableId = accountableId;
 	}
 
 }

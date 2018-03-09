@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.Set;
 
 import com.app.kowalski.dto.ActivityDTO;
+import com.app.kowalski.dto.KowalskiUserDTO;
+import com.app.kowalski.dto.ProjectDTO;
+import com.app.kowalski.dto.TaskDTO;
 import com.app.kowalski.exception.ActivityNotFoundException;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.exception.TaskNotFoundException;
-import com.app.kowalski.dto.ProjectDTO;
-import com.app.kowalski.dto.TaskDTO;
-import com.app.kowalski.dto.KowalskiUserDTO;
 
 /**
  * Interface to expose allowed methods related to activities.
@@ -65,8 +65,10 @@ public interface ActivityService {
 	 * @return created task
 	 *
 	 * @throws ActivityNotFoundException No activity instance was found in the system
+	 * @throws KowalskiUserNotFoundException No kowalski user was found in the system
 	 */
-	public TaskDTO addTaskForActivity(int activityId, TaskDTO taskDTO) throws ActivityNotFoundException;
+	public TaskDTO addTaskForActivity(int activityId, TaskDTO taskDTO)
+			throws ActivityNotFoundException, KowalskiUserNotFoundException;
 
 	/**
 	 * Deletes a task

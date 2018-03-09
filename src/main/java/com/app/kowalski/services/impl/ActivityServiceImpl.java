@@ -6,24 +6,24 @@ import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
-import com.app.kowalski.da.entities.Activity;
-import com.app.kowalski.da.repositories.ActivityRepository;
-import com.app.kowalski.dto.ActivityDTO;
-import com.app.kowalski.services.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.app.kowalski.da.entities.Activity;
+import com.app.kowalski.da.entities.KowalskiUser;
+import com.app.kowalski.da.entities.Project;
+import com.app.kowalski.da.entities.Task;
+import com.app.kowalski.da.repositories.ActivityRepository;
+import com.app.kowalski.da.repositories.KowalskiUserRepository;
+import com.app.kowalski.dto.ActivityDTO;
+import com.app.kowalski.dto.KowalskiUserDTO;
+import com.app.kowalski.dto.ProjectDTO;
+import com.app.kowalski.dto.TaskDTO;
 import com.app.kowalski.exception.ActivityNotFoundException;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.exception.TaskNotFoundException;
-import com.app.kowalski.da.entities.Project;
-import com.app.kowalski.dto.ProjectDTO;
-import com.app.kowalski.da.entities.Task;
-import com.app.kowalski.dto.TaskDTO;
-import com.app.kowalski.da.entities.KowalskiUser;
-import com.app.kowalski.dto.KowalskiUserDTO;
-import com.app.kowalski.da.repositories.KowalskiUserRepository;
+import com.app.kowalski.services.ActivityService;
 
 @Service
 public class ActivityServiceImpl implements ActivityService {
@@ -90,23 +90,38 @@ public class ActivityServiceImpl implements ActivityService {
 
 	@Override
 	@Transactional
-	public TaskDTO addTaskForActivity(int activityId, TaskDTO taskDTO) throws ActivityNotFoundException {
+	public TaskDTO addTaskForActivity(int activityId, TaskDTO taskDTO)
+			throws ActivityNotFoundException, KowalskiUserNotFoundException {
 		Activity activity = null;
 		Task task = null;
+		KowalskiUser user = null;
+
+		// accountable is not required during task creation
+		if (taskDTO.getAccountableId() != null) {
+			try {
+				user = this.userRepository.getOne(taskDTO.getAccountableId());
+			} catch (EntityNotFoundException e) {
+				throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
+			}
+		}
 
 		try {
 			activity = this.activityRepository.getOne(activityId);
-			task = new Task().convertToTask(taskDTO);
-			task.setActivity(activity);
-			activity.addTask(task);
-
-			activity = this.activityRepository.saveAndFlush(activity);
-
-			// update task id
-			task = activity.getTasks().get(activity.getTasks().size() - 1);
 		} catch (EntityNotFoundException e) {
 			throw new ActivityNotFoundException(e.getMessage(), e.getCause());
 		}
+
+		task = new Task().convertToTask(taskDTO);
+		task.setActivity(activity);
+		activity.addTask(task);
+
+		if (user != null)
+			task.setAccountable(user);
+
+		activity = this.activityRepository.saveAndFlush(activity);
+
+		// update task id
+		task = activity.getTasks().get(activity.getTasks().size() - 1);
 
 		return new TaskDTO(task);
 	}

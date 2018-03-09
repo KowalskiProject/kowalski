@@ -4,12 +4,9 @@ import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
-import com.app.kowalski.dto.ActivityDTO;
-import com.app.kowalski.services.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,11 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.kowalski.dto.ActivityDTO;
+import com.app.kowalski.dto.KowalskiUserDTO;
+import com.app.kowalski.dto.TaskDTO;
 import com.app.kowalski.exception.ActivityNotFoundException;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.exception.TaskNotFoundException;
-import com.app.kowalski.dto.TaskDTO;
-import com.app.kowalski.dto.KowalskiUserDTO;
+import com.app.kowalski.services.ActivityService;
 import com.app.kowalski.util.HateoasLinksBuilder;
 
 @RestController
@@ -84,16 +83,16 @@ public class ActivityController {
 	}
 
 	@RequestMapping(value = "/{activityId}/tasks", method = RequestMethod.POST)
-	public ResponseEntity<TaskDTO> addTaskForActivity(@PathVariable int activityId, @RequestBody TaskDTO taskDTO) {
+	public ResponseEntity<TaskDTO> addTaskForActivity(@PathVariable int activityId, @Valid @RequestBody TaskDTO taskDTO) {
 		try {
 			taskDTO = this.activityService.addTaskForActivity(activityId, taskDTO);
-		} catch (ActivityNotFoundException e) {
+		} catch (ActivityNotFoundException | KowalskiUserNotFoundException e) {
 			return new ResponseEntity<TaskDTO>(HttpStatus.NOT_FOUND);
 		}
 
 		HateoasLinksBuilder.createHateoasForTask(taskDTO);
 
-		return new ResponseEntity<TaskDTO>(taskDTO, HttpStatus.OK);
+		return new ResponseEntity<TaskDTO>(taskDTO, HttpStatus.CREATED);
 	}
 
 	@RequestMapping(value = "/{activityId}/tasks/{taskId}", method = RequestMethod.POST)
