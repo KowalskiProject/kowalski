@@ -55,7 +55,7 @@ public class Task {
 		try {
 			this.startDate = sdf.parse(taskDTO.getStartDate());
 			this.endDate = sdf.parse(taskDTO.getEndDate());
-		} catch (ParseException e) {}
+		} catch (ParseException | NullPointerException e) {}
 
 		return this;
 	}
