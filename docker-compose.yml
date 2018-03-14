@@ -3,8 +3,10 @@ services:
   kowalski:
     image: kowalski/kowalski
     environment:
-      KOWALSKI_LOGIN_AD_URL: "ldap://openldap:389/dc=example,dc=com"
-      KOWALSKI_LOGIN_AD_DOMAIN: "kowalski.org"
+      KOWALSKI_LOGIN_LOCAL_USER: admin
+      KOWALSKI_LOGIN_LOCAL_PASSWORD: password
+      KOWALSKI_LOGIN_TYPE: ldap
+      KOWALSKI_LOGIN_LDAP_URL: "ldap://openldap:389/dc=example,dc=org"
       SPRING_DATASOURCE_URL: jdbc:mysql://kowalski-db/kowalskidb?useSSL=false
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
