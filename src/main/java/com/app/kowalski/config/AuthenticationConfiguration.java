@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configurers.provisioning.InMemoryUserDetailsManagerConfigurer;
-import org.springframework.security.ldap.authentication.NullLdapAuthoritiesPopulator;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
 import org.springframework.util.ObjectUtils;
 
@@ -45,11 +45,14 @@ public class AuthenticationConfiguration {
     private String localUserPassword;
 
     @Autowired
+    private KowalskiAuthoritiesPopulator authPopulator;
+
+    @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 
-        configureLocalAuth(auth);
-
         try {
+            configureLocalAuth(auth);
+
             switch (parseLoginType(this.login_type)) {
                 case AD: {
                     configureAD(auth);
@@ -74,11 +77,12 @@ public class AuthenticationConfiguration {
         if(!ObjectUtils.isEmpty(this.ldap_url)) {
             auth.ldapAuthentication()
                     .contextSource()
-                    .url(this.ldap_url)
+                        .url(this.ldap_url)
                     .and()
                     .userDnPatterns("cn={0},ou=users")
                     .userSearchBase("ou=users")
-                    .ldapAuthoritiesPopulator(new NullLdapAuthoritiesPopulator());
+                    .rolePrefix("")
+                    .ldapAuthoritiesPopulator(authPopulator);
         }else{
             throw new IllegalArgumentException("+++ No LDAP URL found.");
         }
@@ -92,6 +96,7 @@ public class AuthenticationConfiguration {
                 ActiveDirectoryLdapAuthenticationProvider provider = new ActiveDirectoryLdapAuthenticationProvider(this.ad_domain, this.ad_url);
                 provider.setConvertSubErrorCodesToExceptions(true);
                 provider.setUseAuthenticationRequestCredentials(true);
+                provider.setUserDetailsContextMapper(authPopulator);
                 auth.authenticationProvider(provider);
             } else {
                 throw new IllegalArgumentException("+++ No active directory URL found.");
