@@ -1,10 +1,13 @@
 package com.app.kowalski.security.jwt;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.DefaultClaims;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -12,6 +15,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +24,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class JWTHelperService {
+
+    private Logger LOG = LoggerFactory.getLogger(JWTHelperService.class);
 
     @Value("${kowalski.token.expiration ?: 180000}")
     private long EXPIRATION_TIME;
@@ -47,10 +53,17 @@ public class JWTHelperService {
     }
 
     public void addAuthentication(HttpServletResponse response, Authentication auth) {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
         DefaultClaims claim = new DefaultClaims();
         claim.setSubject(auth.getName());
         Date expiration = new Date(System.currentTimeMillis() + EXPIRATION_TIME);
+
+        if(!auth.getAuthorities().isEmpty()){
+            List<String> authorities = auth.getAuthorities().stream().map(authority -> authority.getAuthority()).collect(Collectors.toList());
+            claim.put("authorities",authorities.toArray());
+        }
+
+
 
         String JWT = Jwts.builder()
                 .setClaims(claim)
@@ -74,13 +87,20 @@ public class JWTHelperService {
                         .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
                         .getBody();
                 String user = claim.getSubject();
-                List<String> authorities = gson.fromJson((String) claim.get("authorities"), List.class);
 
+                List<String> authorities = (List<String>) claim.get("authorities");;
+                List<GrantedAuthority> lg;
+
+                if(!CollectionUtils.isEmpty(authorities)){
+                    lg = authorities.stream().map((authority) -> new SimpleGrantedAuthority(authority)).collect(Collectors.toList());
+                }else{
+                    lg = Collections.emptyList();
+                }
                 if (user != null) {
-                    return new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
+                    return new UsernamePasswordAuthenticationToken(user, null, lg);
                 }
             }catch (Exception e){
-                //TODO LOG
+                LOG.error("Get authorization Error",e);
             }
         }
         return null;
