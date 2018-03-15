@@ -52,11 +52,14 @@ public interface ActivityService {
 	/**
 	 * Returns the list of tasks associated to the given activity
 	 * @param activityId activity reference
+	 * @param kUserId user reference
 	 * @return List of tasks associated to the given activity
 	 *
 	 * @throws ActivityNotFoundException No activity instance was found in the system
+	 * @throws KowalskiUserNotFoundException No kowalski user was found in the system
 	 */
-	public List<TaskDTO> getTasksForActivity(int activityId) throws ActivityNotFoundException;
+	public List<TaskDTO> getTasksForActivity(int activityId, Integer kUserId)
+			throws ActivityNotFoundException, KowalskiUserNotFoundException;
 
 	/**
 	 * Creates a new task and associates it to the given activity

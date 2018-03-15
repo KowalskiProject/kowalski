@@ -52,7 +52,7 @@ public class HateoasLinksBuilder {
 		activityDTO.add(projectLink);
 
 		ResponseEntity<List<TaskDTO>> tasksLinkBuilder = methodOn(ActivityController.class)
-				.getTasksForActivity(activityDTO.getActivityId());
+				.getTasksForActivity(activityDTO.getActivityId(), null);
 		Link tasksLink = linkTo(tasksLinkBuilder).withRel("tasks");
 		activityDTO.add(tasksLink);
 

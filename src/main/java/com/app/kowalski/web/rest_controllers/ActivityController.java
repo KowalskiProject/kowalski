@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.kowalski.dto.ActivityDTO;
@@ -67,12 +68,14 @@ public class ActivityController {
 	}
 
 	@RequestMapping(value = "/{activityId}/tasks", method = RequestMethod.GET)
-	public ResponseEntity<List<TaskDTO>> getTasksForActivity(@PathVariable int activityId) {
+	public ResponseEntity<List<TaskDTO>> getTasksForActivity(
+			@PathVariable int activityId,
+			@RequestParam(value = "userId", required = false) Integer kUserId) {
 		List<TaskDTO> tasksDTO = null;
 
 		try {
-			tasksDTO = this.activityService.getTasksForActivity(activityId);
-		} catch (ActivityNotFoundException e) {
+			tasksDTO = this.activityService.getTasksForActivity(activityId, kUserId);
+		} catch (ActivityNotFoundException | KowalskiUserNotFoundException e) {
 			return new ResponseEntity<List<TaskDTO>>(HttpStatus.NOT_FOUND);
 		}
 

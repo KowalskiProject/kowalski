@@ -16,6 +16,7 @@ import com.app.kowalski.da.entities.Project;
 import com.app.kowalski.da.entities.Task;
 import com.app.kowalski.da.repositories.ActivityRepository;
 import com.app.kowalski.da.repositories.KowalskiUserRepository;
+import com.app.kowalski.da.repositories.TaskRepository;
 import com.app.kowalski.dto.ActivityDTO;
 import com.app.kowalski.dto.KowalskiUserDTO;
 import com.app.kowalski.dto.ProjectDTO;
@@ -29,11 +30,14 @@ import com.app.kowalski.services.ActivityService;
 public class ActivityServiceImpl implements ActivityService {
 
 	private final ActivityRepository activityRepository;
+	private final TaskRepository taskRepository;
 	private final KowalskiUserRepository userRepository;
 
 	@Autowired
-	public ActivityServiceImpl(ActivityRepository activityRepository, KowalskiUserRepository userRepository) {
+	public ActivityServiceImpl(ActivityRepository activityRepository, TaskRepository taskRepository,
+			KowalskiUserRepository userRepository) {
 		this.activityRepository = activityRepository;
+		this.taskRepository = taskRepository;
 		this.userRepository = userRepository;
 	}
 
@@ -74,8 +78,19 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 
 	@Override
-	public List<TaskDTO> getTasksForActivity(int activityId) throws ActivityNotFoundException {
+	public List<TaskDTO> getTasksForActivity(int activityId, Integer kUserId)
+			throws ActivityNotFoundException, KowalskiUserNotFoundException {
 		Activity activity = null;
+		KowalskiUser user = null;
+		List<Task> tasks = null;
+
+		if (kUserId != null) {
+			try {
+				user = this.userRepository.getOne(kUserId);
+			} catch (EntityNotFoundException e) {
+				throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
+			}
+		}
 
 		try {
 			activity = this.activityRepository.getOne(activityId);
@@ -83,7 +98,12 @@ public class ActivityServiceImpl implements ActivityService {
 			throw new ActivityNotFoundException(e.getMessage(), e.getCause());
 		}
 
-		return activity.getTasks().stream()
+		if (user != null)
+			tasks = this.taskRepository.findByActivityAndAccountable(activity, user);
+		else
+			tasks = activity.getTasks();
+
+		return tasks.stream()
 				.map(task -> new TaskDTO(task))
 				.collect(Collectors.toList());
 	}
