@@ -76,11 +76,15 @@ public interface ProjectService {
 	/**
 	 * Returns all activities associated with given project id
 	 * @param id Project id
+	 * @param includeTasks Flag to indicate if all tasks associated to the activities must be also returned
+	 * @param tasksAccountableId filter tasks by accountable user
 	 * @return list of activities associated with given project id
 	 *
 	 * @throws ProjectNotFoundException No project instance was found in the system
+	 * @throws KowalskiUserNotFoundException No kowalski user was found in the system
 	 */
-	public List<ActivityDTO> getAllActivitiesForProject(int id) throws ProjectNotFoundException;
+	public List<ActivityDTO> getAllActivitiesForProject(Integer id, Boolean includeTasks, Integer tasksAccountableId)
+			throws ProjectNotFoundException, KowalskiUserNotFoundException;
 
 	/**
 	 * Remove an activity from project and delete it.
