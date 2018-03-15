@@ -23,9 +23,10 @@ public interface ProjectService {
 
 	/**
 	 * Get all projects available in the system.
+	 * @param userId filter to return projects which the given user is member
 	 * @return List of projects
 	 */
-	public List<ProjectDTO> getProjects();
+	public List<ProjectDTO> getProjects(Integer userId);
 
 	/**
 	 * Get a single project instance through given id.

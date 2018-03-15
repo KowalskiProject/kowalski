@@ -44,8 +44,20 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public List<ProjectDTO> getProjects() {
-		List<Project> projects = this.projectRepository.findAll();
+	public List<ProjectDTO> getProjects(Integer userId) {
+		List<Project> projects = null;
+
+		if (userId != null) {
+			KowalskiUser user = this.userRepository.getOne(userId);
+			if (user != null)
+				projects = this.projectRepository.findWithMember(user);
+			else
+				projects = this.projectRepository.findAll();
+		}
+		else {
+			projects = this.projectRepository.findAll();
+		}
+
 		return projects.stream()
 				.map(project -> new ProjectDTO(project))
 				.collect(Collectors.toList());

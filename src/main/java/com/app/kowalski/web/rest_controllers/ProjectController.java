@@ -38,8 +38,8 @@ public class ProjectController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<List<ProjectDTO>> getProjects() {
-		List<ProjectDTO> projectsDTO = this.projectService.getProjects();
+	public ResponseEntity<List<ProjectDTO>> getProjects(@RequestParam(value="userId", required=false) Integer userId) {
+		List<ProjectDTO> projectsDTO = this.projectService.getProjects(userId);
 
 		for (ProjectDTO projectDTO : projectsDTO) {
 			HateoasLinksBuilder.createHateoasForProject(projectDTO);
