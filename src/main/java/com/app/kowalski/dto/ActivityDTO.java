@@ -5,10 +5,12 @@ package com.app.kowalski.dto;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.app.kowalski.da.entities.Activity;
 import org.springframework.hateoas.ResourceSupport;
 
+import com.app.kowalski.da.entities.Activity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -27,6 +29,7 @@ public class ActivityDTO extends ResourceSupport implements Serializable {
 	private String startDate;
 	private String endDate;
 	private Integer projectId;
+	private List<TaskDTO> tasks = new ArrayList<TaskDTO>();
 
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -39,7 +42,7 @@ public class ActivityDTO extends ResourceSupport implements Serializable {
 		this.status = activity.getStatus();
 		this.startDate = sdf.format(activity.getStartDate());
 		this.endDate = sdf.format(activity.getEndDate());
-		this.setProjectId(activity.getProject().getProjectId());
+		this.projectId = activity.getProject().getProjectId();
 	}
 
 	public ActivityDTO(String name, String description, String status, String startDate, String endDate) {
@@ -146,6 +149,20 @@ public class ActivityDTO extends ResourceSupport implements Serializable {
 	 */
 	public void setProjectId(Integer projectId) {
 		this.projectId = projectId;
+	}
+
+	/**
+	 * @return the tasks
+	 */
+	public List<TaskDTO> getTasks() {
+		return tasks;
+	}
+
+	/**
+	 * @param tasks the tasks to set
+	 */
+	public void setTasks(List<TaskDTO> tasks) {
+		this.tasks = tasks;
 	}
 
 }

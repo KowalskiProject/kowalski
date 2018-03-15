@@ -1,5 +1,6 @@
 package com.app.kowalski.services.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,9 +17,11 @@ import com.app.kowalski.da.entities.Project;
 import com.app.kowalski.da.repositories.ActivityRepository;
 import com.app.kowalski.da.repositories.KowalskiUserRepository;
 import com.app.kowalski.da.repositories.ProjectRepository;
+import com.app.kowalski.da.repositories.TaskRepository;
 import com.app.kowalski.dto.ActivityDTO;
 import com.app.kowalski.dto.KowalskiUserDTO;
 import com.app.kowalski.dto.ProjectDTO;
+import com.app.kowalski.dto.TaskDTO;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.exception.ProjectNotFoundException;
 import com.app.kowalski.services.ProjectService;
@@ -28,19 +31,33 @@ public class ProjectServiceImpl implements ProjectService {
 
 	private final ProjectRepository projectRepository;
 	private final ActivityRepository activityRepository;
+	private final TaskRepository taskRepository;
 	private final KowalskiUserRepository userRepository;
 
 	@Autowired
 	public ProjectServiceImpl(ProjectRepository projectRepository, ActivityRepository activityRepository,
-			KowalskiUserRepository userRepository) {
+			TaskRepository taskRepository, KowalskiUserRepository userRepository) {
 		this.projectRepository = projectRepository;
 		this.activityRepository = activityRepository;
+		this.taskRepository = taskRepository;
 		this.userRepository = userRepository;
 	}
 
 	@Override
-	public List<ProjectDTO> getProjects() {
-		List<Project> projects = this.projectRepository.findAll();
+	public List<ProjectDTO> getProjects(Integer userId) {
+		List<Project> projects = null;
+
+		if (userId != null) {
+			KowalskiUser user = this.userRepository.getOne(userId);
+			if (user != null)
+				projects = this.projectRepository.findWithMember(user);
+			else
+				projects = this.projectRepository.findAll();
+		}
+		else {
+			projects = this.projectRepository.findAll();
+		}
+
 		return projects.stream()
 				.map(project -> new ProjectDTO(project))
 				.collect(Collectors.toList());
@@ -93,18 +110,53 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public List<ActivityDTO> getAllActivitiesForProject(int id) throws ProjectNotFoundException {
+	public List<ActivityDTO> getAllActivitiesForProject(Integer id, Boolean includeTasks, Integer tasksAccountableId)
+			throws ProjectNotFoundException, KowalskiUserNotFoundException {
 		Project project = null;
+		KowalskiUser accountable = null;
+		List<ActivityDTO> results = new ArrayList<ActivityDTO>();
+
 		try {
 			project = this.projectRepository.getOne(id);
 		} catch (EntityNotFoundException e) {
 			throw new ProjectNotFoundException(e.getMessage(), e.getCause());
 		}
 
+		if (tasksAccountableId != null) {
+			try {
+				accountable = this.userRepository.getOne(tasksAccountableId);
+			} catch (EntityNotFoundException e) {
+				throw new KowalskiUserNotFoundException(e.getMessage(), e.getCause());
+			}
+		}
+
 		List<Activity> activities = project.getActivities();
-		return activities.stream()
-				.map(activity -> new ActivityDTO(activity))
-				.collect(Collectors.toList());
+
+		// no flags included: return only activities
+		if (!includeTasks) {
+			results = activities.stream().map(activity -> new ActivityDTO(activity)).collect(Collectors.toList());
+		}
+		else {
+			// include tasks but without a specific user
+			if (tasksAccountableId == null) {
+				results = activities.stream().map(activity -> {
+					ActivityDTO activityDTO = new ActivityDTO(activity);
+					activityDTO.setTasks(activity.getTasks().stream().map(task -> new TaskDTO(task)).collect(Collectors.toList()));
+					return activityDTO;
+				}).collect(Collectors.toList());
+			}
+			else {
+				// include tasks of a specific user
+				for (Activity activity : activities) {
+					ActivityDTO activityDTO = new ActivityDTO(activity);
+					activityDTO.setTasks(this.taskRepository.findByActivityAndAccountable(activity, accountable).stream()
+							.map(task -> new TaskDTO(task)).collect(Collectors.toList()));
+					results.add(activityDTO);
+				}
+			}
+		}
+
+		return results;
 	}
 
 	@Override
