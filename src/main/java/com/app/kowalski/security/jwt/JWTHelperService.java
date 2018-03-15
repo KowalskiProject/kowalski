@@ -1,13 +1,16 @@
 package com.app.kowalski.security.jwt;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.impl.DefaultClaims;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,17 +18,23 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.app.kowalski.da.repositories.KowalskiUserRepository;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.DefaultClaims;
 
 @Service
 public class JWTHelperService {
 
     private Logger LOG = LoggerFactory.getLogger(JWTHelperService.class);
+
+    @Autowired
+    private KowalskiUserRepository kwuRepo;
 
     @Value("${kowalski.token.expiration ?: 180000}")
     private long EXPIRATION_TIME;
@@ -61,9 +70,11 @@ public class JWTHelperService {
         if(!auth.getAuthorities().isEmpty()){
             List<String> authorities = auth.getAuthorities().stream().map(authority -> authority.getAuthority()).collect(Collectors.toList());
             claim.put("authorities",authorities.toArray());
+
+            // return user id on token
+            if (this.kwuRepo.findByUsername(auth.getName()) != null)
+            	claim.put("kUserId", this.kwuRepo.findByUsername(auth.getName()).getkUserId().toString());
         }
-
-
 
         String JWT = Jwts.builder()
                 .setClaims(claim)
