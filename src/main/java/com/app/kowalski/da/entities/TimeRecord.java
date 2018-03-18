@@ -29,15 +29,15 @@ public class TimeRecord {
     private KowalskiUser user;
 
 	@ManyToOne
-    @JoinColumn(name="task_taskId")
+    @JoinColumn(name="taskId")
     private Task task;
 
 	@ManyToOne
-    @JoinColumn(name="activity_activityId")
+    @JoinColumn(name="activityId")
     private Activity activity;
 
 	@ManyToOne
-    @JoinColumn(name="project_projectId")
+    @JoinColumn(name="projectId")
     private Project project;
 
 	private Date createDate;
