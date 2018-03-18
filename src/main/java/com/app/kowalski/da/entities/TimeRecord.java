@@ -16,9 +16,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.app.kowalski.da.entities.Task;
-import com.app.kowalski.da.entities.KowalskiUser;
-
 @Entity
 @Table(name = "timerecord")
 public class TimeRecord {
@@ -35,6 +32,14 @@ public class TimeRecord {
     @JoinColumn(name="task_taskId")
     private Task task;
 
+	@ManyToOne
+    @JoinColumn(name="activity_activityId")
+    private Activity activity;
+
+	@ManyToOne
+    @JoinColumn(name="project_projectId")
+    private Project project;
+
 	private Date createDate;
 	private LocalDate reportedDay;
 	private LocalTime reportedTime;
@@ -50,6 +55,8 @@ public class TimeRecord {
 	public TimeRecord(KowalskiUser user, Task task, LocalDate reportedDay, LocalTime reportedTime, String comment) {
 		this.user = user;
 		this.task = task;
+		this.activity = task.getActivity();
+		this.project = this.activity.getProject();
 		this.createDate = new Date();
 		this.reportedDay = reportedDay;
 		this.reportedTime = reportedTime;
@@ -194,5 +201,33 @@ public class TimeRecord {
 	 */
 	public void addReview(TimeRecordReview review) {
 		this.reviews.add(review);
+	}
+
+	/**
+	 * @return the activity
+	 */
+	public Activity getActivity() {
+		return activity;
+	}
+
+	/**
+	 * @param activity the activity to set
+	 */
+	public void setActivity(Activity activity) {
+		this.activity = activity;
+	}
+
+	/**
+	 * @return the project
+	 */
+	public Project getProject() {
+		return project;
+	}
+
+	/**
+	 * @param project the project to set
+	 */
+	public void setProject(Project project) {
+		this.project = project;
 	}
 }
