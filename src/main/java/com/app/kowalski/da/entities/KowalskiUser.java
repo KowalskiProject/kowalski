@@ -4,10 +4,13 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
@@ -24,7 +27,6 @@ public class KowalskiUser {
 	private String name;
 	private String username;
 	private String email;
-	private String password;
 	private Date creationDate;
 
 	@ManyToMany(mappedBy = "members")
@@ -33,13 +35,20 @@ public class KowalskiUser {
 	@ManyToMany(mappedBy = "members")
     private Set<Activity> activities = new HashSet<>();
 
+	@ManyToMany(cascade=CascadeType.ALL)
+    @JoinTable(
+    	name="KowalskiUser_KowalskiUserRole",
+    	joinColumns={@JoinColumn(name = "kowalskiuser_kUserId")},
+    	inverseJoinColumns={@JoinColumn(name = "kowalskiuserrole_roleId")}
+    )
+    Set<KowalskiUserRole> roles = new HashSet<>();
+
 	public KowalskiUser() {}
 
-	public KowalskiUser(String name, String username, String email, String password) {
+	public KowalskiUser(String name, String username, String email) {
 		this.name = name;
 		this.username = username;
 		this.email = email;
-		this.password = password;
 		this.creationDate = new Date();
 	}
 
@@ -47,7 +56,6 @@ public class KowalskiUser {
 		this.name = kowalskiUserDTO.getName();
 		this.username = kowalskiUserDTO.getUsername();
 		this.email = kowalskiUserDTO.getEmail();
-		this.password = kowalskiUserDTO.getPassword();
 		this.creationDate = new Date();
 
 		return this;
@@ -110,20 +118,6 @@ public class KowalskiUser {
 	}
 
 	/**
-	 * @return the password
-	 */
-	public String getPassword() {
-		return password;
-	}
-
-	/**
-	 * @param password the password to set
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	/**
 	 * @return the creationDate
 	 */
 	public Date getCreationDate() {
@@ -147,6 +141,34 @@ public class KowalskiUser {
 
 	public Set<Activity> getActivities() {
 		return this.activities;
+	}
+
+	/**
+	 * @return the roles
+	 */
+	public Set<KowalskiUserRole> getRoles() {
+		return roles;
+	}
+
+	/**
+	 * @param roles the roles to set
+	 */
+	public void setRoles(Set<KowalskiUserRole> roles) {
+		this.roles = roles;
+	}
+
+	/**
+	 * @param projects the projects to set
+	 */
+	public void setProjects(Set<Project> projects) {
+		this.projects = projects;
+	}
+
+	/**
+	 * @param activities the activities to set
+	 */
+	public void setActivities(Set<Activity> activities) {
+		this.activities = activities;
 	}
 
 }

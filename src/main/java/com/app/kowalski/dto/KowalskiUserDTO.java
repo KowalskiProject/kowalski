@@ -1,10 +1,13 @@
 package com.app.kowalski.dto;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import com.app.kowalski.da.entities.KowalskiUser;
 import org.springframework.hateoas.ResourceSupport;
 
+import com.app.kowalski.da.entities.KowalskiUser;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -20,16 +23,15 @@ public class KowalskiUserDTO extends ResourceSupport implements Serializable {
 	private String name;
 	private String username;
 	private String email;
-	private String password;
 	private String creationDate;
+	private Set<String> roles = new HashSet<String>();
 
 	public KowalskiUserDTO() {}
 
-	public KowalskiUserDTO(String name, String username, String email, String password) {
+	public KowalskiUserDTO(String name, String username, String email) {
 		this.name = name;
 		this.username = username;
 		this.email = email;
-		this.password = password;
 	}
 
 	public KowalskiUserDTO(KowalskiUser kowalskiUser) {
@@ -37,6 +39,9 @@ public class KowalskiUserDTO extends ResourceSupport implements Serializable {
 		this.name = kowalskiUser.getName();
 		this.username = kowalskiUser.getUsername();
 		this.email = kowalskiUser.getEmail();
+		this.setRoles(kowalskiUser.getRoles().stream()
+				.map(role -> role.getRole())
+				.collect(Collectors.toSet()));
 	}
 
 	/**
@@ -96,20 +101,6 @@ public class KowalskiUserDTO extends ResourceSupport implements Serializable {
 	}
 
 	/**
-	 * @return the password
-	 */
-	public String getPassword() {
-		return password;
-	}
-
-	/**
-	 * @param password the password to set
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	/**
 	 * @return the creationDate
 	 */
 	public String getCreationDate() {
@@ -121,6 +112,20 @@ public class KowalskiUserDTO extends ResourceSupport implements Serializable {
 	 */
 	public void setCreationDate(String creationDate) {
 		this.creationDate = creationDate;
+	}
+
+	/**
+	 * @return the roles
+	 */
+	public Set<String> getRoles() {
+		return roles;
+	}
+
+	/**
+	 * @param roles the roles to set
+	 */
+	public void setRoles(Set<String> roles) {
+		this.roles = roles;
 	}
 
 }
