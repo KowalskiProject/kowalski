@@ -1,5 +1,6 @@
 package com.app.kowalski.config;
 
+
 import com.app.kowalski.security.jwt.JWTAuthenticationFilter;
 import com.app.kowalski.security.jwt.JWTAuthorizationFilter;
 import com.app.kowalski.security.jwt.JWTHelperService;
@@ -20,6 +21,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @PropertySource("classpath:application.properties")
@@ -53,8 +56,11 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("*");
+        configuration.setAllowedMethods(Arrays.asList("GET","PUT","DELETE","OPTIONS","POST"));
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 
