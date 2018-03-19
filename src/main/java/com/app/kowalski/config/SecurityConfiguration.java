@@ -41,7 +41,8 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
+        http.cors().configurationSource(corsConfigurationSource())
+                .and().csrf().disable()
                 .authorizeRequests()
                     .antMatchers(HttpMethod.POST, this.SIGN_UP_URL)
                         .permitAll()
@@ -54,15 +55,16 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
     }
 
 
-    @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("*");
-        configuration.setAllowedMethods(Arrays.asList("GET","PUT","DELETE","OPTIONS","POST"));
-        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        configuration.setAllowedMethods(Arrays.asList("GET","PUT","DELETE","POST","HEAD"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration.applyPermitDefaultValues());
         return source;
     }
+
+
+
 
     @Override
     public void configure(WebSecurity web) throws Exception {

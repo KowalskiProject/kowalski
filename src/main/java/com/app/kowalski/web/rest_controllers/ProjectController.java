@@ -75,7 +75,7 @@ public class ProjectController {
 	}
 
 	@RequestMapping(value = "/{projectId}", method = RequestMethod.PUT)
-	public ResponseEntity<ProjectDTO> editProject(@PathVariable("id") int id, @RequestBody ProjectDTO projectDTO) {
+	public ResponseEntity<ProjectDTO> editProject(@PathVariable int id, @RequestBody ProjectDTO projectDTO) {
 		projectDTO.setProjectId(id);
 
 		try {
@@ -90,7 +90,7 @@ public class ProjectController {
 	}
 
 	@RequestMapping(value = "/{projectId}", method = RequestMethod.DELETE)
-	public ResponseEntity<String> deleteProject(@PathVariable("id") int projectId) {
+	public ResponseEntity<String> deleteProject(@PathVariable int projectId) {
 		try {
 			boolean ret = this.projectService.deleteProject(projectId);
 		} catch (ProjectNotFoundException e) {

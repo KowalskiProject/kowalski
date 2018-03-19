@@ -68,7 +68,7 @@ public class TimeRecordController {
 	}
 
 	@RequestMapping(value = "/{trId}", method = RequestMethod.PUT)
-	public ResponseEntity<TimeRecordDTO> editTimeRecord(@PathVariable("trId") int trId, @RequestBody TimeRecordDTO timeRecordDTO) {
+	public ResponseEntity<TimeRecordDTO> editTimeRecord(@PathVariable int trId, @RequestBody TimeRecordDTO timeRecordDTO) {
 		try {
 			timeRecordDTO = this.trService.editTimeRecord(trId, timeRecordDTO);
 		} catch (KowalskiUserNotFoundException | TaskNotFoundException | InvalidTimeRecordException | TimeRecordNotFoundException e) {
@@ -81,7 +81,7 @@ public class TimeRecordController {
 	}
 
 	@RequestMapping(value = "/{trId}", method = RequestMethod.DELETE)
-	public ResponseEntity<String> deleteTimeRecord(@PathVariable("trId") int trId) {
+	public ResponseEntity<String> deleteTimeRecord(@PathVariable int trId) {
 		try {
 			boolean ret = this.trService.deleteTimeRecord(trId);
 		} catch (TimeRecordNotFoundException e) {
