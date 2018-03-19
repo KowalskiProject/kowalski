@@ -1,5 +1,6 @@
 package com.app.kowalski.config;
 
+
 import com.app.kowalski.security.jwt.JWTAuthenticationFilter;
 import com.app.kowalski.security.jwt.JWTAuthorizationFilter;
 import com.app.kowalski.security.jwt.JWTHelperService;
@@ -21,6 +22,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
+
 @Configuration
 @PropertySource("classpath:application.properties")
 @EnableWebSecurity
@@ -38,7 +41,8 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
+        http.cors().configurationSource(corsConfigurationSource())
+                .and().csrf().disable()
                 .authorizeRequests()
                     .antMatchers(HttpMethod.POST, this.SIGN_UP_URL)
                         .permitAll()
@@ -51,12 +55,16 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
     }
 
 
-    @Bean
     CorsConfigurationSource corsConfigurationSource() {
-        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedMethods(Arrays.asList("GET","PUT","DELETE","POST","HEAD"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration.applyPermitDefaultValues());
         return source;
     }
+
+
+
 
     @Override
     public void configure(WebSecurity web) throws Exception {
