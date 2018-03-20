@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -35,7 +36,7 @@ public class KowalskiUser {
 	@ManyToMany(mappedBy = "members")
     private Set<Activity> activities = new HashSet<>();
 
-	@ManyToMany(cascade=CascadeType.ALL)
+	@ManyToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @JoinTable(
     	name="KowalskiUser_KowalskiUserRole",
     	joinColumns={@JoinColumn(name = "kowalskiuser_kUserId")},
@@ -45,20 +46,11 @@ public class KowalskiUser {
 
 	public KowalskiUser() {}
 
-	public KowalskiUser(String name, String username, String email) {
-		this.name = name;
-		this.username = username;
-		this.email = email;
-		this.creationDate = new Date();
-	}
-
-	public KowalskiUser convertToKowalskiUser(KowalskiUserDTO kowalskiUserDTO) {
+	public KowalskiUser(KowalskiUserDTO kowalskiUserDTO) {
 		this.name = kowalskiUserDTO.getName();
 		this.username = kowalskiUserDTO.getUsername();
 		this.email = kowalskiUserDTO.getEmail();
 		this.creationDate = new Date();
-
-		return this;
 	}
 
 	/**

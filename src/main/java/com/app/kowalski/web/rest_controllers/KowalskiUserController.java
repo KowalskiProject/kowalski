@@ -25,6 +25,7 @@ import com.app.kowalski.dto.TaskDTO;
 import com.app.kowalski.dto.TimeRecordDTO;
 import com.app.kowalski.exception.InvalidTimeRecordException;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
+import com.app.kowalski.exception.KowalskiUserServiceException;
 import com.app.kowalski.services.ActivityService;
 import com.app.kowalski.services.KowalskiUserService;
 import com.app.kowalski.services.ProjectService;
@@ -70,7 +71,11 @@ public class KowalskiUserController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<KowalskiUserDTO> addKowalskiUser(@RequestBody KowalskiUserDTO kowalskiUserDTO) {
-		kowalskiUserDTO = this.kowalskiUserService.addKowaslkiUser(kowalskiUserDTO);
+		try {
+			kowalskiUserDTO = this.kowalskiUserService.addKowaslkiUser(kowalskiUserDTO);
+		} catch (KowalskiUserServiceException e) {
+			return new ResponseEntity<KowalskiUserDTO>(HttpStatus.PRECONDITION_FAILED);
+		}
 		HateoasLinksBuilder.createHateoasForKowalskiUser(kowalskiUserDTO);
 		return new ResponseEntity<KowalskiUserDTO>(kowalskiUserDTO, HttpStatus.CREATED);
 	}

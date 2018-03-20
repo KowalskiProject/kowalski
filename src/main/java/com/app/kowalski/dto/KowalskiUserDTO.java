@@ -24,14 +24,15 @@ public class KowalskiUserDTO extends ResourceSupport implements Serializable {
 	private String username;
 	private String email;
 	private String creationDate;
-	private Set<String> roles = new HashSet<String>();
+	private Set<KowalskiUserRoleDTO> roles = new HashSet<KowalskiUserRoleDTO>();
 
 	public KowalskiUserDTO() {}
 
-	public KowalskiUserDTO(String name, String username, String email) {
+	public KowalskiUserDTO(String name, String username, String email, Set<KowalskiUserRoleDTO> roles) {
 		this.name = name;
 		this.username = username;
 		this.email = email;
+		this.roles = roles;
 	}
 
 	public KowalskiUserDTO(KowalskiUser kowalskiUser) {
@@ -39,9 +40,9 @@ public class KowalskiUserDTO extends ResourceSupport implements Serializable {
 		this.name = kowalskiUser.getName();
 		this.username = kowalskiUser.getUsername();
 		this.email = kowalskiUser.getEmail();
-		this.setRoles(kowalskiUser.getRoles().stream()
-				.map(role -> role.getRole())
-				.collect(Collectors.toSet()));
+		this.roles = kowalskiUser.getRoles().stream()
+				.map(role -> new KowalskiUserRoleDTO(role))
+				.collect(Collectors.toSet());
 	}
 
 	/**
@@ -117,14 +118,14 @@ public class KowalskiUserDTO extends ResourceSupport implements Serializable {
 	/**
 	 * @return the roles
 	 */
-	public Set<String> getRoles() {
+	public Set<KowalskiUserRoleDTO> getRoles() {
 		return roles;
 	}
 
 	/**
 	 * @param roles the roles to set
 	 */
-	public void setRoles(Set<String> roles) {
+	public void setRoles(Set<KowalskiUserRoleDTO> roles) {
 		this.roles = roles;
 	}
 
