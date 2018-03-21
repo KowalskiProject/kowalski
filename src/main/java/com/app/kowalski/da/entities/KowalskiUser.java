@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,8 +26,10 @@ public class KowalskiUser {
 	private String name;
 	private String username;
 	private String email;
-	private String password;
 	private Date creationDate;
+
+	@Enumerated(EnumType.ORDINAL)
+	private KowalskiUserRole role;
 
 	@ManyToMany(mappedBy = "members")
     private Set<Project> projects = new HashSet<>();
@@ -35,22 +39,12 @@ public class KowalskiUser {
 
 	public KowalskiUser() {}
 
-	public KowalskiUser(String name, String username, String email, String password) {
-		this.name = name;
-		this.username = username;
-		this.email = email;
-		this.password = password;
-		this.creationDate = new Date();
-	}
-
-	public KowalskiUser convertToKowalskiUser(KowalskiUserDTO kowalskiUserDTO) {
+	public KowalskiUser(KowalskiUserDTO kowalskiUserDTO) {
 		this.name = kowalskiUserDTO.getName();
 		this.username = kowalskiUserDTO.getUsername();
 		this.email = kowalskiUserDTO.getEmail();
-		this.password = kowalskiUserDTO.getPassword();
+		this.role = KowalskiUserRole.valueOf(kowalskiUserDTO.getRole().toUpperCase());
 		this.creationDate = new Date();
-
-		return this;
 	}
 
 	/**
@@ -110,20 +104,6 @@ public class KowalskiUser {
 	}
 
 	/**
-	 * @return the password
-	 */
-	public String getPassword() {
-		return password;
-	}
-
-	/**
-	 * @param password the password to set
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	/**
 	 * @return the creationDate
 	 */
 	public Date getCreationDate() {
@@ -147,6 +127,34 @@ public class KowalskiUser {
 
 	public Set<Activity> getActivities() {
 		return this.activities;
+	}
+
+	/**
+	 * @return the role
+	 */
+	public KowalskiUserRole getRole() {
+		return role;
+	}
+
+	/**
+	 * @param role the role to set
+	 */
+	public void setRole(KowalskiUserRole role) {
+		this.role = role;
+	}
+
+	/**
+	 * @param projects the projects to set
+	 */
+	public void setProjects(Set<Project> projects) {
+		this.projects = projects;
+	}
+
+	/**
+	 * @param activities the activities to set
+	 */
+	public void setActivities(Set<Activity> activities) {
+		this.activities = activities;
 	}
 
 }

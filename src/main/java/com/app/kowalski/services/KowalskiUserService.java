@@ -4,8 +4,9 @@ import java.util.List;
 import java.util.Set;
 
 import com.app.kowalski.dto.KowalskiUserDTO;
-import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.dto.ProjectDTO;
+import com.app.kowalski.exception.KowalskiUserNotFoundException;
+import com.app.kowalski.exception.KowalskiUserServiceException;
 
 /**
  * Expose allowed methods related to Kowalski users.
@@ -34,8 +35,10 @@ public interface KowalskiUserService {
 	 * Creates a new kowalski user.
 	 * @param kowalskiUserDTO data to create the new kowalski user instance
 	 * @return created Kowalski instance
+	 *
+	 * @throws KowalskiUserServiceException Internal service error
 	 */
-	public KowalskiUserDTO addKowaslkiUser(KowalskiUserDTO kowalskiUserDTO);
+	public KowalskiUserDTO addKowaslkiUser(KowalskiUserDTO kowalskiUserDTO) throws KowalskiUserServiceException;
 
 	/**
 	 * Edits the kowalski user information according given id.

@@ -1,6 +1,7 @@
 package com.app.kowalski.web.rest_controllers;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.kowalski.da.entities.KowalskiUserRole;
 import com.app.kowalski.dto.ActivityDTO;
 import com.app.kowalski.dto.KowalskiUserDTO;
 import com.app.kowalski.dto.ProjectDTO;
@@ -25,6 +27,7 @@ import com.app.kowalski.dto.TaskDTO;
 import com.app.kowalski.dto.TimeRecordDTO;
 import com.app.kowalski.exception.InvalidTimeRecordException;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
+import com.app.kowalski.exception.KowalskiUserServiceException;
 import com.app.kowalski.services.ActivityService;
 import com.app.kowalski.services.KowalskiUserService;
 import com.app.kowalski.services.ProjectService;
@@ -68,9 +71,18 @@ public class KowalskiUserController {
 		return new ResponseEntity<List<KowalskiUserDTO>>(kowalskiUsersDTO, HttpStatus.OK);
 	}
 
+	@RequestMapping(value = "/roles", method = RequestMethod.GET)
+	public ResponseEntity<List<KowalskiUserRole>> getKowalskiUserRoles() {
+		return new ResponseEntity<List<KowalskiUserRole>>(Arrays.asList(KowalskiUserRole.values()), HttpStatus.OK);
+	}
+
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<KowalskiUserDTO> addKowalskiUser(@RequestBody KowalskiUserDTO kowalskiUserDTO) {
-		kowalskiUserDTO = this.kowalskiUserService.addKowaslkiUser(kowalskiUserDTO);
+		try {
+			kowalskiUserDTO = this.kowalskiUserService.addKowaslkiUser(kowalskiUserDTO);
+		} catch (KowalskiUserServiceException e) {
+			return new ResponseEntity<KowalskiUserDTO>(HttpStatus.PRECONDITION_FAILED);
+		}
 		HateoasLinksBuilder.createHateoasForKowalskiUser(kowalskiUserDTO);
 		return new ResponseEntity<KowalskiUserDTO>(kowalskiUserDTO, HttpStatus.CREATED);
 	}

@@ -2,9 +2,9 @@ package com.app.kowalski.dto;
 
 import java.io.Serializable;
 
-import com.app.kowalski.da.entities.KowalskiUser;
 import org.springframework.hateoas.ResourceSupport;
 
+import com.app.kowalski.da.entities.KowalskiUser;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -20,16 +20,16 @@ public class KowalskiUserDTO extends ResourceSupport implements Serializable {
 	private String name;
 	private String username;
 	private String email;
-	private String password;
 	private String creationDate;
+	private String role;
 
 	public KowalskiUserDTO() {}
 
-	public KowalskiUserDTO(String name, String username, String email, String password) {
+	public KowalskiUserDTO(String name, String username, String email, String role) {
 		this.name = name;
 		this.username = username;
 		this.email = email;
-		this.password = password;
+		this.role = role;
 	}
 
 	public KowalskiUserDTO(KowalskiUser kowalskiUser) {
@@ -37,6 +37,7 @@ public class KowalskiUserDTO extends ResourceSupport implements Serializable {
 		this.name = kowalskiUser.getName();
 		this.username = kowalskiUser.getUsername();
 		this.email = kowalskiUser.getEmail();
+		this.role = kowalskiUser.getRole().toString();
 	}
 
 	/**
@@ -96,20 +97,6 @@ public class KowalskiUserDTO extends ResourceSupport implements Serializable {
 	}
 
 	/**
-	 * @return the password
-	 */
-	public String getPassword() {
-		return password;
-	}
-
-	/**
-	 * @param password the password to set
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	/**
 	 * @return the creationDate
 	 */
 	public String getCreationDate() {
@@ -121,6 +108,20 @@ public class KowalskiUserDTO extends ResourceSupport implements Serializable {
 	 */
 	public void setCreationDate(String creationDate) {
 		this.creationDate = creationDate;
+	}
+
+	/**
+	 * @return the role
+	 */
+	public String getRole() {
+		return role;
+	}
+
+	/**
+	 * @param role the role to set
+	 */
+	public void setRole(String role) {
+		this.role = role;
 	}
 
 }

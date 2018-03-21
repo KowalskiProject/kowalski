@@ -6,16 +6,18 @@ import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
-import com.app.kowalski.da.entities.KowalskiUser;
-import com.app.kowalski.da.repositories.KowalskiUserRepository;
-import com.app.kowalski.dto.KowalskiUserDTO;
-import com.app.kowalski.services.KowalskiUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.app.kowalski.exception.KowalskiUserNotFoundException;
+import com.app.kowalski.da.entities.KowalskiUser;
+import com.app.kowalski.da.entities.KowalskiUserRole;
+import com.app.kowalski.da.repositories.KowalskiUserRepository;
+import com.app.kowalski.dto.KowalskiUserDTO;
 import com.app.kowalski.dto.ProjectDTO;
+import com.app.kowalski.exception.KowalskiUserNotFoundException;
+import com.app.kowalski.exception.KowalskiUserServiceException;
+import com.app.kowalski.services.KowalskiUserService;
 
 @Service
 public class KowalskiUserServiceImpl implements KowalskiUserService {
@@ -46,9 +48,16 @@ public class KowalskiUserServiceImpl implements KowalskiUserService {
 
 	@Override
 	@Transactional
-	public KowalskiUserDTO addKowaslkiUser(KowalskiUserDTO kowalskiUserDTO) {
-		// check business rules here
-		KowalskiUser kowalskiUser = new KowalskiUser().convertToKowalskiUser(kowalskiUserDTO);
+	public KowalskiUserDTO addKowaslkiUser(KowalskiUserDTO kowalskiUserDTO) throws KowalskiUserServiceException {
+		if (kowalskiUserDTO.getRole() != null) {
+			try {
+				KowalskiUserRole.valueOf(kowalskiUserDTO.getRole().toUpperCase());
+			} catch(IllegalArgumentException e) {
+				System.out.println("Invalid role for given user. Aborting...");
+				throw new KowalskiUserServiceException("Invalid role");
+			}
+		}
+		KowalskiUser kowalskiUser = new KowalskiUser(kowalskiUserDTO);
 		kowalskiUser = this.repository.save(kowalskiUser);
 		return new KowalskiUserDTO(kowalskiUser);
 	}
@@ -59,7 +68,8 @@ public class KowalskiUserServiceImpl implements KowalskiUserService {
 		// check business rules here
 		try {
 			KowalskiUser kowalskiUser = this.repository.getOne(kowalskiUserDTO.getkUserId());
-			kowalskiUser = kowalskiUser.convertToKowalskiUser(kowalskiUserDTO);
+			kowalskiUser = new KowalskiUser(kowalskiUserDTO);
+			kowalskiUser.setkUserId(kowalskiUserDTO.getkUserId());
 			kowalskiUser = this.repository.save(kowalskiUser);
 			return new KowalskiUserDTO(kowalskiUser);
 		} catch (EntityNotFoundException e) {
