@@ -12,7 +12,7 @@ OPTION=$1
 
 # Check if docker is installed
 PACKAGETOLOOKFOR=docker
-CONTAINER_NAME=kowalski-mysql
+CONTAINER_NAME=kowalski_kowalski-db_1
 EXTERNAL_PORT=2020
 
 INSTALLED=$(dpkg -l | grep ${PACKAGETOLOOKFOR} >/dev/null && echo "yes" || echo "no")

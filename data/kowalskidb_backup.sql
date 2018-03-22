@@ -36,7 +36,7 @@ CREATE TABLE `activity` (
   KEY `FKkl5wciey44062wo324m1ohqtv` (`project_project_id`),
   CONSTRAINT `FK293388c3wn9eufn7m1mhii4nk` FOREIGN KEY (`kowalskiuser_k_user_id`) REFERENCES `kowalskiuser` (`k_user_id`),
   CONSTRAINT `FKkl5wciey44062wo324m1ohqtv` FOREIGN KEY (`project_project_id`) REFERENCES `project` (`project_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -45,7 +45,6 @@ CREATE TABLE `activity` (
 
 LOCK TABLES `activity` WRITE;
 /*!40000 ALTER TABLE `activity` DISABLE KEYS */;
-INSERT INTO `activity` VALUES (1,'Pra lá , depois divoltis porris, paradis. Atirei o pau no gatis, per gatis num morreus. Quem num gosta di mé, boa gentis num é. Admodum accumsan disputationi eu sit. Vide electram sadipscing et per.','2019-01-01 00:00:00','Depois divoltis porris, paradis','2018-01-01 00:00:00','New',NULL,1),(2,'Aenean aliquam molestie leo, vitae iaculis nisl. Aenean aliquam molestie leo, vitae iaculis nisl. Cevadis im ampola pa arma uma pindureta. Per aumento de cachacis, eu reclamis.','2019-01-01 00:00:00','Mauris nec dolor in eros commodo tempor','2018-01-01 00:00:00','New',NULL,1),(3,'Si u mundo tá muito paradis? Toma um mé que o mundo vai girarzis! Nec orci ornare consequat. Praesent lacinia ultrices consectetur. Sed non ipsum felis. Per aumento de cachacis, eu reclamis.','2019-01-01 00:00:00','Atirei o pau no gatis, per gatis num morreus','2018-01-01 00:00:00','New',NULL,1),(4,'Praesent malesuada urna nisi, quis volutpat erat hendrerit non. Nam vulputate dapibus. Interagi no mé, cursus quis, vehicula ac nisi.','2019-01-01 00:00:00','Diuretics paradis num copo é motivis de denguis','2018-01-01 00:00:00','New',NULL,1),(5,'Detraxit consequat et quo num tendi nada. Aenean aliquam molestie leo, vitae iaculis nisl. Casamentiss faiz malandris se pirulitá.','2019-01-01 00:00:00','Quem num gosta di mé, boa gentis num é','2018-01-01 00:00:00','New',NULL,1);
 /*!40000 ALTER TABLE `activity` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -124,7 +123,6 @@ CREATE TABLE `activity_tasks` (
 
 LOCK TABLES `activity_tasks` WRITE;
 /*!40000 ALTER TABLE `activity_tasks` DISABLE KEYS */;
-INSERT INTO `activity_tasks` VALUES (1,1),(1,2),(1,3),(1,4),(1,5);
 /*!40000 ALTER TABLE `activity_tasks` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -164,10 +162,10 @@ CREATE TABLE `kowalskiuser` (
   `creation_date` datetime DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
-  `password` varchar(255) DEFAULT NULL,
+  `role` int(11) DEFAULT NULL,
   `username` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`k_user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -176,7 +174,6 @@ CREATE TABLE `kowalskiuser` (
 
 LOCK TABLES `kowalskiuser` WRITE;
 /*!40000 ALTER TABLE `kowalskiuser` DISABLE KEYS */;
-INSERT INTO `kowalskiuser` VALUES (1,'2018-02-17 17:22:52','didimoco@sonrisal.com','Didi Mocó','didimoco','didimoco'),(2,'2018-02-17 17:24:21','dedesantana@disfarca.com','Dedé Santana','dedesantana','dedesantana'),(3,'2018-02-17 17:24:50','mussum@branquinha.com','Mussum','mussumzis','mussumzis'),(4,'2018-02-17 17:25:12','zacarias@didiiiiiii.com','Zacarias','zacarias','zacarias');
 /*!40000 ALTER TABLE `kowalskiuser` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -189,16 +186,16 @@ DROP TABLE IF EXISTS `project`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `project` (
   `project_id` int(11) NOT NULL AUTO_INCREMENT,
-  `code` varchar(255) DEFAULT NULL,
+  `code` varchar(255) NOT NULL,
   `description` varchar(255) DEFAULT NULL,
   `end_date` datetime DEFAULT NULL,
-  `name` varchar(255) DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
   `start_date` datetime DEFAULT NULL,
   `kowalskiuser_k_user_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`project_id`),
   KEY `FKq8iq8wxrf07xn4hyy8vc6sklf` (`kowalskiuser_k_user_id`),
   CONSTRAINT `FKq8iq8wxrf07xn4hyy8vc6sklf` FOREIGN KEY (`kowalskiuser_k_user_id`) REFERENCES `kowalskiuser` (`k_user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -207,7 +204,6 @@ CREATE TABLE `project` (
 
 LOCK TABLES `project` WRITE;
 /*!40000 ALTER TABLE `project` DISABLE KEYS */;
-INSERT INTO `project` VALUES (1,'PROJ1','Mussum Ipsum, cacilds vidis litro abertis. Quem num gosta di mim que vai caçá sua turmis! Suco de cevadiss deixa as pessoas mais interessantis. Si num tem leite então bota uma pinga aí cumpadi! Per aumento de cachacis, eu reclamis.','2019-01-01 00:00:00','Mussum Ipsum, cacilds vidis litro abertis','2018-01-01 00:00:00',NULL),(2,'PROJ2','Copo furadis é disculpa de bebadis, arcu quam euismod magna. Si u mundo tá muito paradis? Toma um mé que o mundo vai girarzis! Suco de cevadiss deixa as pessoas mais interessantis. A ordem dos tratores não altera o pão duris.','2019-01-01 00:00:00','Copo furadis é disculpa de bebadis','2018-01-01 00:00:00',NULL),(3,'PROJ3','Pra lá , depois divoltis porris, paradis. Atirei o pau no gatis, per gatis num morreus. Quem num gosta di mé, boa gentis num é. Admodum accumsan disputationi eu sit. Vide electram sadipscing et per.','2019-01-01 00:00:00','Depois divoltis porris, paradis','2018-01-01 00:00:00',NULL);
 /*!40000 ALTER TABLE `project` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -234,7 +230,6 @@ CREATE TABLE `project_activities` (
 
 LOCK TABLES `project_activities` WRITE;
 /*!40000 ALTER TABLE `project_activities` DISABLE KEYS */;
-INSERT INTO `project_activities` VALUES (1,1),(1,2),(1,3),(1,4),(1,5);
 /*!40000 ALTER TABLE `project_activities` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -285,7 +280,7 @@ CREATE TABLE `task` (
   KEY `FK5y0qhxknesnsaf7nwtjwqwpxd` (`activity_activity_id`),
   CONSTRAINT `FK58r0butye5knj6ey0epce67b5` FOREIGN KEY (`kowalskiuser_k_user_id`) REFERENCES `kowalskiuser` (`k_user_id`),
   CONSTRAINT `FK5y0qhxknesnsaf7nwtjwqwpxd` FOREIGN KEY (`activity_activity_id`) REFERENCES `activity` (`activity_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -294,7 +289,6 @@ CREATE TABLE `task` (
 
 LOCK TABLES `task` WRITE;
 /*!40000 ALTER TABLE `task` DISABLE KEYS */;
-INSERT INTO `task` VALUES (1,'Detraxit consequat et quo num tendi nada. Aenean aliquam molestie leo, vitae iaculis nisl. Casamentiss faiz malandris se pirulitá.','2019-01-01 00:00:00','Vivamus sit amet nibh non tellus tristique interdum','2018-01-01 00:00:00','New',NULL,1),(2,'Detraxit consequat et quo num tendi nada. Aenean aliquam molestie leo, vitae iaculis nisl. Casamentiss faiz malandris se pirulitá.','2019-01-01 00:00:00','Delegadis gente finis, bibendum egestas augue arcu ut est','2018-01-01 00:00:00','New',NULL,1),(3,'Detraxit consequat et quo num tendi nada. Aenean aliquam molestie leo, vitae iaculis nisl. Casamentiss faiz malandris se pirulitá.','2019-01-01 00:00:00','Per aumento de cachacis, eu reclamis','2018-01-01 00:00:00','New',NULL,1),(4,'Detraxit consequat et quo num tendi nada. Aenean aliquam molestie leo, vitae iaculis nisl. Casamentiss faiz malandris se pirulitá.','2019-01-01 00:00:00','Cevadis im ampola pa arma uma pindureta','2018-01-01 00:00:00','New',NULL,1),(5,'Detraxit consequat et quo num tendi nada. Aenean aliquam molestie leo, vitae iaculis nisl. Casamentiss faiz malandris se pirulitá.','2019-01-01 00:00:00','Mé faiz elementum girarzis, nisi eros vermeio','2018-01-01 00:00:00','New',NULL,1);
 /*!40000 ALTER TABLE `task` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -312,14 +306,20 @@ CREATE TABLE `timerecord` (
   `reported_day` date DEFAULT NULL,
   `reported_time` time DEFAULT NULL,
   `state` int(11) DEFAULT NULL,
-  `task_task_id` int(11) DEFAULT NULL,
+  `activity_id` int(11) DEFAULT NULL,
+  `project_id` int(11) DEFAULT NULL,
+  `task_id` int(11) DEFAULT NULL,
   `kowalskiuser_k_user_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`tr_id`),
-  KEY `FKgpecbronb7vwevqp86hv8qumi` (`task_task_id`),
+  KEY `FKeg1jp1khhjw1qsnw0weyb4wb8` (`activity_id`),
+  KEY `FKtb1ncnb6o0vs4nimts9ik5unt` (`project_id`),
+  KEY `FK1tw2v4volharkb6exkroqvexr` (`task_id`),
   KEY `FKfhb4aecc0t3ixuuggf8yhdonp` (`kowalskiuser_k_user_id`),
+  CONSTRAINT `FK1tw2v4volharkb6exkroqvexr` FOREIGN KEY (`task_id`) REFERENCES `task` (`task_id`),
+  CONSTRAINT `FKeg1jp1khhjw1qsnw0weyb4wb8` FOREIGN KEY (`activity_id`) REFERENCES `activity` (`activity_id`),
   CONSTRAINT `FKfhb4aecc0t3ixuuggf8yhdonp` FOREIGN KEY (`kowalskiuser_k_user_id`) REFERENCES `kowalskiuser` (`k_user_id`),
-  CONSTRAINT `FKgpecbronb7vwevqp86hv8qumi` FOREIGN KEY (`task_task_id`) REFERENCES `task` (`task_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
+  CONSTRAINT `FKtb1ncnb6o0vs4nimts9ik5unt` FOREIGN KEY (`project_id`) REFERENCES `project` (`project_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -328,7 +328,6 @@ CREATE TABLE `timerecord` (
 
 LOCK TABLES `timerecord` WRITE;
 /*!40000 ALTER TABLE `timerecord` DISABLE KEYS */;
-INSERT INTO `timerecord` VALUES (1,'Viva Forevis aptent taciti sociosqu ad litora torquent. Suco de cevadiss, é um leite divinis, qui tem lupuliz, matis, aguis e fermentis. Casamentiss faiz malandris se pirulitá.','2018-02-17 17:38:10','2017-12-15','08:00:00',0,1,1),(2,'Vivamus sit amet nibh non tellus tristique interdum. Casamentiss faiz malandris se pirulitá. Nec orci ornare consequat.','2018-02-17 17:38:49','2017-12-16','08:00:00',0,2,2),(3,'Sed non consequat odio. Interessantiss quisso pudia ce receita de bolis, mais bolis eu num gostis.','2018-02-17 17:39:11','2017-12-17','08:00:00',0,3,3),(4,'Casamentiss faiz malandris se pirulitá. Nec orci ornare consequat.','2018-02-17 17:39:45','2017-12-18','08:00:00',0,4,4),(5,'Casamentiss faiz malandris se pirulitá. Nec orci ornare consequat.','2018-02-17 17:40:07','2017-12-16','08:00:00',0,1,1),(6,'Casamentiss faiz malandris se pirulitá. Nec orci ornare consequat.','2018-02-17 17:40:20','2017-12-17','08:00:00',0,1,2),(7,'Casamentiss faiz malandris se pirulitá. Nec orci ornare consequat.','2018-02-17 17:40:33','2017-12-18','08:00:00',0,1,3),(8,'Sapien in monti palavris qui num significa nadis i pareci latim.','2018-02-17 17:41:38','2018-02-19','08:00:00',0,1,1),(9,'Sapien in monti palavris qui num significa nadis i pareci latim.','2018-02-17 17:41:48','2018-02-20','08:00:00',0,2,1),(10,'Sapien in monti palavris qui num significa nadis i pareci latim.','2018-02-17 17:41:58','2018-02-21','08:00:00',0,3,1),(11,'Sapien in monti palavris qui num significa nadis i pareci latim.','2018-02-17 17:42:05','2018-02-22','08:00:00',0,4,1),(12,'Sapien in monti palavris qui num significa nadis i pareci latim.','2018-02-17 17:42:17','2018-02-23','04:00:00',0,1,1),(13,'Sapien in monti palavris qui num significa nadis i pareci latim.','2018-02-17 17:42:22','2018-02-23','04:00:00',0,2,1);
 /*!40000 ALTER TABLE `timerecord` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -399,4 +398,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-02-17 19:44:52
+-- Dump completed on 2018-03-22 17:12:57
