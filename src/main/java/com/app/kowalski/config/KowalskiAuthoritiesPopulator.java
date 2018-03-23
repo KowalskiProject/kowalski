@@ -26,9 +26,8 @@ public class KowalskiAuthoritiesPopulator implements LdapAuthoritiesPopulator, U
     @Override
     public Collection<? extends GrantedAuthority> getGrantedAuthorities(DirContextOperations userData, String username) {
 
-        if(kwuRepo.findByUsername(username) != null) {
-
-            return Arrays.asList(new SimpleGrantedAuthority("USER"));
+    	if(kwuRepo.findByUsername(username) != null) {
+            return Arrays.asList(new SimpleGrantedAuthority(kwuRepo.findByUsername(username).getRole().toString()));
         } else {
             return Collections.emptyList();
         }
@@ -38,7 +37,8 @@ public class KowalskiAuthoritiesPopulator implements LdapAuthoritiesPopulator, U
     public UserDetails mapUserFromContext(DirContextOperations ctx, String username, Collection<? extends GrantedAuthority> authorities) {
 
         if(kwuRepo.findByUsername(username) != null) {
-            return new User(username,"",  Arrays.asList(new SimpleGrantedAuthority("USER")));
+            return new User(username,"",  Arrays.asList(
+            		new SimpleGrantedAuthority(kwuRepo.findByUsername(username).getRole().toString())));
         } else {
             return new User(username,"", Collections.emptyList());
         }
