@@ -71,13 +71,11 @@ public class KowalskiUserController {
 
 	@RequestMapping(value = "/email", method = RequestMethod.GET)
 	public ResponseEntity<String> testEmail() {
-		System.out.println("+++ A");
 		Mail mail = new Mail();
         mail.setMailFrom("itlic@lenovo.com");
         mail.setMailTo("fdassan@lenovo.com");
         mail.setMailSubject("Spring 4 - Email with FreeMarker template");
 
-        System.out.println("+++ B");
         Map<String, Object> model = new HashMap < String, Object > ();
         model.put("firstName", "Yashwant");
         model.put("lastName", "Chavan");
@@ -85,10 +83,8 @@ public class KowalskiUserController {
         model.put("signature", "www.technicalkeeda.com");
         mail.setModel(model);
 
-        System.out.println("+++ C");
         this.mailService.sendEmail(mail);
 
-        System.out.println("+++ D");
 		return new ResponseEntity<String>("Ok", HttpStatus.OK);
 	}
 

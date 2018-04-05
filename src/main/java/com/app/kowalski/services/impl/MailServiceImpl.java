@@ -15,6 +15,7 @@ import com.app.kowalski.mail.Mail;
 import com.app.kowalski.services.MailService;
 
 import freemarker.template.Configuration;
+import freemarker.template.Template;
 
 @Service
 public class MailServiceImpl implements MailService {
@@ -30,20 +31,14 @@ public class MailServiceImpl implements MailService {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
 
         try {
-
-        	System.out.println("+++ E");
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
 
             mimeMessageHelper.setSubject(mail.getMailSubject());
             mimeMessageHelper.setFrom(mail.getMailFrom());
             mimeMessageHelper.setTo(mail.getMailTo());
-            mail.setMailContent(geContentFromTemplate(mail.getModel()));
+           	mail.setMailContent(geContentFromTemplate(mail.getModel()));
             mimeMessageHelper.setText(mail.getMailContent(), true);
-
-            System.out.println("+++ F");
             mailSender.send(mimeMessageHelper.getMimeMessage());
-
-            System.out.println("+++ G");
         } catch (MessagingException e) {
             e.printStackTrace();
         }
@@ -53,15 +48,14 @@ public class MailServiceImpl implements MailService {
         StringBuffer content = new StringBuffer();
 
         try {
-        	System.out.println("+++ H");
-            content.append(FreeMarkerTemplateUtils
-                .processTemplateIntoString(fmConfiguration.getTemplate("email-template.txt"), model));
+        	Template t = fmConfiguration.getTemplate("email-template.txt");
+            content.append(FreeMarkerTemplateUtils.processTemplateIntoString(fmConfiguration.getTemplate(t.getName()), model));
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
 
         System.out.println("***********" + content.toString());
-        System.out.println("+++ I");
         return content.toString();
     }
 

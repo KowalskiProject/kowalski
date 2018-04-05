@@ -34,8 +34,8 @@ public class ApplicationConfig {
     @Bean
     @Primary
     public FreeMarkerConfigurationFactoryBean getFreeMarkerConfiguration() {
-        FreeMarkerConfigurationFactoryBean fmConfigFactoryBean = new FreeMarkerConfigurationFactoryBean();
-        fmConfigFactoryBean.setTemplateLoaderPath("src/main/resources/templates/");
+    	FreeMarkerConfigurationFactoryBean fmConfigFactoryBean = new FreeMarkerConfigurationFactoryBean();
+        fmConfigFactoryBean.setTemplateLoaderPath("classpath:/templates/");
         return fmConfigFactoryBean;
     }
 
