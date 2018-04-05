@@ -51,15 +51,29 @@ repositories {
 dependencies {
     compile 'com.google.code.gson:gson:2.8.2'
 	compile 'mysql:mysql-connector-java'
+	
     compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.0'
+    
     compile group: 'org.springframework.boot', name:'spring-boot-starter-security'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+    
+    compile group: 'org.springframework', name: 'spring-core'
+    compile group: 'org.springframework', name: 'spring-context'
+    compile group: 'org.springframework', name: 'spring-context-support'
+    
+    compile group: 'javax.mail', name: 'javax.mail-api', version: '1.6.1'
+    compile group: 'javax.mail', name: 'mail', version: '1.4.7'
+    compile group: 'org.freemarker', name: 'freemarker', version: '2.3.23'
+    
     compile group: 'org.springframework.ldap', name: 'spring-ldap-core'
     compile group: 'org.springframework.security', name:'spring-security-ldap'
+    
     compile group: 'com.h2database', name: 'h2', version:'1.4.196'
+    
     compile group: 'io.springfox', name: 'springfox-swagger2', version:'2.7.0'
     compile group: 'io.springfox', name: 'springfox-swagger-ui', version:'2.7.0'
+    
     compile group: 'org.springframework.hateoas', name: 'spring-hateoas', version:'0.23.0.RELEASE'
     testCompile(group: 'org.springframework.boot', name: 'spring-boot-starter-test', version:'1.5.8.RELEASE')
     testCompile group: 'org.springframework.security', name: 'spring-security-test', version:'4.2.3.RELEASE'

@@ -2,7 +2,9 @@ package com.app.kowalski.web.rest_controllers;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,8 +30,10 @@ import com.app.kowalski.dto.TimeRecordDTO;
 import com.app.kowalski.exception.InvalidTimeRecordException;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.exception.KowalskiUserServiceException;
+import com.app.kowalski.mail.Mail;
 import com.app.kowalski.services.ActivityService;
 import com.app.kowalski.services.KowalskiUserService;
+import com.app.kowalski.services.MailService;
 import com.app.kowalski.services.ProjectService;
 import com.app.kowalski.services.TaskService;
 import com.app.kowalski.services.TimeRecordService;
@@ -48,18 +52,44 @@ public class KowalskiUserController {
 	private ActivityService activityService;
 	private TaskService taskService;
 	private TimeRecordService trService;
+	private MailService mailService;
 
 	public static final LocalDate today = LocalDate.now();
 	public static final LocalDate oneWeekLater = today.minusDays(7);
 
 	@Autowired
 	KowalskiUserController(KowalskiUserService kowalskiUserService, ProjectService projectService,
-			ActivityService activityService, TaskService taskService, TimeRecordService trService) {
+			ActivityService activityService, TaskService taskService, TimeRecordService trService,
+			MailService mailService) {
 		this.kowalskiUserService = kowalskiUserService;
 		this.projectService = projectService;
 		this.activityService = activityService;
 		this.taskService = taskService;
 		this.trService = trService;
+		this.mailService = mailService;
+	}
+
+	@RequestMapping(value = "/email", method = RequestMethod.GET)
+	public ResponseEntity<String> testEmail() {
+		System.out.println("+++ A");
+		Mail mail = new Mail();
+        mail.setMailFrom("itlic@lenovo.com");
+        mail.setMailTo("fdassan@lenovo.com");
+        mail.setMailSubject("Spring 4 - Email with FreeMarker template");
+
+        System.out.println("+++ B");
+        Map<String, Object> model = new HashMap < String, Object > ();
+        model.put("firstName", "Yashwant");
+        model.put("lastName", "Chavan");
+        model.put("location", "Pune");
+        model.put("signature", "www.technicalkeeda.com");
+        mail.setModel(model);
+
+        System.out.println("+++ C");
+        this.mailService.sendEmail(mail);
+
+        System.out.println("+++ D");
+		return new ResponseEntity<String>("Ok", HttpStatus.OK);
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
