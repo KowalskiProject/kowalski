@@ -60,6 +60,7 @@ public class MailServiceImpl implements MailService {
             e.printStackTrace();
         }
 
+        System.out.println("***********" + content.toString());
         System.out.println("+++ I");
         return content.toString();
     }
