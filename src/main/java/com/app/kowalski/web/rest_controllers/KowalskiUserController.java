@@ -83,7 +83,9 @@ public class KowalskiUserController {
         model.put("signature", "www.technicalkeeda.com");
         mail.setModel(model);
 
+        System.out.println("*** X");
         this.mailService.sendEmail(mail);
+        System.out.println("*** Y");
 
 		return new ResponseEntity<String>("Ok", HttpStatus.OK);
 	}
