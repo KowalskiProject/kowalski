@@ -1,4 +1,4 @@
-version: '3'
+version: '3.5'
 services:
   kowalski:
     image: kowalski/kowalski
@@ -17,9 +17,9 @@ services:
     depends_on:
       - kowalski-db
       - openldap
-    links:
-      - openldap
-      - kowalski-db
+    networks:
+      - frontend
+      - backend
     entrypoint: ["./tmp/wait_for_mysql.sh","java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
     volumes:
     - ./data/wait_for_mysql.sh:/tmp/wait_for_mysql.sh
@@ -32,6 +32,8 @@ services:
       MYSQL_PASSWORD: root
       MYSQL_DATABASE: kowalskidb
     restart: always
+    networks:
+      - backend
     volumes:
       - kowalski-db-data:/var/lib/mysql
       - ./data/kowalskidb_backup.sql:/docker-entrypoint-initdb.d/kowalskidb_backup.sql
@@ -42,6 +44,8 @@ services:
       - 389:389
       - 639:639
     hostname: "kowalski.org"
+    networks:
+      - backend
     volumes:
       - kowalski-devldap-data:/var/lib/ldap
       - kowalski-devldap-config:/etc/ldap/slapd.d
@@ -53,10 +57,15 @@ services:
     ports:
       - 8080:80
       - 4443:443
-    links:
-      - openldap
+    networks:
+      - backend
 
 volumes:
   kowalski-db-data:
   kowalski-devldap-data:
   kowalski-devldap-config:
+
+networks:
+  frontend:
+    name: kowalski-front-end-network
+  backend:
