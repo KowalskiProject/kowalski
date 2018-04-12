@@ -56,8 +56,15 @@ public class ActivityServiceImpl implements ActivityService {
 		// check business rules here
 		try {
 			Activity activity = this.activityRepository.getOne(activityDTO.getActivityId());
-			activity = activity.convertToActivity(activityDTO);
+
+			if (activityDTO.getName() != null) activity.setName(activityDTO.getName());
+			if (activityDTO.getDescription() != null) activity.setDescription(activityDTO.getDescription());
+			if (activityDTO.getStatus() != null) activity.setStatus(activityDTO.getStatus());
+			if (activityDTO.getStartDate() != null) activity.setStartDate(activityDTO.getStartDate());
+			if (activityDTO.getEndDate() != null) activity.setEndDate(activityDTO.getEndDate());
+
 			activity = this.activityRepository.save(activity);
+
 			return new ActivityDTO(activity);
 		} catch (EntityNotFoundException e) {
 			throw new ActivityNotFoundException(e.getMessage(), e.getCause());
