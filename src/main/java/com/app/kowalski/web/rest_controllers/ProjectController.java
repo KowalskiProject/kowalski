@@ -21,6 +21,7 @@ import com.app.kowalski.dto.KowalskiUserDTO;
 import com.app.kowalski.dto.ProjectDTO;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.exception.ProjectNotFoundException;
+import com.app.kowalski.exception.ProjectServiceException;
 import com.app.kowalski.services.KowalskiUserService;
 import com.app.kowalski.services.ProjectService;
 import com.app.kowalski.util.HateoasLinksBuilder;
@@ -107,7 +108,7 @@ public class ProjectController {
 	public ResponseEntity<String> deleteProject(@PathVariable int projectId) {
 		try {
 			boolean ret = this.projectService.deleteProject(projectId);
-		} catch (ProjectNotFoundException e) {
+		} catch (ProjectNotFoundException | ProjectServiceException e) {
 			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
 		}
 

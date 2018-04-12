@@ -24,6 +24,7 @@ import com.app.kowalski.dto.ProjectDTO;
 import com.app.kowalski.dto.TaskDTO;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.exception.ProjectNotFoundException;
+import com.app.kowalski.exception.ProjectServiceException;
 import com.app.kowalski.services.ProjectService;
 
 @Service
@@ -110,12 +111,16 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	@Transactional
-	public boolean deleteProject(int id) throws ProjectNotFoundException {
-		try {
-			this.projectRepository.delete(id);
-		} catch (Exception e) {
-			throw new ProjectNotFoundException(e.getMessage(), e.getCause());
-		}
+	public boolean deleteProject(int id) throws ProjectNotFoundException, ProjectServiceException {
+		Project project = this.projectRepository.getOne(id);
+		if (project == null)
+			throw new ProjectNotFoundException();
+
+		if (project.getActivities().size() > 0)
+			throw new ProjectServiceException("Project not empty");
+
+		this.projectRepository.delete(id);
+
 		return true;
 	}
 

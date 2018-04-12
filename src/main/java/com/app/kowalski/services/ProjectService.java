@@ -9,6 +9,7 @@ import com.app.kowalski.dto.KowalskiUserDTO;
 import com.app.kowalski.dto.ProjectDTO;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.exception.ProjectNotFoundException;
+import com.app.kowalski.exception.ProjectServiceException;
 
 /**
  * Interface to expose allowed methods related to projects.
@@ -61,8 +62,9 @@ public interface ProjectService {
 	 * @return true if the project was removed successfully, false otherwise
 	 *
 	 * @throws ProjectNotFoundException No project instance was found in the system
+	 * @throws ProjectServiceException Internal error in service
 	 */
-	public boolean deleteProject(int id) throws ProjectNotFoundException;
+	public boolean deleteProject(int id) throws ProjectNotFoundException, ProjectServiceException;
 
 	/**
 	 * Adds an activity to the given project
