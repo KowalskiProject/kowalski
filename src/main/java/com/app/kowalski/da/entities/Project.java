@@ -77,9 +77,8 @@ public class Project {
 	 * Read all parameters from DTO and save them into project instance
 	 *
 	 * @param projectDTO information used to create or edit a project
-	 * @return project instance
 	 */
-	public Project convertToProject(ProjectDTO projectDTO) {
+	public Project(ProjectDTO projectDTO) {
 		this.name = projectDTO.getName();
 		this.code = projectDTO.getCode();
 		this.description = projectDTO.getDescription();
@@ -87,8 +86,6 @@ public class Project {
 			this.startDate = sdf.parse(projectDTO.getStartDate());
 			this.endDate = sdf.parse(projectDTO.getEndDate());
 		} catch (ParseException | NullPointerException e) {}
-
-		return this;
 	}
 
 	/**

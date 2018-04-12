@@ -79,7 +79,7 @@ public class ProjectServiceImpl implements ProjectService {
 		if (this.projectRepository.findByCode(projectDTO.getCode()).size() > 0) {
 			throw new DataIntegrityViolationException(projectDTO.getCode());
 		}
-		Project project = new Project().convertToProject(projectDTO);
+		Project project = new Project(projectDTO);
 		project = this.projectRepository.save(project);
 		return new ProjectDTO(project);
 	}
@@ -90,7 +90,8 @@ public class ProjectServiceImpl implements ProjectService {
 		// check business rules here
 		try {
 			Project project = this.projectRepository.getOne(projectDTO.getProjectId());
-			project = project.convertToProject(projectDTO);
+			project = new Project(projectDTO);
+			project.setProjectId(projectDTO.getProjectId());
 			project = this.projectRepository.save(project);
 			return new ProjectDTO(project);
 		} catch (EntityNotFoundException e) {
