@@ -223,6 +223,15 @@ public class Project {
 	}
 
 	/**
+	 * @param startDate the startDate to set
+	 */
+	public void setStartDate(String startDate) {
+		try {
+			this.startDate = sdf.parse(startDate);
+		} catch (ParseException | NullPointerException e) {}
+	}
+
+	/**
 	 * @return the endDate
 	 */
 	public Date getEndDate() {
@@ -234,6 +243,15 @@ public class Project {
 	 */
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+	}
+
+	/**
+	 * @param endDate the endDate to set
+	 */
+	public void setEndDate(String endDate) {
+		try {
+			this.endDate = sdf.parse(endDate);
+		} catch (ParseException | NullPointerException e) {}
 	}
 
 }

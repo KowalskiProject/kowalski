@@ -91,9 +91,17 @@ public class ProjectServiceImpl implements ProjectService {
 		// check business rules here
 		try {
 			Project project = this.projectRepository.getOne(projectDTO.getProjectId());
-			project = new Project(projectDTO);
-			project.setProjectId(projectDTO.getProjectId());
+
+			if (projectDTO.getName() != null) project.setName(projectDTO.getName());
+			if (projectDTO.getDescription() != null) project.setDescription(projectDTO.getDescription());
+			if (projectDTO.getCode() != null) project.setCode(projectDTO.getCode());
+			if (projectDTO.getStartDate() != null) project.setStartDate(projectDTO.getStartDate());
+			if (projectDTO.getEndDate() != null) project.setEndDate(projectDTO.getEndDate());
+			if (projectDTO.getAccountableId() != null)
+				project.setAccountable(this.userRepository.getOne(projectDTO.getAccountableId()));
+
 			project = this.projectRepository.save(project);
+
 			return new ProjectDTO(project);
 		} catch (EntityNotFoundException e) {
 			throw new ProjectNotFoundException(e.getMessage(), e.getCause());
