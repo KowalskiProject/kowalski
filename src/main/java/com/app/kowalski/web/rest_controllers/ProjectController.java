@@ -21,6 +21,7 @@ import com.app.kowalski.dto.KowalskiUserDTO;
 import com.app.kowalski.dto.ProjectDTO;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.exception.ProjectNotFoundException;
+import com.app.kowalski.services.KowalskiUserService;
 import com.app.kowalski.services.ProjectService;
 import com.app.kowalski.util.HateoasLinksBuilder;
 
@@ -31,10 +32,12 @@ public class ProjectController {
 	@Autowired
 	HttpServletRequest request;
 	private ProjectService projectService;
+	private KowalskiUserService userService;
 
 	@Autowired
-	ProjectController(ProjectService projectService) {
+	ProjectController(ProjectService projectService, KowalskiUserService userService) {
 		this.projectService = projectService;
+		this.userService = userService;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -64,6 +67,17 @@ public class ProjectController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<ProjectDTO> addProject(@Valid @RequestBody ProjectDTO projectDTO) {
+		if (projectDTO.getAccountableId() == null) {
+			try {
+				// configure the user that is creating the project as its accountable
+				Integer userId = this.userService.getKowalskiUserByUsername(
+						request.getUserPrincipal().getName()).getkUserId();
+				projectDTO.setAccountableId(userId);
+			} catch (KowalskiUserNotFoundException e1) {
+				return new ResponseEntity<ProjectDTO>(HttpStatus.PRECONDITION_FAILED);
+			}
+		}
+
 		try {
 			projectDTO = this.projectService.addProject(projectDTO);
 		} catch (DataIntegrityViolationException e) {

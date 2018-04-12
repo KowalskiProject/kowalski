@@ -32,6 +32,15 @@ public interface KowalskiUserService {
 	public KowalskiUserDTO getKowalskiUser(int kowalskiUserId) throws KowalskiUserNotFoundException;
 
 	/**
+	 * Return kowalski user data according given username.
+	 * @param kowalskiUserId kowalski user reference
+	 * @return kowalski user data
+	 *
+	 * @throws KowalskiUserNotFoundException No KowalskiUser instance found in the system
+	 */
+	public KowalskiUserDTO getKowalskiUserByUsername(String username) throws KowalskiUserNotFoundException;
+
+	/**
 	 * Creates a new kowalski user.
 	 * @param kowalskiUserDTO data to create the new kowalski user instance
 	 * @return created Kowalski instance

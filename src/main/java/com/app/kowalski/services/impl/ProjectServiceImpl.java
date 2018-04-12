@@ -80,6 +80,7 @@ public class ProjectServiceImpl implements ProjectService {
 			throw new DataIntegrityViolationException(projectDTO.getCode());
 		}
 		Project project = new Project(projectDTO);
+		project.setAccountable(this.userRepository.getOne(projectDTO.getAccountableId()));
 		project = this.projectRepository.save(project);
 		return new ProjectDTO(project);
 	}
