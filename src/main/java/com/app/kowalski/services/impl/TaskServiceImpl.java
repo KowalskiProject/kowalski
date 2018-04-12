@@ -5,19 +5,19 @@ import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
-import com.app.kowalski.da.entities.Task;
-import com.app.kowalski.da.repositories.TaskRepository;
-import com.app.kowalski.dto.TaskDTO;
-import com.app.kowalski.services.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.app.kowalski.da.entities.KowalskiUser;
+import com.app.kowalski.da.entities.Task;
+import com.app.kowalski.da.repositories.KowalskiUserRepository;
+import com.app.kowalski.da.repositories.TaskRepository;
+import com.app.kowalski.dto.KowalskiUserDTO;
+import com.app.kowalski.dto.TaskDTO;
 import com.app.kowalski.exception.KowalskiUserNotFoundException;
 import com.app.kowalski.exception.TaskNotFoundException;
-import com.app.kowalski.da.entities.KowalskiUser;
-import com.app.kowalski.dto.KowalskiUserDTO;
-import com.app.kowalski.da.repositories.KowalskiUserRepository;
+import com.app.kowalski.services.TaskService;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -51,7 +51,10 @@ public class TaskServiceImpl implements TaskService {
 
 		try {
 			task = this.taskRepository.getOne(taskDTO.getTaskId());
-			task = task.convertToTask(taskDTO);
+
+			if (taskDTO.getName() != null) task.setName(taskDTO.getName());
+			if (taskDTO.getDescription() != null) task.setDescription(taskDTO.getDescription());
+
 			task = this.taskRepository.save(task);
 		} catch (EntityNotFoundException e) {
 			throw new TaskNotFoundException(e.getMessage(), e.getCause());
