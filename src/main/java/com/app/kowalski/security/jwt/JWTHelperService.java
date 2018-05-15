@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,8 +111,10 @@ public class JWTHelperService {
                 if (user != null) {
                     return new UsernamePasswordAuthenticationToken(user, null, lg);
                 }
-            }catch (Exception e){
-                LOG.error("Get authorization Error",e);
+            }catch (ExpiredJwtException expjwt){
+                LOG.error(String.format("Request from %s with an expired token for user: %s", request.getRemoteAddr(), expjwt.getClaims().getSubject()));
+            } catch (Exception e){
+                LOG.error("Get authorization Error: ", e);
             }
         }
         return null;
